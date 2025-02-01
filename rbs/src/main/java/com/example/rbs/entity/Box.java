@@ -13,9 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Setter
 public class Box {
 	@EmbeddedId
-    private BoxId boxIdtestadmin; // 복합 키 클래스
-	
-	//master 공통된 코드 수정
+    private BoxId boxId; // 복합 키 클래스
 	
 	private String IPAddress;
 	
