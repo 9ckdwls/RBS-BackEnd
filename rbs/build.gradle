@@ -1,0 +1,50 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.10'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	//클래스 변경 시 서버 재시작
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	//테스트 관련
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	//DB
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'com.mysql:mysql-connector-j'
+	//시큐리티
+	//implementation 'org.springframework.boot:spring-boot-starter-security'
+	//웹
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	//롬복
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	//위치정보
+	implementation("org.locationtech.jts:jts-core:1.19.0")
+	implementation 'org.hibernate.orm:hibernate-spatial:6.4.10.Final'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
