@@ -15,8 +15,6 @@ public class Box {
 	@EmbeddedId
     private BoxId boxId; // 복합 키 클래스
 	
-	//master 공통된 코드 수정
-	
 	private String IPAddress;
 	
 	private Point location;
