@@ -32,6 +32,7 @@ public class UserController {
 	}
 	
 	// 로그인 요청은 /login으로
+	// form-data 타입으로 id는 key: username pw는 key: password 
 	// Success: 로그인 성공 Fail: 로그인 실패
 	
 	// 프론트에서 접근 X
