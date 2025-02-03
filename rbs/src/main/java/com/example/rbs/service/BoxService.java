@@ -6,9 +6,9 @@ import com.example.rbs.repository.BoxRepository;
 @Service
 public class BoxService {
 
-	private final BoxRepository repository;
-	public BoxService(BoxRepository repository) {
-		this.repository = repository;
+	private final BoxRepository boxRepository;
+	public BoxService(BoxRepository boxRepository) {
+		this.boxRepository = boxRepository;
 	}
 
 }
