@@ -23,7 +23,7 @@ public class BoxService {
 
 	// 수거함 이름으로 검색
 	public Box findBoxByName(String name) {
-		Optional<Box> box = repository.findByBoxId_name(name);
+		Optional<Box> box = repository.findByName(name);
 		if(box.isPresent()) {
 			return box.get();
 		} else {

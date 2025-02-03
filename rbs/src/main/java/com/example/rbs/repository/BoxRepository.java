@@ -11,6 +11,6 @@ import com.example.rbs.entity.Box;
 public interface BoxRepository extends JpaRepository<Box, Integer> {
 
 	// 수거함 이름으로 검색
-	Optional<Box> findByBoxId_name(String name);
+	Optional<Box> findByName(String name);
 
 }
