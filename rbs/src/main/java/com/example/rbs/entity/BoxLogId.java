@@ -10,15 +10,15 @@ public class BoxLogId implements Serializable {
 
     private int boxId;
     private String userId;
-    private Date data;
+    private Date date;
 
     // 기본 생성자, equals(), hashCode() 메서드 필요
     public BoxLogId() {}
 
-    public BoxLogId(int boxId, String userId, Date data) {
+    public BoxLogId(int boxId, String userId, Date date) {
         this.boxId = boxId;
         this.userId = userId;
-        this.data = data;
+        this.date = date;
     }
     
 }
