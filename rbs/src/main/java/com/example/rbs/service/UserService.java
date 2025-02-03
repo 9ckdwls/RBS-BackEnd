@@ -103,4 +103,16 @@ public class UserService {
 	public List<BoxLog> findByUserId(String userId) {
 		return boxLogService.findByUserId(userId);
 	}
+
+	// 관리자 비밀번호 바꾸기
+	public int updatePw(FindUserDto findUserDto) {
+		Optional<User> user = userRepositroy.findById(getUserId());
+		if (user.isPresent()) {
+			User myuser = user.get();
+			myuser.setPw(bCryptPasswordEncoder.encode(findUserDto.getPw()));
+			userRepositroy.save(myuser);
+			return 1;
+		}
+		return 0;
+	}
 }

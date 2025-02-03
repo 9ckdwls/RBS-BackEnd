@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -105,5 +106,21 @@ public class UserController {
 	@GetMapping("admin/findBoxLogById/{userId}")
 	public List<BoxLog> findBoxLogById(@PathVariable(value = "userId") String userId) {
 		return userService.findByUserId(userId);
+	}
+	
+	// 내정보 보기
+	@GetMapping("admin/MyInfo/{id}")
+	public User MyInfo(@PathVariable(value = "id") String id) {
+		return userService.findUserByIdAndRole(id, "ROLE_ADMIN");
+	}
+	
+	// 관리자 비밀번호 바꾸기
+	@PatchMapping("admin/updatePw")
+	public String updatePw(@RequestBody FindUserDto findUserDto) {
+		if(userService.updatePw(findUserDto) == 1) {
+			return "Success";
+		} else {
+			return "Fail";
+		}
 	}
 }
