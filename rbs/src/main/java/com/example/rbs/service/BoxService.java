@@ -18,12 +18,12 @@ public class BoxService {
 	
 	// 모든 수거함 조회
 	public List<Box> findAllBox() {
-		return repository.findAll();
+		return boxRepository.findAll();
 	}
 
 	// 수거함 이름으로 검색
 	public Box findBoxByName(String name) {
-		Optional<Box> box = repository.findByName(name);
+		Optional<Box> box = boxRepository.findByName(name);
 		if(box.isPresent()) {
 			return box.get();
 		} else {
