@@ -3,6 +3,7 @@ package com.example.rbs.service;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.rbs.dto.FindUserDto;
 import com.example.rbs.dto.JoinDto;
+import com.example.rbs.entity.BoxLog;
 import com.example.rbs.entity.User;
 import com.example.rbs.repository.UserRepository;
 
@@ -19,10 +21,12 @@ public class UserService {
 
 	private final UserRepository userRepositroy;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final BoxLogService boxLogService;
 
-	public UserService(UserRepository userRepositroy, BCryptPasswordEncoder bCryptPasswordEncoder) {
+	public UserService(UserRepository userRepositroy, BCryptPasswordEncoder bCryptPasswordEncoder, BoxLogService boxLogService) {
 		this.userRepositroy = userRepositroy;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+		this.boxLogService = boxLogService; 
 	}
 
 	// 회원가입 메소드
@@ -79,5 +83,24 @@ public class UserService {
 			return 1;
 		}
 		return 0;
+	}
+
+	// 전체 사용자 조회
+	public List<User> findUserAll() {
+		return userRepositroy.findUserAll();
+	}
+	
+	// id와 권한으로 사용자 찾기
+	public User findUserByIdAndRole(String id, String role) {
+		Optional<User> user = userRepositroy.findByIdAndRole(id, role);
+		if (user.isPresent()) {
+			return user.get();
+		}
+		return null;
+	}
+
+	// userId로 수거함 로그 검색
+	public List<BoxLog> findByUserId(String userId) {
+		return boxLogService.findByUserId(userId);
 	}
 }

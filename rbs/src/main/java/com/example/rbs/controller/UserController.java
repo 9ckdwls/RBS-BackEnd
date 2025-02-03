@@ -3,11 +3,17 @@ package com.example.rbs.controller;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.rbs.dto.FindUserDto;
 import com.example.rbs.dto.JoinDto;
+import com.example.rbs.entity.BoxLog;
 import com.example.rbs.entity.User;
 import com.example.rbs.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -76,5 +82,28 @@ public class UserController {
 			return "Fail";
 		}
 	}
-
+	
+	// 전체 사용자 조회
+	@GetMapping("admin/findUserAll")
+	public List<User> findUserAll() {
+		return userService.findUserAll();
+	}
+	
+	// id로 회원 검색하기
+	@GetMapping("admin/findUser/{id}")
+	public User findUserById(@PathVariable(value = "id") String id) {
+		return userService.findUserByIdAndRole(id, "ROLE_USER");
+	}
+	
+	// id로 수거자 검색
+	@GetMapping("admin/findEmployee/{id}")
+	public User findEmployee(@PathVariable(value = "id") String id) {
+		return userService.findUserByIdAndRole(id, "ROLE_EMPLOYEE");
+	}
+	
+	// userId로 수거함 로그 검색
+	@GetMapping("admin/findBoxLogById/{userId}")
+	public List<BoxLog> findBoxLogById(@PathVariable(value = "userId") String userId) {
+		return userService.findByUserId(userId);
+	}
 }
