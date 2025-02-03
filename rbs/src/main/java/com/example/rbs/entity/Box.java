@@ -1,7 +1,10 @@
 package com.example.rbs.entity;
 
-import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 import org.locationtech.jts.geom.Point;
@@ -12,8 +15,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Getter
 @Setter
 public class Box {
-	@EmbeddedId
-    private BoxId boxId; // 복합 키 클래스
+	
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+	
+	@Column(unique = true, nullable = false)
+	private String name;
 	
 	private String IPAddress;
 	
