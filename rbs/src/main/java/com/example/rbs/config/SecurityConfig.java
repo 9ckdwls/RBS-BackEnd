@@ -1,11 +1,20 @@
 package com.example.rbs.config;
 
+import java.io.IOException;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -19,6 +28,8 @@ public class SecurityConfig {
 
 	@Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+		
+		http.addFilterBefore(new IpFilter(), UsernamePasswordAuthenticationFilter.class);
 
 		// 메인, 로그인, 회원가입 페이지는 아무나 접근 가능
 		// 나머지 amdin/으로 시작하는 페이지는 ADMIN 권한이 있어야 접근 가능
@@ -48,5 +59,33 @@ public class SecurityConfig {
         	);
 
         return http.build();
+    }
+	
+	// IP 체크를 위한 필터 정의
+    public class IpFilter extends OncePerRequestFilter {
+
+        @Override
+        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+                throws ServletException, IOException {
+            String clientIp = request.getRemoteAddr();
+
+            // 앱 서버 IP만 허용
+            if (request.getRequestURI().startsWith("/userFrontServer")) {
+                if (!"사용자 앱 서버의 IP".equals(clientIp)) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden: Invalid IP Address");
+                    return;
+                }
+            }
+            
+            if (request.getRequestURI().startsWith("/employeeFrontServer")) {
+                if (!"수거자 앱 서버의 IP".equals(clientIp)) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden: Invalid IP Address");
+                    return;
+                }
+            }
+
+            // 필터 체인 계속 진행
+            filterChain.doFilter(request, response);
+        }
     }
 }

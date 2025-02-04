@@ -29,14 +29,16 @@ public class ServerStatusController {
 		return serverStatusService.serverStatus();
 	}
 	
+	// 프론트에서 접근 X
 	// 사용자 앱 프론트 서버 상태 업데이트
-	@GetMapping("admin/userFrontServer")
+	@GetMapping("userFrontServer")
 	public void userFrontServer() {
 		serverStatusService.updateUserHeartbeat();
 	}
 	
+	// 프론트에서 접근 X
 	// 수거자 앱 프론트 서버 상태 업데이트
-	@GetMapping("admin/employeeFrontServer")
+	@GetMapping("employeeFrontServer")
 	public void employeeFrontServer() {
 		serverStatusService.updateEmployeeHeartbeat();
 	}
