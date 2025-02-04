@@ -42,5 +42,19 @@ public class BoxContorller {
 	public String superBlockBox(@PathVariable(value = "id") int id) {
 		return boxService.superBlockBox(id);
 	}
+	
+	// 수거함 문열기
+	// 테스트 불가 IOT 장비 연결 후 테스트
+	@GetMapping("admin/boxOpen/{role}/{id}")
+	public String boxOpen(@PathVariable(value = "role") String role, @PathVariable(value = "id") int id) {
+		return boxService.boxControll("open", role, id);
+	}
+	
+	// 수거함 문닫기
+	// 테스트 불가 IOT 장비 연결 후 테스트
+	@GetMapping("admin/boxClose/{role}/{id}")
+	public String boxClose(@PathVariable(value = "role") String role, @PathVariable(value = "id") int id) {
+		return boxService.boxControll("close", role, id);
+	}
 
 }

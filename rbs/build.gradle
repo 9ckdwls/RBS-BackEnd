@@ -43,6 +43,10 @@ dependencies {
 	//위치정보
 	implementation("org.locationtech.jts:jts-core:1.19.0")
 	implementation 'org.hibernate.orm:hibernate-spatial:6.4.10.Final'
+	
+	//비동기처리를 위한 WebClient 의존성 추가
+    //WebClient는 HTTP 비동기 통신을 할 때 사용하는 도구
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {
