@@ -1,6 +1,7 @@
 package com.example.rbs.config;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
@@ -57,6 +60,22 @@ public class SecurityConfig {
         	.logout((auth) -> auth
         		.logoutSuccessUrl("/logoutSuccess") // 로그아웃 성공
         	);
+        http
+        	.cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+
+            @Override
+            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+
+                CorsConfiguration configuration = new CorsConfiguration();
+
+                configuration.setAllowedOrigins(Collections.singletonList("*"));
+                configuration.setAllowedMethods(Collections.singletonList("*"));
+                configuration.setAllowCredentials(true);
+                configuration.setAllowedHeaders(Collections.singletonList("*"));
+                configuration.setMaxAge(3600L);
+                return configuration;
+            }
+        })));
 
         return http.build();
     }
