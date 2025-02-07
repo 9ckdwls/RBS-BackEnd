@@ -56,7 +56,7 @@ public class UserController {
 
 	// 프론트에서 접근 X
 	// 로그아웃 성공 return용
-	@PostMapping("logoutSuccess")
+	@GetMapping("logoutSuccess")
 	public String logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		return "logoutSuccess";
 	}

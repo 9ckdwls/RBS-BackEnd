@@ -58,7 +58,7 @@ public class SecurityConfig {
         
         http
         	.logout((auth) -> auth
-        		.logoutSuccessUrl("/logoutSuccess") // 로그아웃 성공
+        		.logoutSuccessUrl("/logoutSuccess").permitAll() // 로그아웃 성공
         	);
         http
         	.cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
