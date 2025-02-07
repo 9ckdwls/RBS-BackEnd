@@ -4,8 +4,12 @@ import java.io.Serializable;
 import java.sql.Date;
 
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
 
 @Embeddable
+@Getter
+@Setter
 public class BoxLogId implements Serializable {
 
     private int boxId;
