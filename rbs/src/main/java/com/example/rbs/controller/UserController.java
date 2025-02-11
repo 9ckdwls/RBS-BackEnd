@@ -9,6 +9,7 @@ import com.example.rbs.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Locked.Read;
 
 import java.util.List;
 
@@ -109,9 +110,15 @@ public class UserController {
 	}
 	
 	// 내정보 보기
-	@GetMapping("admin/MyInfo/{id}")
-	public User MyInfo(@PathVariable(value = "id") String id) {
-		return userService.findUserByIdAndRole(id, "ROLE_ADMIN");
+	@GetMapping("admin/MyInfo")
+	public User MyInfo() {
+		return userService.MyInfo();
+	}
+	
+	// 내 비밀번호 확인
+	@GetMapping("admin/checkPw")
+	public String checkPw(@RequestBody FindUserDto findUserDto) {
+		return userService.checkPw(findUserDto);
 	}
 	
 	// 관리자 비밀번호 바꾸기

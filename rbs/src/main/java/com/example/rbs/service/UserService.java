@@ -104,6 +104,15 @@ public class UserService {
 		return boxLogService.findByUserId(userId);
 	}
 
+	// 내 비밀번호 확인
+	public String checkPw(FindUserDto findUserDto) {
+		if(bCryptPasswordEncoder.matches(findUserDto.getPw(), MyInfo().getPw())) {
+			return "Success";
+		} else {
+			return "Fail";
+		}
+	}
+	
 	// 관리자 비밀번호 바꾸기
 	public int updatePw(FindUserDto findUserDto) {
 		Optional<User> user = userRepositroy.findById(getUserId());
@@ -114,5 +123,15 @@ public class UserService {
 			return 1;
 		}
 		return 0;
+	}
+
+	// 내 정보 확인
+	public User MyInfo() {
+		Optional<User> user = userRepositroy.findById(getUserId());
+		if(user.isPresent()) {
+			return user.get();
+		} else {
+			return null;
+		}
 	}
 }
