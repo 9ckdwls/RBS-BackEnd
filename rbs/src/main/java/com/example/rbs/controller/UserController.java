@@ -116,7 +116,7 @@ public class UserController {
 	}
 	
 	// 내 비밀번호 확인
-	@GetMapping("admin/checkPw")
+	@PostMapping("admin/checkPw")
 	public String checkPw(@RequestBody FindUserDto findUserDto) {
 		return userService.checkPw(findUserDto);
 	}
