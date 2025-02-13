@@ -34,7 +34,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'com.mysql:mysql-connector-j'
 	//시큐리티
-	//implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	//웹
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	//롬복
@@ -43,6 +43,10 @@ dependencies {
 	//위치정보
 	implementation("org.locationtech.jts:jts-core:1.19.0")
 	implementation 'org.hibernate.orm:hibernate-spatial:6.4.10.Final'
+	//JWT
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 }
 
 tasks.named('test') {
