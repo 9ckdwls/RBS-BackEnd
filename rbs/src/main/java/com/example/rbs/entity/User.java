@@ -2,6 +2,7 @@ package com.example.rbs.entity;
 
 import java.util.Date;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Getter;
@@ -16,6 +17,8 @@ public class User {
 	private String pw;
 	
 	private String name;
+	
+	@Column(unique = true, nullable = false)
 	private String phoneNumber;
 	private int point;
 	private Date date;
