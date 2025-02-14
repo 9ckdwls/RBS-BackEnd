@@ -1,10 +1,15 @@
 package com.example.rbs.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.rbs.dto.JoinDTO;
+import com.example.rbs.entity.BoxLog;
+import com.example.rbs.entity.User;
 import com.example.rbs.service.UserService;
 
 @RestController
@@ -15,10 +20,22 @@ public class UserController {
 	public UserController(UserService userService) {
 		this.userService = userService;
 	}
-	
+
 	// 회원가입
 	@PostMapping("join")
 	public String join(@RequestBody JoinDTO joinDTO) {
 		return userService.join(joinDTO);
+	}
+
+	// 내정보 보기
+	@GetMapping("myInfo")
+	public User myInfo() {
+		return userService.myInfo();
+	}
+	
+	// 수거 및 분리 내역
+	@GetMapping("myBoxLog")
+	public List<BoxLog> myBoxLog() {
+		return userService.myBoxLog();
 	}
 }

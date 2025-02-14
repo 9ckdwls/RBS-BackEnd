@@ -3,14 +3,15 @@ package com.example.rbs.service;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-
+import java.util.List;
+import java.util.Optional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.example.rbs.dto.JoinDTO;
+import com.example.rbs.entity.BoxLog;
 import com.example.rbs.entity.User;
 import com.example.rbs.repository.UserRepository;
 
@@ -59,5 +60,20 @@ public class UserService {
 		Iterator<? extends GrantedAuthority> iter = authorities.iterator();
 		GrantedAuthority auth = iter.next();
 		return auth.getAuthority();
+	}
+
+	// 내 정보 확인
+	public User myInfo() {
+		Optional<User> user = userRepositroy.findById(getId());
+		if (user.isPresent()) {
+			return user.get();
+		} else {
+			return null;
+		}
+	}
+
+	// 수거 및 분리 내역
+	public List<BoxLog> myBoxLog() {
+		return userRepositroy.findByUserId(getId()); 
 	}
 }
