@@ -1,9 +1,5 @@
 package com.example.rbs.entity;
 
-
-import java.sql.Date;
-
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,20 +10,16 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class BoxLog {
+public class BoxLogItems {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int logId;
+	private int id;
 	
-	private int boxId;
+	private int boxLogId;
 	
-    private String userId;
-    
-    private Date date;
+	private String name;
 	
-	private int type; // 수거 : 0 분리 : 1
+	private int count;
 	
-	private int value; // 일반사용자는 point, 수거자는 수익금
-
 }
