@@ -11,13 +11,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import com.example.rbs.jwt.CustomLogoutFilter;
 import com.example.rbs.jwt.JWTFilter;
 import com.example.rbs.jwt.JWTUtil;
 import com.example.rbs.jwt.LoginFilter;
+import com.example.rbs.repository.RefreshRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -27,10 +30,12 @@ public class SecurityConfig {
 	
 	private final AuthenticationConfiguration authenticationConfiguration;
 	private final JWTUtil jwtUtil;
+	private final RefreshRepository refreshRepository;
 	
-	public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
+	public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
 		this.authenticationConfiguration = authenticationConfiguration;
 		this.jwtUtil = jwtUtil;
+		this.refreshRepository = refreshRepository;
 	}
 	
 	@Bean
@@ -73,17 +78,24 @@ public class SecurityConfig {
 		
 		http
 			.authorizeHttpRequests((auth) -> auth
-					.requestMatchers("/login", "/join").permitAll() // 회원가입, 로그인만 모두 허용
+					.requestMatchers("/login", "/join", "/reissue").permitAll() // 회원가입, 로그인만 모두 허용
 					.requestMatchers("/user/**").hasRole("USER")
 					.requestMatchers("/employee/**").hasRole("EMPLOYEE")
 					.anyRequest().authenticated());
 		
+		// JWTFilter는 로그인 전에 작동해서 JWT가 있다면 인증에 성공, 만료되었다면 재발급 or 로그인
 		http
 			.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 		
+		// LoginFilter는 기존 UsernamePasswordAuthenticationFilter에 위치해서 우리가 커스텀한 로직으로 작동하도록
 		http
-			.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+			.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class);
 		
+		// CustomLogoutFilter는 기존 LogoutFilter 전에 위치
+		http
+			.addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
+		
+		// JWT 사용 시 세션은 STATELESS로 관리
 		http
 			.sessionManagement((session) -> session
 					.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
