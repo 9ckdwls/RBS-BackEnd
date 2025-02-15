@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.example.rbs.dto.JoinDTO;
 import com.example.rbs.entity.BoxLog;
 import com.example.rbs.entity.User;
+import com.example.rbs.repository.BoxLogRepository;
 import com.example.rbs.repository.UserRepository;
 
 @Service
@@ -20,10 +21,12 @@ public class UserService {
 
 	private final UserRepository userRepositroy;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final BoxLogRepository boxLogRepository;
 
-	public UserService(UserRepository userRepositroy, BCryptPasswordEncoder bCryptPasswordEncoder) {
+	public UserService(UserRepository userRepositroy, BCryptPasswordEncoder bCryptPasswordEncoder, BoxLogRepository boxLogRepository) {
 		this.userRepositroy = userRepositroy;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+		this.boxLogRepository = boxLogRepository;
 	}
 
 	// 회원가입 또는 가입신청
@@ -74,6 +77,6 @@ public class UserService {
 
 	// 수거 및 분리 내역
 	public List<BoxLog> myBoxLog() {
-		return userRepositroy.findByUserId(getId());
+		return boxLogRepository.findByUserId(getId());
 	}
 }

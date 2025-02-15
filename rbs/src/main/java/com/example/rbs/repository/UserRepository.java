@@ -16,7 +16,4 @@ public interface UserRepository extends JpaRepository<User, String>{
 	
 	// id로 User 찾기
 	Optional<User> findById(String id);
-	
-	// userId로 boxLog 찾기
-	List<BoxLog> findByUserId(String id);
 }
