@@ -1,6 +1,5 @@
 package com.example.rbs.entity;
 
-import java.util.Date;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,18 +10,13 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class OrderDetails {
-	
+public class OrderItems {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private int orderId;
 	
-	private String userId;
-
-	private int totalPrice;
+	private int itmeId;
 	
-	private int state;
-	
-	private Date date;
-	
+	private int price;
 }
