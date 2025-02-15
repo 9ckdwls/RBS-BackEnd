@@ -26,10 +26,10 @@ public class UserService {
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 	}
 
-	// 회원가입
+	// 회원가입 또는 가입신청
 	public String join(JoinDTO joinDTO) {
 
-		if (userRepositroy.existsById(joinDTO.getId())) {
+		if (userRepositroy.existsByIdAndPhoneNumber(joinDTO.getId(), joinDTO.getPhoneNumber())) {
 			return "Fail";
 		} else {
 			User user = new User();
@@ -74,6 +74,6 @@ public class UserService {
 
 	// 수거 및 분리 내역
 	public List<BoxLog> myBoxLog() {
-		return userRepositroy.findByUserId(getId()); 
+		return userRepositroy.findByUserId(getId());
 	}
 }
