@@ -72,7 +72,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
         
         //JWT 생성
-        String access = jwtUtil.createJwt("access", userId, role, 10*60*1000L); //10분
+        String access = jwtUtil.createJwt("access", userId, role, 24*60*60*1000L); //테스트를 위해 길게 했음
         String refresh = jwtUtil.createJwt("refresh", userId, role, 24*60*60*1000L); //24시간
         
         //원래는 스케줄을 통해 기간이 지난 refresh 토큰을 제거 해야하지만 누군가 로그인 성공 했을 때 여기서 제거하도록 구성함

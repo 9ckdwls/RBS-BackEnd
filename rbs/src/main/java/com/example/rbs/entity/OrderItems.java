@@ -14,9 +14,13 @@ public class OrderItems {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+	
 	private int orderId;
 	
-	private int itmeId;
+	private int itemId;
+	
+	private int count;
 	
 	private int price;
 }
