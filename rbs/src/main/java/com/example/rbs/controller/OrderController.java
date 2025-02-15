@@ -1,13 +1,13 @@
 package com.example.rbs.controller;
 
 import org.springframework.web.bind.annotation.RestController;
-import com.example.rbs.service.OrderService;
+import com.example.rbs.service.OrderDetailsService;
 
 @RestController
 public class OrderController {
-	private final OrderService orderService;
+	private final OrderDetailsService orderDetailsService;
 	
-	public OrderController(OrderService orderService) {
-		this.orderService = orderService;
+	public OrderController(OrderDetailsService orderDetailsService) {
+		this.orderDetailsService = orderDetailsService;
 	}
 }
