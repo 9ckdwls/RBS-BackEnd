@@ -23,7 +23,7 @@ public class BoxLogService {
 
 	// userId로 수거함로그 검색
 	public List<BoxLog> findByUserId(String userId) {
-		return boxLogRepository.findByBoxLogId_UserId(userId);
+		return boxLogRepository.findByUserId(userId);
 	}
 
 }
