@@ -14,6 +14,7 @@ import com.example.rbs.dto.OrderListResponseDTO;
 import com.example.rbs.entity.Item;
 import com.example.rbs.entity.OrderDetails;
 import com.example.rbs.entity.OrderItems;
+import com.example.rbs.entity.User;
 import com.example.rbs.repository.OrderDetailsRepository;
 
 @Service
@@ -171,10 +172,19 @@ public class OrderDetailsService {
 		List<OrderDetails> orderList = orderDetailsRepository.findByUserIdAndState(userService.getId(), 0);
 		if (!orderList.isEmpty()) {
 			OrderDetails orderDetails = orderList.get(0);
-			orderDetails.setDate(new Date());
-			orderDetails.setState(1);
-			orderDetailsRepository.save(orderDetails);
-			return "Success";
+			
+			User user = userService.myInfo();
+			
+			if(user.getPoint() < orderDetails.getTotalPrice()) {
+				return "Fail";
+			} else {
+				user.setPoint(user.getPoint() - orderDetails.getTotalPrice());
+				orderDetails.setDate(new Date());
+				orderDetails.setState(1);
+				orderDetailsRepository.save(orderDetails);
+				return "Success";
+			}
+			
 		} else {
 			return "Fail";
 		}
