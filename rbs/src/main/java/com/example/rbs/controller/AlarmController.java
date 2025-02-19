@@ -1,5 +1,6 @@
 package com.example.rbs.controller;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.rbs.service.AlarmService;
@@ -11,6 +12,11 @@ public class AlarmController {
 	
 	public AlarmController(AlarmService alarmService) {
 		this.alarmService = alarmService;
+	}
+	
+	@GetMapping("test")
+	public String test() {
+		return "ok";
 	}
 
 }

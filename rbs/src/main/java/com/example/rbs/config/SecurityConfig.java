@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/", "/login", "join", "loginFail", "logout", "findId", "findPw").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/alarm/**").authenticated()
                         .anyRequest().hasRole("ADMIN")
                 );
         
@@ -93,13 +94,21 @@ public class SecurityConfig {
             }
         })));
         http
-        	.exceptionHandling(configurer ->
-        		configurer
-        			.accessDeniedHandler((request, response, accessDeniedException) -> {
-        				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        			})
-        			.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-        	);
+        .exceptionHandling(configurer ->
+            configurer
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    // 권한이 부족한 경우
+                    System.out.println("접근 거부: 권한 부족");
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.getWriter().write("접근 거부: 권한이 부족합니다.");
+                })
+                .authenticationEntryPoint((request, response, authException) -> {
+                    // 인증이 없는 경우
+                    System.out.println("인증 오류 발생: " + authException.getMessage());
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("인증 오류: 로그인 후 사용 가능합니다.");
+                })
+        );
 
         return http.build();
     }
