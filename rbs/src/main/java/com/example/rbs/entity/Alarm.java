@@ -20,6 +20,9 @@ public class Alarm {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
+
+	private int boxId;
+	
 	@Enumerated(EnumType.STRING)
 	private AlarmType type;
 	
