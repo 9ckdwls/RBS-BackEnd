@@ -3,10 +3,16 @@ package com.example.rbs.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.rbs.dto.BoxDTO;
 import com.example.rbs.entity.Alarm;
 import com.example.rbs.service.AlarmService;
+
+import jakarta.websocket.server.PathParam;
 
 @RestController
 public class AlarmController {
@@ -23,6 +29,10 @@ public class AlarmController {
 		return alarmService.unResolved();
 	}
 	
-	
+	// 수거함 설치 요청
+	@PostMapping("admin/installRequest")
+	public String installRequest(@RequestBody BoxDTO boxDTO) {
+		return alarmService.installRequest(boxDTO);
+	}
 
 }

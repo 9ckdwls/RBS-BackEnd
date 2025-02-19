@@ -9,6 +9,7 @@ import java.util.concurrent.CompletionException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.example.rbs.dto.BoxDTO;
 import com.example.rbs.entity.Box;
 import com.example.rbs.repository.BoxRepository;
 
@@ -111,6 +112,16 @@ public class BoxService {
 		} else {
 			return "Fail";
 		}
+	}
+	
+	// 수거함 설치 요청
+	public String installRequest(BoxDTO boxDTO) {
+		Box box = new Box();
+		box.setName(boxDTO.getName());
+		box.setIPAddress(boxDTO.getIPAddress());
+		box.setLocation(boxDTO.getLocation());
+		box.setUsed(0); // 변경 필요
+		return null;
 	}
 
 }
