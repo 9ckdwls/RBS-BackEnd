@@ -18,6 +18,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.rbs.jwt.JWTFilter;
+import com.example.rbs.jwt.JWTUtil;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +30,12 @@ import jakarta.servlet.http.HttpServletResponse;
 @EnableWebSecurity
 public class SecurityConfig {
 	
+	private final JWTUtil jwtUtil;
+
+	public SecurityConfig(JWTUtil jwtUtil) {
+		this.jwtUtil = jwtUtil;
+	}
+	
 	//비밀번호 암호화
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -35,6 +44,9 @@ public class SecurityConfig {
 
 	@Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+		
+		// 로그인 필터가 작동하기 전에 JWT 필터 작동
+		http.addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 		
 		http.addFilterBefore(new IpFilter(), UsernamePasswordAuthenticationFilter.class);
 
