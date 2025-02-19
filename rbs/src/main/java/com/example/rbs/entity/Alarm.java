@@ -3,6 +3,8 @@ package com.example.rbs.entity;
 import java.util.Date;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,7 +20,10 @@ public class Alarm {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	private String type;
+	private int boxId;
+	
+	@Enumerated(EnumType.STRING)
+	private AlarmType type;
 	
 	private String role;
 	
