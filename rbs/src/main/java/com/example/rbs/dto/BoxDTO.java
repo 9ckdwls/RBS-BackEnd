@@ -10,6 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BoxDTO {
+	
+	private int id;
 
 	private String name;
 	
