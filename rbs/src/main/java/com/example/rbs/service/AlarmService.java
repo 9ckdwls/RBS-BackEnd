@@ -18,11 +18,13 @@ public class AlarmService {
 	private AlarmRepository alarmRepository;
 	private BoxService boxService;
 	private UserService userService;
+	private AlarmCheckService alarmCheckService;
 
-	public AlarmService(AlarmRepository alarmRepository, BoxService boxService, UserService userService) {
+	public AlarmService(AlarmRepository alarmRepository, BoxService boxService, UserService userService, AlarmCheckService alarmCheckService) {
 		this.alarmRepository = alarmRepository;
 		this.boxService = boxService;
 		this.userService = userService;
+		this.alarmCheckService = alarmCheckService;
 	}
 
 	// 미해결된 알람 가져오기
@@ -75,6 +77,7 @@ public class AlarmService {
 	public String alarmRequest(int id, BoxStatus boxStatus, String role, AlarmType alarmType, BoxDTO boxDTO) {
 		try {
 			createAlarm(boxService.boxStatusUpdate(alarmResolve(id), boxStatus, boxDTO), role, alarmType);
+			
 			return "Success";
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
