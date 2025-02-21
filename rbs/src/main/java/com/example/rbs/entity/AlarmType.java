@@ -6,10 +6,13 @@ public enum AlarmType {
 	COLLECTION_NEEDED("수거 필요"), 
 	COLLECTION_RECOMMENDED("수거 권장"), 
 	INSTALL_REQUEST("설치 요청"),
+	INSTALL_IN_PROGRESS("설치 진행"), 
 	INSTALL_COMPLETED("설치 완료"), 
 	INSTALL_CONFIRMED("설치 확정"), 
 	REMOVE_REQUEST("제거 요청"), 
-	REMOVE_COMPLETED("제거 완료");
+	REMOVE_IN_PROGRESS("제거 진행"), 
+	REMOVE_COMPLETED("제거 완료"),
+	REMOVE_CONFIRMED("제거 확정");
 
 	private final String description;
 
