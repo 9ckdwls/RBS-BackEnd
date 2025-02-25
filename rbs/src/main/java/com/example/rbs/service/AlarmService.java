@@ -26,12 +26,12 @@ public class AlarmService {
 		this.userService = userService;
 		this.alarmCheckService = alarmCheckService;
 	}
-
+	
 	// 미해결된 알람 가져오기
 	public List<Alarm> unResolved() {
 		return alarmRepository.findByResolvedAndRoles(false, "ROLE_ALL", userService.getUserRole());
 	}
-
+	
 	// 새로운 알람 생성
 	public void createAlarm(int boxId, String role, AlarmType alarmType) {
 		Alarm alarm = new Alarm();
@@ -43,7 +43,7 @@ public class AlarmService {
 
 		alarmRepository.save(alarm);
 	}
-
+	
 	// 알람 해결 완료
 	// 공통된 로직 처리
 	// return 알람의 boxId
@@ -70,7 +70,7 @@ public class AlarmService {
 			return "Fail";
 		}
 	}
-
+	
 	// 수거함 요청 처리
 	// 공통된 로직 처리
 	@Transactional
@@ -84,7 +84,7 @@ public class AlarmService {
 			return "Fail";
 		}
 	}
-
+	
 	// 수거함 설치 요청
 	@Transactional
 	public String installRequest(BoxDTO boxDTO) {

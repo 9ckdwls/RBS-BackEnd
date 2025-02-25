@@ -25,27 +25,34 @@ public class AlarmController {
 	public AlarmController(AlarmService alarmService) {
 		this.alarmService = alarmService;
 	}
-
+	
 	// 미해결된 알람 가져오기
 	@GetMapping("alarm/unResolved")
 	public List<Alarm> unResolved() {
 		return alarmService.unResolved();
 	}
-
+	
 	// 수거함 설치 요청
 	// 관리자용
 	@PostMapping("admin/installRequest")
 	public String installRequest(@RequestBody BoxDTO boxDTO) {
 		return alarmService.installRequest(boxDTO);
 	}
-
+	
+	// 수거함 설치 진행
+	// 수거자용
+	@PatchMapping("admin/installInProgress/{id}")
+	public String installInProgress(@PathVariable(value = "id") int id) {
+		return alarmService.alarmRequest(id, BoxStatus.INSTALL_IN_PROGRESS, "ROLE_ADMIN", AlarmType.INSTALL_IN_PROGRESS);
+	}
+	
 	// 수거함 설치 완료
 	// 수거자용
 	@PatchMapping("employee/installCompleted/{id}")
 	public String installCompleted(@PathVariable(value = "id") int id, @RequestBody BoxDTO boxDTO) {
 		return alarmService.alarmRequest(id, BoxStatus.INSTALL_COMPLETED, "ROLE_ADMIN", AlarmType.INSTALL_COMPLETED, boxDTO);
 	}
-
+	
 	// 수거함 설치 확정
 	// 관리자용
 	@PatchMapping("admin/installConFiremed/{id}")
@@ -60,11 +67,25 @@ public class AlarmController {
 		return alarmService.alarmRequest(id, BoxStatus.REMOVE_REQUEST, "ROLE_EMPLOYEE", AlarmType.REMOVE_REQUEST);
 	}
 	
+	// 수거함 제거 진행
+	// 수거자용
+	@PatchMapping("admin/removeInProgress/{id}")
+	public String removeInProgress(@PathVariable(value = "id") int id) {
+		return alarmService.alarmRequest(id, BoxStatus.REMOVE_REQUEST, "ROLE_ADMIN", AlarmType.REMOVE_REQUEST);
+	}
+
 	// 수거함 제거 완료
 	// 수거자용
 	@PatchMapping("employee/removeCompleted/{id}")
-	public String remove(@PathVariable(value = "id") int id) {
+	public String removeCompleted(@PathVariable(value = "id") int id) {
 		return alarmService.alarmRequest(id, BoxStatus.REMOVE_COMPLETED, "ROLE_ADMIN", AlarmType.REMOVE_COMPLETED);
 	}
-
+	
+	// 수거함 제거 확정
+	// 수거자용
+	@PatchMapping("admin/removeConFiremed/{id}")
+	public String removeConFiremed(@PathVariable(value = "id") int id) {
+		return alarmService.alarmRequest(id, BoxStatus.REMOVE_REQUEST, "ROLE_EMPLOYEE", AlarmType.REMOVE_REQUEST);
+	}
+	
 }
