@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.example.rbs.dto.BoxDTO;
 import com.example.rbs.entity.Box;
-import com.example.rbs.entity.BoxStatus;
+import com.example.rbs.entity.Box.FireStatus;
+import com.example.rbs.entity.Box.InstallStatus;
+import com.example.rbs.entity.Box.UsageStatus;
 import com.example.rbs.repository.BoxRepository;
 import reactor.core.publisher.Mono;
 
@@ -47,14 +49,14 @@ public class BoxService {
 		Optional<Box> box = boxRepository.findById(id);
 		if (box.isPresent()) {
 			Box myBox = box.get();
-			if (myBox.getUsed() == BoxStatus.IN_USE) { // 누군가 사용 중
+			if (myBox.getUsageStatus() == UsageStatus.USED) { // 누군가 사용 중
 				return "-1";
-			} else if (myBox.getUsed() == BoxStatus.AVAILABLE) { // 차단하기
-				myBox.setUsed(BoxStatus.BLOCKED);
+			} else if (myBox.getUsageStatus() == UsageStatus.AVAILABLE) { // 차단하기
+				myBox.setUsageStatus(UsageStatus.BLOCKED);
 				boxRepository.save(myBox);
 				return "차단 성공";
-			} else if (myBox.getUsed() == BoxStatus.BLOCKED) { // 차단 해제하기
-				myBox.setUsed(BoxStatus.AVAILABLE);
+			} else if (myBox.getUsageStatus() == UsageStatus.BLOCKED) { // 차단 해제하기
+				myBox.setUsageStatus(UsageStatus.AVAILABLE);
 				boxRepository.save(myBox);
 				return "차단 해제 성공";
 			} else {
@@ -70,7 +72,7 @@ public class BoxService {
 		Optional<Box> box = boxRepository.findById(id);
 		if (box.isPresent()) {
 			Box myBox = box.get();
-			myBox.setUsed(BoxStatus.BLOCKED);
+			myBox.setUsageStatus(UsageStatus.BLOCKED);
 			boxRepository.save(myBox);
 			return "Success";
 		} else {
@@ -132,8 +134,10 @@ public class BoxService {
 		box.setName(boxDTO.getName());
 		box.setIPAddress(boxDTO.getIPAddress());
 		box.setLocation(boxDTO.toPoint());
-		box.setUsed(BoxStatus.INSTALL_REQUEST);
-		box.setFire(0);
+		box.setFireStatus(FireStatus.UNFIRE);
+		box.setInstallStatus(InstallStatus.INSTALL_REQUEST);
+		box.setUsageStatus(UsageStatus.AVAILABLE);
+		box.setVolume(0);
 		boxRepository.save(box);
 
 		return box.getId();
@@ -141,9 +145,9 @@ public class BoxService {
 
 	// 수거함 상태 변경
 	// 공통된 로직 처리
-	public int boxStatusUpdate(int id, BoxStatus boxStatus) {
+	public int boxStatusUpdate(int id, InstallStatus installStatus) {
 		Box box = findById(id);
-		box.setUsed(boxStatus);
+		box.setInstallStatus(installStatus);
 		boxRepository.save(box);
 
 		return box.getId();
@@ -151,9 +155,9 @@ public class BoxService {
 
 	// 수거함 상태 변경 및 위치 최신화
 	// 공통된 로직 처리
-	public int boxStatusUpdate(int id, BoxStatus boxStatus, BoxDTO boxDTO) {
+	public int boxStatusUpdate(int id, InstallStatus installStatus, BoxDTO boxDTO) {
 		Box box = findById(id);
-		box.setUsed(boxStatus);
+		box.setInstallStatus(installStatus);
 		box.setLocation(boxDTO.toPoint());
 		boxRepository.save(box);
 
