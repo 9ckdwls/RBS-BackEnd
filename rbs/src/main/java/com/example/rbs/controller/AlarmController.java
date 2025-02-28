@@ -41,7 +41,7 @@ public class AlarmController {
 	
 	// 수거함 설치 진행
 	// 수거자용
-	@PatchMapping("admin/installInProgress/{id}")
+	@PatchMapping("employee/installInProgress/{id}")
 	public String installInProgress(@PathVariable(value = "id") int id) {
 		return alarmService.alarmRequest(id, AlarmStatus.IN_PROGRESS, InstallStatus.INSTALL_IN_PROGRESS, "ROLE_ADMIN", AlarmType.INSTALL_IN_PROGRESS);
 	}
@@ -69,7 +69,7 @@ public class AlarmController {
 	
 	// 수거함 제거 진행
 	// 수거자용
-	@PatchMapping("admin/removeInProgress/{id}")
+	@PatchMapping("employee/removeInProgress/{id}")
 	public String removeInProgress(@PathVariable(value = "id") int id) {
 		return alarmService.alarmRequest(id, AlarmStatus.IN_PROGRESS, InstallStatus.REMOVE_REQUEST, "ROLE_ADMIN", AlarmType.REMOVE_REQUEST);
 	}
