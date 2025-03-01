@@ -24,7 +24,13 @@ public class UserController {
 	// 회원가입
 	@PostMapping("join")
 	public String join(@RequestBody JoinDTO joinDTO) {
-		return userService.join(joinDTO);
+		return userService.joinUser(joinDTO);
+	}
+	
+	// 수거자 회원가입
+	@PostMapping("joinRequest")
+	public String joinRequest(@RequestBody JoinDTO joinDTO) {
+		return userService.joinEmployee(joinDTO);
 	}
 
 	// 내정보 보기

@@ -23,14 +23,15 @@ public class UserService {
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final BoxLogRepository boxLogRepository;
 
-	public UserService(UserRepository userRepositroy, BCryptPasswordEncoder bCryptPasswordEncoder, BoxLogRepository boxLogRepository) {
+	public UserService(UserRepository userRepositroy, BCryptPasswordEncoder bCryptPasswordEncoder,
+			BoxLogRepository boxLogRepository) {
 		this.userRepositroy = userRepositroy;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 		this.boxLogRepository = boxLogRepository;
 	}
 
 	// 회원가입 또는 가입신청
-	public String join(JoinDTO joinDTO) {
+	public String join(JoinDTO joinDTO, String role) {
 
 		if (userRepositroy.existsByIdAndPhoneNumber(joinDTO.getId(), joinDTO.getPhoneNumber())) {
 			return "Fail";
@@ -42,12 +43,22 @@ public class UserService {
 			user.setPhoneNumber(joinDTO.getPhoneNumber());
 			user.setPoint(0);
 			user.setDate(new Date());
-			user.setRole(joinDTO.getRole());
+			user.setRole(role);
 
 			userRepositroy.save(user);
 
 			return "Success";
 		}
+	}
+
+	// 일반 사용자 회원가입
+	public String joinUser(JoinDTO joinDTO) {
+		return join(joinDTO, "ROLE_USER");
+	}
+	
+	// 수거자 회원가입
+	public String joinEmployee(JoinDTO joinDTO) {
+		return join(joinDTO, "ROLE_EMPLOYEE_REQUEST");
 	}
 
 	// 내 id 가져오기
