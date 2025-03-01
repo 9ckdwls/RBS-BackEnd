@@ -18,9 +18,17 @@ public class SSEController {
 		this.sseService = sseService;
 	}
 	
-	@GetMapping()
+	@GetMapping("/SSEsubscribe")
 	public SseEmitter subscribe() {
+		System.out.println("요청옴");
 		return sseService.subscribe();
+	}
+	
+	@GetMapping("/test")
+	public String test() {
+		System.out.println("요청옴2");
+		sseService.sendAlarmToUser("admin1", "테스트 데이터");
+		return "ok";
 	}
 	
 	

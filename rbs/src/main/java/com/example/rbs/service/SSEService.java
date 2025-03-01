@@ -1,6 +1,7 @@
 package com.example.rbs.service;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,7 +31,7 @@ public class SSEService {
 		SseEmitter emitter = new SseEmitter(0L);
         emitters.put(userId, emitter);
         
-        emitter.onCompletion(() -> emitters.remove(userId));		
+        
 		return emitter;
 	}
 	
@@ -38,7 +39,10 @@ public class SSEService {
         SseEmitter emitter = emitters.get(userId);
         if (emitter != null) {
             try {
-                emitter.send(SseEmitter.event().name("alarm").data(message));
+            	System.out.println(userService.getUserId());
+            	 Map<String, String> data = new HashMap<>();
+                 data.put("message", message);
+                 emitter.send(SseEmitter.event().name("alarm").data(data));
             } catch (IOException e) {
                 emitters.remove(userId);
             }
