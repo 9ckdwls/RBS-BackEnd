@@ -21,7 +21,7 @@ public class UserController {
 		this.userService = userService;
 	}
 
-	// 회원가입
+	// 일반 사용자 회원가입
 	@PostMapping("join")
 	public String join(@RequestBody JoinDTO joinDTO) {
 		return userService.joinUser(joinDTO);
