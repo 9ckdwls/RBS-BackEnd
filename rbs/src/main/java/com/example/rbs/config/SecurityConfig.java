@@ -78,7 +78,7 @@ public class SecurityConfig {
 		
 		http
 			.authorizeHttpRequests((auth) -> auth
-					.requestMatchers("/login", "/join", "/reissue").permitAll() // 회원가입, 로그인만 모두 허용
+					.requestMatchers("/login", "/join", "/joinRequest", "/reissue").permitAll() // 회원가입, 로그인만 모두 허용
 					.requestMatchers("/user/**").hasRole("USER")
 					.requestMatchers("/employee/**").hasRole("EMPLOYEE")
 					.anyRequest().authenticated());
