@@ -14,11 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ReissueController {
 	
 	private final ReissueService reissueService;
-	private final JWTUtil jwtUtil;
 	
-	public ReissueController(ReissueService reissueService, JWTUtil jwtUtil) {
+	public ReissueController(ReissueService reissueService) {
 		this.reissueService = reissueService;
-		this.jwtUtil = jwtUtil;
 	}
 	
 	// refresh 토큰으로 access 재발급 받기

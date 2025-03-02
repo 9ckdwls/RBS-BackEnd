@@ -1,5 +1,6 @@
 package com.example.rbs.jwt;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.rbs.dto.CustomUserDetails;
@@ -89,8 +91,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	
 	//로그인 실패 시 401 응답
 	@Override
-	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
-		response.setStatus(401);
+	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
+	    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	    response.getWriter().write("Fail");
 	}
 	
 	//쿠키 생성하는 메서드

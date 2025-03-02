@@ -29,9 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 		if (user.isPresent()) {
 			return new CustomUserDetails(user.get());
 		}
-		
-		return null;
-
+		throw new UsernameNotFoundException("Fail");
 	}
 
 }
