@@ -130,4 +130,16 @@ public class UserController {
 			return "Fail";
 		}
 	}
+	
+	// 가입신청한 수거자 보기
+	@GetMapping("admin/showEmployeeRequest")
+	public List<User> showEmployeeRequest() {
+		return userService.showEmployeeRequest();
+	}
+	
+	// 가입신청 수락하기
+	@PatchMapping("admin/permitJoin/{userId}")
+	public String permitJoin(@PathVariable(value = "userId") String userId) {
+		return userService.permitJoin(userId);
+	}
 }

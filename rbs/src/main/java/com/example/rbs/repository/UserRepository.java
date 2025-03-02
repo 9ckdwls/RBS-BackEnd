@@ -28,6 +28,9 @@ public interface UserRepository extends JpaRepository<User, String> {
 	
 	// id와 권한으로 User 찾기
 	Optional<User> findByIdAndRole(String id, String role);
+
+	// 가입신청한 수거자 보기
+	List<User> findByRole(String string);
 }
 
 

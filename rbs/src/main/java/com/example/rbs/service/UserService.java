@@ -134,4 +134,21 @@ public class UserService {
 			return null;
 		}
 	}
+
+	// 가입신청한 수거자 보기
+	public List<User> showEmployeeRequest() {
+		return userRepositroy.findByRole("ROLE_EMPLOYEE_REQUEST");
+	}
+
+	// 가입신청 수락하기
+	public String permitJoin(String userId) {
+		Optional<User> user = userRepositroy.findById(userId);
+		if(user.isPresent()) {
+			User myUser = user.get();
+			myUser.setRole("ROLE_EMPLOYEE");
+			userRepositroy.save(myUser);
+			return "Success";
+		}
+		return "Fail";
+	}
 }
