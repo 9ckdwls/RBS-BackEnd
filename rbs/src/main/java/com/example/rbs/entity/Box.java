@@ -64,4 +64,6 @@ public class Box {
     public enum FireStatus {
     	FIRE, UNFIRE
     }
+
 }
+

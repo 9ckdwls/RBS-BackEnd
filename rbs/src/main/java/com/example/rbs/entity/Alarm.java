@@ -53,4 +53,6 @@ public class Alarm {
 	    REMOVE_COMPLETED,           // 제거 완료
 	    REMOVE_CONFIRMED            // 제거 확정
 	}
+
 }
+
