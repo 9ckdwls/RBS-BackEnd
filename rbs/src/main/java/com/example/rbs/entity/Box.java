@@ -48,13 +48,13 @@ public class Box {
 	private FireStatus fireStatus3;
 	
 	@Enumerated(EnumType.STRING)
-	private UsageStatus usageStatus1;
+	private UsageStatus usageStatus;
 	
-	@Enumerated(EnumType.STRING)
-	private UsageStatus usageStatus2;
+	private int store1;
 	
-	@Enumerated(EnumType.STRING)
-	private UsageStatus usageStatus3;
+	private int store2;
+	
+	private int store3;
 	
 	//반환되는 JSON 값을 문자열로 바꾸기
 	@JsonProperty("location")
