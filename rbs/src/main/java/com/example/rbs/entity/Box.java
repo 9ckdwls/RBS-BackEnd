@@ -32,13 +32,29 @@ public class Box {
 	@Enumerated(EnumType.STRING)
 	private InstallStatus installStatus;
 	
-	private int volume;
+	private int volume1;
+	
+	private int volume2;
+	
+	private int volume3;
 	
 	@Enumerated(EnumType.STRING)
-	private FireStatus fireStatus;
+	private FireStatus fireStatus1;
 	
 	@Enumerated(EnumType.STRING)
-	private UsageStatus usageStatus;
+	private FireStatus fireStatus2;
+	
+	@Enumerated(EnumType.STRING)
+	private FireStatus fireStatus3;
+	
+	@Enumerated(EnumType.STRING)
+	private UsageStatus usageStatus1;
+	
+	@Enumerated(EnumType.STRING)
+	private UsageStatus usageStatus2;
+	
+	@Enumerated(EnumType.STRING)
+	private UsageStatus usageStatus3;
 	
 	//반환되는 JSON 값을 문자열로 바꾸기
 	@JsonProperty("location")
