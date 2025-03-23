@@ -81,16 +81,16 @@ public class BoxService {
 	}
 
 	// 수거함 제어
-	public String boxControll(String controll, String role, int id) {
+	public String boxControll(String controll, String role, int id, int number) {
 		Optional<Box> box = boxRepository.findById(id);
 		if (box.isPresent()) {
 			WebClient webClient = webClientBuilder.baseUrl("http://" + box.get().getIPAddress()).build();
 
 			String uri;
 			if (role.equals("user")) {
-				uri = "user" + controll; // user open or close
-			} else if (role.equals("admin")) {
-				uri = "admin" + controll; // admin open or close
+				uri = "user" + controll + number; // user open or close
+			} else if (role.equals("employee")) {
+				uri = "employee" + controll + number; // admin open or close
 			} else {
 				return "권한이 존재하지 않습니다.";
 			}
