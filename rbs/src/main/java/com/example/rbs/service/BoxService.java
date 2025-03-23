@@ -134,10 +134,17 @@ public class BoxService {
 		box.setName(boxDTO.getName());
 		box.setIPAddress(boxDTO.getIPAddress());
 		box.setLocation(boxDTO.toPoint());
-		box.setFireStatus(FireStatus.UNFIRE);
+		box.setFireStatus1(FireStatus.UNFIRE);
+		box.setFireStatus2(FireStatus.UNFIRE);
+		box.setFireStatus3(FireStatus.UNFIRE);
 		box.setInstallStatus(InstallStatus.INSTALL_REQUEST);
+		box.setStore1(0);
+		box.setStore2(0);
+		box.setStore3(0);
 		box.setUsageStatus(UsageStatus.AVAILABLE);
-		box.setVolume(0);
+		box.setVolume1(0);
+		box.setVolume2(0);
+		box.setVolume3(0);
 		boxRepository.save(box);
 
 		return box.getId();

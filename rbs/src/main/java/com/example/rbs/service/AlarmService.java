@@ -37,9 +37,6 @@ public class AlarmService {
 		Alarm alarm = new Alarm();
 		alarm.setBoxId(boxId);
 		alarm.setDate(new Date());
-		if (parentAlarmId != -1) {
-			alarm.setParentAlarmId(parentAlarmId);
-		}
 		alarm.setResolved(AlarmStatus.UNRESOLVED);
 		alarm.setRole(role);
 		alarm.setType(alarmType);
