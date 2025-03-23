@@ -78,68 +78,80 @@ public class UserController {
 	// key: id key: name key: phoneNumber
 	@PostMapping("findPw")
 	public String findPw(@RequestBody FindUserDto findUserDto) {
-		if(userService.findPw(findUserDto) == 1) {
+		if (userService.findPw(findUserDto) == 1) {
 			return "Success";
 		} else {
 			return "Fail";
 		}
 	}
-	
+
 	// 전체 사용자 조회
 	@GetMapping("admin/findUserAll")
 	public List<User> findUserAll() {
 		return userService.findUserAll();
 	}
-	
+
 	// id로 회원 검색하기
 	@GetMapping("admin/findUser/{id}")
 	public User findUserById(@PathVariable(value = "id") String id) {
 		return userService.findUserByIdAndRole(id, "ROLE_USER");
 	}
-	
+
 	// id로 수거자 검색
 	@GetMapping("admin/findEmployee/{id}")
 	public User findEmployee(@PathVariable(value = "id") String id) {
 		return userService.findUserByIdAndRole(id, "ROLE_EMPLOYEE");
 	}
-	
+
 	// userId로 수거함 로그 검색
 	@GetMapping("admin/findBoxLogById/{userId}")
 	public List<BoxLog> findBoxLogById(@PathVariable(value = "userId") String userId) {
 		return userService.findByUserId(userId);
 	}
-	
+
 	// 내정보 보기
 	@GetMapping("admin/MyInfo")
 	public User MyInfo() {
 		return userService.MyInfo();
 	}
-	
+
 	// 내 비밀번호 확인
 	@PostMapping("admin/checkPw")
 	public String checkPw(@RequestBody FindUserDto findUserDto) {
 		return userService.checkPw(findUserDto);
 	}
-	
+
 	// 관리자 비밀번호 바꾸기
 	@PatchMapping("admin/updatePw")
 	public String updatePw(@RequestBody FindUserDto findUserDto) {
-		if(userService.updatePw(findUserDto) == 1) {
+		if (userService.updatePw(findUserDto) == 1) {
 			return "Success";
 		} else {
 			return "Fail";
 		}
 	}
-	
+
 	// 가입신청한 수거자 보기
 	@GetMapping("admin/showEmployeeRequest")
 	public List<User> showEmployeeRequest() {
 		return userService.showEmployeeRequest();
 	}
-	
+
 	// 가입신청 수락하기
 	@PatchMapping("admin/permitJoin/{userId}")
 	public String permitJoin(@PathVariable(value = "userId") String userId) {
 		return userService.permitJoin(userId);
+	}
+
+	// 가입신청 거절하기
+	@PatchMapping("admin/noJoin/{userId}")
+	public String noJoin(@PathVariable(value = "userId") String userId) {
+		return userService.noJoin(userId);
+	}
+	
+	// 사용자 담당 구역 변경하기
+	@PatchMapping("admin/changeLocation/{userId}/{location}")
+	public String changeLocation(@PathVariable(value = "userId") String userId, @PathVariable(value = "location") String location) {
+		return userService.changeLocation(userId, location);
 	}
 }

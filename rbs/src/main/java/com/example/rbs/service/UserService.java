@@ -151,4 +151,29 @@ public class UserService {
 		}
 		return "Fail";
 	}
+
+	// 가입신청 거절하기
+	public String noJoin(String userId) {
+		Optional<User> user = userRepositroy.findById(userId);
+		if(user.isPresent()) {
+			User myUser = user.get();
+			myUser.setRole("ROLE_EMPLOYEE_NO");
+			userRepositroy.save(myUser);
+			return "Success";
+		}
+		return "Fail";
+	}
+
+	
+	// 사용자 담당 구역 변경하기
+	public String changeLocation(String userId, String location) {
+		Optional<User> user = userRepositroy.findById(userId);
+		if(user.isPresent()) {
+			User myUser = user.get();
+			myUser.setLocation(location);
+			userRepositroy.save(myUser);
+			return "Success";
+		}
+		return "Fail";
+	}
 }
