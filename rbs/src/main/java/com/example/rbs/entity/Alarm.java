@@ -23,9 +23,7 @@ public class Alarm {
 	private int boxId;
 	
 	private String userId;
-	
-	private Integer parentAlarmId;
-	
+		
 	@Enumerated(EnumType.STRING)
 	private AlarmStatus resolved;
 	
