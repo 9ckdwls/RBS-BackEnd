@@ -152,22 +152,17 @@ public class BoxService {
 
 	// 수거함 상태 변경
 	// 공통된 로직 처리
-	public int boxStatusUpdate(int id, InstallStatus installStatus) {
+	public void boxStatusUpdate(int id, InstallStatus installStatus) {
 		Box box = findById(id);
 		box.setInstallStatus(installStatus);
 		boxRepository.save(box);
-
-		return box.getId();
 	}
 
-	// 수거함 상태 변경 및 위치 최신화
-	// 공통된 로직 처리
-	public int boxStatusUpdate(int id, InstallStatus installStatus, BoxDTO boxDTO) {
+	// 수거함 설치 완료 시 위치 최신화
+	public void boxStatusUpdate(int id, InstallStatus installStatus, BoxDTO boxDTO) {
 		Box box = findById(id);
 		box.setInstallStatus(installStatus);
 		box.setLocation(boxDTO.toPoint());
 		boxRepository.save(box);
-
-		return box.getId();
 	}
 }

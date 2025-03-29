@@ -33,6 +33,7 @@ public class AlarmController {
 	}
 	
 	// 수거함 설치 요청
+	// BoxDTO(name, IPAddress, Location)
 	// 관리자용
 	@PostMapping("admin/installRequest")
 	public String installRequest(@RequestBody BoxDTO boxDTO) {
@@ -43,49 +44,57 @@ public class AlarmController {
 	// 수거자용
 	@PatchMapping("employee/installInProgress/{id}")
 	public String installInProgress(@PathVariable(value = "id") int id) {
-		return alarmService.alarmRequest(id, AlarmStatus.IN_PROGRESS, InstallStatus.INSTALL_IN_PROGRESS, "ROLE_ADMIN", AlarmType.INSTALL_IN_PROGRESS);
+		return alarmService.alarmUpdate(id, AlarmType.INSTALL_IN_PROGRESS, "ROLE_ADMIN", null);
 	}
 	
 	// 수거함 설치 완료
+	// BoxDTO(Location)
 	// 수거자용
 	@PatchMapping("employee/installCompleted/{id}")
 	public String installCompleted(@PathVariable(value = "id") int id, @RequestBody BoxDTO boxDTO) {
-		return alarmService.alarmRequest(id, AlarmStatus.IN_PROGRESS, InstallStatus.INSTALL_COMPLETED, "ROLE_ADMIN", AlarmType.INSTALL_COMPLETED, boxDTO);
+		return alarmService.alarmUpdate(id, AlarmType.INSTALL_COMPLETED, "ROLE_ADMIN", boxDTO);
 	}
 	
 	// 수거함 설치 확정
 	// 관리자용
 	@PatchMapping("admin/installConFiremed/{id}")
 	public String installConFiremed(@PathVariable(value = "id") int id) {
-		return alarmService.alarmRequest(id, AlarmStatus.RESOLVED, InstallStatus.INSTALL_CONFIRMED, "ROLE_EMPLOYEE", AlarmType.INSTALL_CONFIRMED);
+		return alarmService.alarmUpdate(id, AlarmType.INSTALL_CONFIRMED, "null", null);
 	}
 	
 	// 수거함 제거 요청
 	// 관리자용
-	@PatchMapping("admin/removeRequest/{id}")
-	public String removeRequest(@PathVariable(value = "id") int id) {
-		return alarmService.alarmRequest(id, AlarmStatus.UNRESOLVED, InstallStatus.REMOVE_REQUEST, "ROLE_EMPLOYEE", AlarmType.REMOVE_REQUEST);
+	@PatchMapping("admin/removeRequest/{boxId}")
+	public String removeRequest(@PathVariable(value = "boxId") int boxId) {
+		return alarmService.removeRequest(boxId);
 	}
 	
 	// 수거함 제거 진행
 	// 수거자용
 	@PatchMapping("employee/removeInProgress/{id}")
 	public String removeInProgress(@PathVariable(value = "id") int id) {
-		return alarmService.alarmRequest(id, AlarmStatus.IN_PROGRESS, InstallStatus.REMOVE_REQUEST, "ROLE_ADMIN", AlarmType.REMOVE_REQUEST);
+		return alarmService.alarmUpdate(id, AlarmType.REMOVE_IN_PROGRESS, "ROLE_ADMIN", null);
 	}
 
 	// 수거함 제거 완료
 	// 수거자용
 	@PatchMapping("employee/removeCompleted/{id}")
 	public String removeCompleted(@PathVariable(value = "id") int id) {
-		return alarmService.alarmRequest(id, AlarmStatus.IN_PROGRESS, InstallStatus.REMOVE_COMPLETED, "ROLE_ADMIN", AlarmType.REMOVE_COMPLETED);
+		return alarmService.alarmUpdate(id, AlarmType.REMOVE_COMPLETED, "ROLE_ADMIN", null);
 	}
 	
 	// 수거함 제거 확정
 	// 수거자용
 	@PatchMapping("admin/removeConFiremed/{id}")
 	public String removeConFiremed(@PathVariable(value = "id") int id) {
-		return alarmService.alarmRequest(id, AlarmStatus.RESOLVED, InstallStatus.REMOVE_REQUEST, "ROLE_EMPLOYEE", AlarmType.REMOVE_REQUEST);
+		return alarmService.alarmUpdate(id, AlarmType.REMOVE_CONFIRMED, "null", null);
+	}
+	
+	// 수거 예약
+	// 수거자용
+	@PatchMapping("employee/reserveBox/{id}")
+	public String reserveBox(@PathVariable(value = "id") int id) {
+		return alarmService.reserveBox(id);
 	}
 	
 }
