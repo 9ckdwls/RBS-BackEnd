@@ -43,6 +43,9 @@ public class Alarm {
 	public enum AlarmType {
 	    COLLECTION_NEEDED,          // 수거 필요
 	    COLLECTION_RECOMMENDED,     // 수거 권장
+	    COLLECTION_IN_PROGRESS,		// 수거 진행
+        COLLECTION_COMPLETED,		// 수거 완료
+        COLLECTION_CONFIRMED,		// 수거 확정
 	    FIRE,                       // 화재 발생
 	    INSTALL_REQUEST,            // 설치 요청
 	    INSTALL_IN_PROGRESS,        // 설치 진행 중
