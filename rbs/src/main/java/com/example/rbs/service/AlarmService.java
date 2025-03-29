@@ -79,41 +79,65 @@ public class AlarmService {
 	}
 
 	// 알람 상태 변경
-	// return 알람의 boxId
+	// 수거함 설치/제거 과정
+	@Transactional
 	public String alarmUpdate(int alarmId, AlarmType alarmType, String role, BoxDTO boxDTO) {
-		Optional<Alarm> alarm = alarmRepository.findById(alarmId);
-		if (alarm.isPresent()) {
-			Alarm myAlarm = alarm.get();
-			myAlarm.setType(alarmType);
-			myAlarm.setRole(role);
-			if (!alarmType.equals(AlarmType.INSTALL_COMPLETED) || !alarmType.equals(AlarmType.REMOVE_COMPLETED)) {
-				myAlarm.setTargetUserId(myAlarm.getUserId());
-				myAlarm.setUserId(userService.getUserId());
-			}
-			alarmRepository.save(myAlarm);
-			
-			if(alarmType.equals(AlarmType.INSTALL_COMPLETED)) {
-				boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()), boxDTO);
+		try {
+			Optional<Alarm> alarm = alarmRepository.findById(alarmId);
+			if (alarm.isPresent()) {
+				Alarm myAlarm = alarm.get();
+				myAlarm.setType(alarmType);
+				myAlarm.setRole(role);
+				if (!alarmType.equals(AlarmType.INSTALL_COMPLETED) || !alarmType.equals(AlarmType.REMOVE_COMPLETED)) {
+					myAlarm.setTargetUserId(myAlarm.getUserId());
+					myAlarm.setUserId(userService.getUserId());
+				}
+				alarmRepository.save(myAlarm);
+				
+				if(alarmType.equals(AlarmType.INSTALL_COMPLETED)) {
+					boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()), boxDTO);
+				} else {
+					boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()));
+				}
+				
+				return "Success";
 			} else {
-				boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()));
+				return "Fail";
 			}
-			
-			return "Success";
-		} else {
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return "Fail";
 		}
 	}
-
-	// 수거 예약
-	public String reserveBox(int id) {
-		Optional<Alarm> alarm = alarmRepository.findById(id);
-		if (alarm.isPresent()) {
-			Alarm myAlarm = alarm.get();
-			/* todo
-			 * 수거 예약 로직 작성 필요
-			 */
+	
+	// 알람 상태 변경
+	// 수거함 수거 예약 과정
+	@Transactional
+	public String collectionAlarmUpdate(int alarmId, AlarmType alarmType, String role) {
+		try {
+			Optional<Alarm> alarm = alarmRepository.findById(alarmId);
+			if (alarm.isPresent()) {
+				Alarm myAlarm = alarm.get();
+				myAlarm.setType(alarmType);
+				myAlarm.setRole(role);
+				if (!alarmType.equals(AlarmType.COLLECTION_COMPLETED)) {
+					myAlarm.setTargetUserId(myAlarm.getUserId());
+					myAlarm.setUserId(userService.getUserId());
+				}
+				
+				if(alarmType.equals(AlarmType.COLLECTION_CONFIRMED)) {
+					boxService.collectionConFirmed(myAlarm.getBoxId());
+				}
+				alarmRepository.save(myAlarm);
+				
+				return "Success";
+			} else {
+				return "Fail";
+			}
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			return "Fail";
 		}
-		return null;
 	}
 
 }

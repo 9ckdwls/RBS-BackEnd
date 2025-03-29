@@ -16,7 +16,6 @@ import com.example.rbs.entity.Alarm.AlarmType;
 import com.example.rbs.entity.Box.InstallStatus;
 import com.example.rbs.service.AlarmService;
 
-
 @RestController
 public class AlarmController {
 
@@ -25,13 +24,13 @@ public class AlarmController {
 	public AlarmController(AlarmService alarmService) {
 		this.alarmService = alarmService;
 	}
-	
+
 	// 미해결된 알람 가져오기
 	@GetMapping("alarm/unResolved")
 	public List<Alarm> unResolved() {
 		return alarmService.unResolved();
 	}
-	
+
 	// 수거함 설치 요청
 	// BoxDTO(name, IPAddress, Location)
 	// 관리자용
@@ -39,14 +38,14 @@ public class AlarmController {
 	public String installRequest(@RequestBody BoxDTO boxDTO) {
 		return alarmService.installRequest(boxDTO);
 	}
-	
+
 	// 수거함 설치 진행
 	// 수거자용
 	@PatchMapping("employee/installInProgress/{id}")
 	public String installInProgress(@PathVariable(value = "id") int id) {
 		return alarmService.alarmUpdate(id, AlarmType.INSTALL_IN_PROGRESS, "ROLE_ADMIN", null);
 	}
-	
+
 	// 수거함 설치 완료
 	// BoxDTO(Location)
 	// 수거자용
@@ -54,21 +53,21 @@ public class AlarmController {
 	public String installCompleted(@PathVariable(value = "id") int id, @RequestBody BoxDTO boxDTO) {
 		return alarmService.alarmUpdate(id, AlarmType.INSTALL_COMPLETED, "ROLE_ADMIN", boxDTO);
 	}
-	
+
 	// 수거함 설치 확정
 	// 관리자용
 	@PatchMapping("admin/installConFiremed/{id}")
 	public String installConFiremed(@PathVariable(value = "id") int id) {
 		return alarmService.alarmUpdate(id, AlarmType.INSTALL_CONFIRMED, "null", null);
 	}
-	
+
 	// 수거함 제거 요청
 	// 관리자용
 	@PatchMapping("admin/removeRequest/{boxId}")
 	public String removeRequest(@PathVariable(value = "boxId") int boxId) {
 		return alarmService.removeRequest(boxId);
 	}
-	
+
 	// 수거함 제거 진행
 	// 수거자용
 	@PatchMapping("employee/removeInProgress/{id}")
@@ -82,19 +81,33 @@ public class AlarmController {
 	public String removeCompleted(@PathVariable(value = "id") int id) {
 		return alarmService.alarmUpdate(id, AlarmType.REMOVE_COMPLETED, "ROLE_ADMIN", null);
 	}
-	
+
 	// 수거함 제거 확정
 	// 수거자용
 	@PatchMapping("admin/removeConFiremed/{id}")
 	public String removeConFiremed(@PathVariable(value = "id") int id) {
 		return alarmService.alarmUpdate(id, AlarmType.REMOVE_CONFIRMED, "null", null);
 	}
-	
-	// 수거 예약
+
+	// 수거 진행
 	// 수거자용
-	@PatchMapping("employee/reserveBox/{id}")
-	public String reserveBox(@PathVariable(value = "id") int id) {
-		return alarmService.reserveBox(id);
+	@PatchMapping("employee/collectionInProgress/{id}")
+	public String collectionInProgress(@PathVariable(value = "id") int id) {
+		return alarmService.collectionAlarmUpdate(id, AlarmType.COLLECTION_IN_PROGRESS, "ROLE_ADMIN");
 	}
 	
+	// 수거 완료
+	// 관리자용
+	@PatchMapping("employee/collectionCompleted/{id}")
+	public String collectionCompleted(@PathVariable(value = "id") int id) {
+		return alarmService.collectionAlarmUpdate(id, AlarmType.COLLECTION_COMPLETED, "ROLE_ADMIN");
+	}
+	
+	// 수거 확정
+	// 수거자용
+	@PatchMapping("employee/collectionConFirmed/{id}")
+	public String collectionConFirmed(@PathVariable(value = "id") int id) {
+		return alarmService.collectionAlarmUpdate(id, AlarmType.COLLECTION_CONFIRMED, null);
+	}
+
 }

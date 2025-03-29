@@ -165,4 +165,13 @@ public class BoxService {
 		box.setLocation(boxDTO.toPoint());
 		boxRepository.save(box);
 	}
+
+	// 수거 완료
+	public void collectionConFirmed(int boxId) {
+		Box box = findById(boxId);
+		box.setStore1(0);
+		box.setStore2(0);
+		box.setStore3(0);
+		boxRepository.save(box);
+	}
 }
