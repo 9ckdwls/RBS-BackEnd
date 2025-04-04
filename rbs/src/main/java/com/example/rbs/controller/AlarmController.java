@@ -30,6 +30,12 @@ public class AlarmController {
 	public List<Alarm> unResolved() {
 		return alarmService.unResolved();
 	}
+	
+	// 관리자가 볼 알람
+	@GetMapping("admin/alarm/unResolved")
+	public List<Alarm> adminAlarm() {
+		return alarmService.adminAlarm();
+	}
 
 	// 수거함 설치 요청
 	// BoxDTO(name, IPAddress, Location)

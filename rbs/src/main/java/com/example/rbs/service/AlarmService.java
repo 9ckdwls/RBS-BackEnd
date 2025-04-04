@@ -21,16 +21,22 @@ public class AlarmService {
 	private UserService userService;
 	private SSEService sseService;
 
-	public AlarmService(AlarmRepository alarmRepository, BoxService boxService, UserService userService, SSEService sseService) {
+	public AlarmService(AlarmRepository alarmRepository, BoxService boxService, UserService userService,
+			SSEService sseService) {
 		this.alarmRepository = alarmRepository;
 		this.boxService = boxService;
 		this.userService = userService;
-		this.sseService  = sseService;
+		this.sseService = sseService;
 	}
 
 	// 미해결된 알람 가져오기
 	public List<Alarm> unResolved() {
 		return alarmRepository.findRelevantAlarms(userService.getUserRole(), userService.getUserRole());
+	}
+
+	// 관리자가 볼 알람
+	public List<Alarm> adminAlarm() {
+		return alarmRepository.findByRoleAndResolved(userService.getUserRole(), AlarmStatus.UNRESOLVED);
 	}
 
 	// 새로운 알람 생성
@@ -45,7 +51,7 @@ public class AlarmService {
 		alarm.setType(alarmType);
 
 		alarmRepository.save(alarm);
-		
+
 		sseService.sendAlarmToUser(alarm);
 	}
 
@@ -58,7 +64,7 @@ public class AlarmService {
 			int boxId = boxService.installRequest(boxDTO);
 			// createAlarm(int boxId, String role, AlarmType alarmType)
 			createAlarm(boxId, "ROLE_ALL", AlarmType.INSTALL_REQUEST);
-			
+
 			return "Success";
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -74,7 +80,7 @@ public class AlarmService {
 			boxService.boxStatusUpdate(boxId, InstallStatus.REMOVE_REQUEST);
 			// createAlarm(int boxId, String role, AlarmType alarmType)
 			createAlarm(boxId, "ROLE_ALL", AlarmType.REMOVE_REQUEST);
-			
+
 			return "Success";
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -97,13 +103,13 @@ public class AlarmService {
 					myAlarm.setUserId(userService.getUserId());
 				}
 				alarmRepository.save(myAlarm);
-				
-				if(alarmType.equals(AlarmType.INSTALL_COMPLETED)) {
+
+				if (alarmType.equals(AlarmType.INSTALL_COMPLETED)) {
 					boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()), boxDTO);
 				} else {
 					boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()));
 				}
-				
+
 				return "Success";
 			} else {
 				return "Fail";
@@ -113,7 +119,7 @@ public class AlarmService {
 			return "Fail";
 		}
 	}
-	
+
 	// 알람 상태 변경
 	// 수거함 수거 예약 과정
 	@Transactional
@@ -128,12 +134,12 @@ public class AlarmService {
 					myAlarm.setTargetUserId(myAlarm.getUserId());
 					myAlarm.setUserId(userService.getUserId());
 				}
-				
-				if(alarmType.equals(AlarmType.COLLECTION_CONFIRMED)) {
+
+				if (alarmType.equals(AlarmType.COLLECTION_CONFIRMED)) {
 					boxService.collectionConFirmed(myAlarm.getBoxId());
 				}
 				alarmRepository.save(myAlarm);
-				
+
 				return "Success";
 			} else {
 				return "Fail";

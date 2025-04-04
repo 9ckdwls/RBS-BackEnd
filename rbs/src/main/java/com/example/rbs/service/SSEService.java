@@ -20,6 +20,7 @@ public class SSEService {
 		this.userService = userService;
 	}
 	
+	// ConcurrentHashMap는 멀티스레드에서 안전하게 사용가능한 해시맵
 	private final Map<String, UserEmitter> emitters = new ConcurrentHashMap<>();
 
 	public SseEmitter subscribe() {
@@ -39,22 +40,20 @@ public class SSEService {
 		return emitter;
 	}
 	
+	// 알람 전송
 	public void sendAlarmToUser (Alarm alarm) {
 		
-		String alarmUserId = alarm.getUserId();
         String alarmTargetUserId = alarm.getTargetUserId();
         String alarmRole = alarm.getRole();
 		
         emitters.forEach((userId, userEmitter) -> {
             String userRole = userEmitter.getRole();
             
-            // user_id 또는 target_user_id가 현재 사용자 ID와 일치하는 경우 또는 역할(role)이 일치하는 경우
-            if ((alarmUserId != null && alarmUserId.equals(userId)) ||
-                (alarmTargetUserId != null && alarmTargetUserId.equals(userId)) ||
-                (alarmRole != null && alarmRole.equals(userRole))) {
-                
+            // 해당 targetUserId 이거나 해당 role 이라면
+            // ROLE_ALL이면 수거자와 관리자 모두에게
+            if (userId.equals(alarmTargetUserId) || userRole.equals(alarmRole) || alarmRole.equals("ROLE_ALL")) {
                 try {
-                    System.out.println("Sending alarm to: " + userId);
+                    System.out.println("알람 전송");
                     userEmitter.getEmitter().send(SseEmitter.event().name("alarm").data(alarm));
                 } catch (IOException e) {
                     emitters.remove(userId);
