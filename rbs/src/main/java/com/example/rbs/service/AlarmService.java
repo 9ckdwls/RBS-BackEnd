@@ -19,11 +19,13 @@ public class AlarmService {
 	private AlarmRepository alarmRepository;
 	private BoxService boxService;
 	private UserService userService;
+	private SSEService sseService;
 
-	public AlarmService(AlarmRepository alarmRepository, BoxService boxService, UserService userService) {
+	public AlarmService(AlarmRepository alarmRepository, BoxService boxService, UserService userService, SSEService sseService) {
 		this.alarmRepository = alarmRepository;
 		this.boxService = boxService;
 		this.userService = userService;
+		this.sseService  = sseService;
 	}
 
 	// 미해결된 알람 가져오기
@@ -43,6 +45,8 @@ public class AlarmService {
 		alarm.setType(alarmType);
 
 		alarmRepository.save(alarm);
+		
+		sseService.sendAlarmToUser(alarm);
 	}
 
 	// 수거함 설치 요청
