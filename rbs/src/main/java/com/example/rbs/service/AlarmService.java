@@ -36,7 +36,7 @@ public class AlarmService {
 
 	// 관리자가 볼 알람
 	public List<Alarm> adminAlarm() {
-		return alarmRepository.findByRoleAndResolved(userService.getUserRole(), AlarmStatus.UNRESOLVED);
+		return alarmRepository.findByResolvedAndRoleIn(AlarmStatus.UNRESOLVED, List.of(userService.getUserRole(), "ROLE_ALL"));
 	}
 
 	// 새로운 알람 생성

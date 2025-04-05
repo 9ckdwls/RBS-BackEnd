@@ -26,7 +26,8 @@ public interface AlarmRepository extends JpaRepository<Alarm, Integer> {
 	Optional<Alarm> findByBoxId(int id);
 
 	// 관리자가 볼 알람
-	// 권한이 ROLE_ADMIN 이고 미해결된 알람
-	List<Alarm> findByRoleAndResolved(String userRole, AlarmStatus unresolved);
+	// 권한이 ROLE_ADMIN or ROLE_ALL 이고 미해결된 알람
+	List<Alarm> findByResolvedAndRoleIn(AlarmStatus unresolved, List<String> roles);
+
 
 }
