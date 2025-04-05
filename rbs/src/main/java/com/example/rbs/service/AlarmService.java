@@ -96,19 +96,25 @@ public class AlarmService {
 			Optional<Alarm> alarm = alarmRepository.findById(alarmId);
 			if (alarm.isPresent()) {
 				Alarm myAlarm = alarm.get();
-				myAlarm.setType(alarmType);
-				myAlarm.setRole(role);
-				if (!alarmType.equals(AlarmType.INSTALL_COMPLETED) || !alarmType.equals(AlarmType.REMOVE_COMPLETED)) {
+				myAlarm.setType(alarmType); // 어떤 알람인지
+				myAlarm.setRole(role); // 권한 설정
+				
+				// 설치/제거 완료는 setTargetUserId와 setUserId가 같음
+				if (!alarmType.equals(AlarmType.INSTALL_COMPLETED) && !alarmType.equals(AlarmType.REMOVE_COMPLETED)) {
 					myAlarm.setTargetUserId(myAlarm.getUserId());
 					myAlarm.setUserId(userService.getUserId());
 				}
 				alarmRepository.save(myAlarm);
 
+				// 설치 완료만 사진과 좌표 업데이트
 				if (alarmType.equals(AlarmType.INSTALL_COMPLETED)) {
 					boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()), boxDTO);
 				} else {
 					boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()));
 				}
+				
+				// 알람 전송
+				sseService.sendAlarmToUser(myAlarm);
 
 				return "Success";
 			} else {
@@ -128,17 +134,20 @@ public class AlarmService {
 			Optional<Alarm> alarm = alarmRepository.findById(alarmId);
 			if (alarm.isPresent()) {
 				Alarm myAlarm = alarm.get();
-				myAlarm.setType(alarmType);
-				myAlarm.setRole(role);
-				if (!alarmType.equals(AlarmType.COLLECTION_COMPLETED)) {
-					myAlarm.setTargetUserId(myAlarm.getUserId());
-					myAlarm.setUserId(userService.getUserId());
-				}
-
-				if (alarmType.equals(AlarmType.COLLECTION_CONFIRMED)) {
+				myAlarm.setType(alarmType); // 알람 타입 업데이트
+				myAlarm.setRole(role); // 수거 진행과 완료는 관리자에게 관리자가 최종 확인 하면 null로
+				
+				if (alarmType.equals(AlarmType.COLLECTION_CONFIRMED)) { // 수거 확정이라면
+					myAlarm.setTargetUserId(myAlarm.getUserId()); // 수거자가 최종 알람 확인
 					boxService.collectionConFirmed(myAlarm.getBoxId());
 				}
+				
+				myAlarm.setUserId(userService.getUserId());
+
 				alarmRepository.save(myAlarm);
+				
+				// 알람 전송
+				sseService.sendAlarmToUser(myAlarm);
 
 				return "Success";
 			} else {
@@ -146,6 +155,49 @@ public class AlarmService {
 			}
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			return "Fail";
+		}
+	}
+
+	// 화재 처리 진행
+	public String fireAlarmUpdate(int alarmId, AlarmType alarmType, String role) {
+		try {
+			Optional<Alarm> alarm = alarmRepository.findById(alarmId);
+			if (alarm.isPresent()) {
+				Alarm myAlarm = alarm.get();
+				myAlarm.setType(alarmType); // 알람 타입 업데이트
+				myAlarm.setRole(role);
+				
+				// AlarmType 추가 후 다시 수정
+				if(alarmType.equals("화재 처리 확정")) {
+					myAlarm.setTargetUserId(myAlarm.getUserId()); // 수거자가 최종 알람 확인
+					boxService.boxFireStatusUpdate(myAlarm.getBoxId());
+				}
+				
+				myAlarm.setUserId(userService.getUserId());
+				
+				alarmRepository.save(myAlarm);
+				
+				return "Success";
+				
+			} else {
+				return "Fail";
+			}
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			return "Fail";
+		}
+	}
+
+	// 알람 해결됨
+	public String alarmResolved(int alarmId) {
+		Optional<Alarm> alarm = alarmRepository.findById(alarmId);
+		if (alarm.isPresent()) {
+			Alarm myAlarm = alarm.get();
+			myAlarm.setResolved(AlarmStatus.RESOLVED);
+			alarmRepository.save(myAlarm);
+			return "Success";
+		} else {
 			return "Fail";
 		}
 	}

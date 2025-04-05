@@ -151,10 +151,18 @@ public class BoxService {
 	}
 
 	// 수거함 상태 변경
-	// 공통된 로직 처리
 	public void boxStatusUpdate(int id, InstallStatus installStatus) {
 		Box box = findById(id);
 		box.setInstallStatus(installStatus);
+		boxRepository.save(box);
+	}
+	
+	// 수거함 상태 변경
+	public void boxFireStatusUpdate(int id) {
+		Box box = findById(id);
+		box.setFireStatus1(FireStatus.UNFIRE);
+		box.setFireStatus2(FireStatus.UNFIRE);
+		box.setFireStatus3(FireStatus.UNFIRE);
 		boxRepository.save(box);
 	}
 

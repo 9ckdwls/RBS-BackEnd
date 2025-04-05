@@ -30,7 +30,7 @@ public class AlarmController {
 	public List<Alarm> unResolved() {
 		return alarmService.unResolved();
 	}
-	
+
 	// 관리자가 볼 알람
 	@GetMapping("admin/alarm/unResolved")
 	public List<Alarm> adminAlarm() {
@@ -67,6 +67,13 @@ public class AlarmController {
 		return alarmService.alarmUpdate(id, AlarmType.INSTALL_CONFIRMED, "null", null);
 	}
 
+	// 수거함 제거 확정 수거자 확인 완료
+	// 수거자용
+	@PatchMapping("employee/installEnd/{id}")
+	public String installEnd(@PathVariable(value = "id") int id) {
+		return alarmService.alarmResolved(id);
+	}
+
 	// 수거함 제거 요청
 	// 관리자용
 	@PatchMapping("admin/removeRequest/{boxId}")
@@ -82,6 +89,7 @@ public class AlarmController {
 	}
 
 	// 수거함 제거 완료
+	// 사진 파일 받아야 함
 	// 수거자용
 	@PatchMapping("employee/removeCompleted/{id}")
 	public String removeCompleted(@PathVariable(value = "id") int id) {
@@ -95,25 +103,71 @@ public class AlarmController {
 		return alarmService.alarmUpdate(id, AlarmType.REMOVE_CONFIRMED, "null", null);
 	}
 
+	// 수거함 제거 확정 수거자 확인 완료
+	// 수거자용
+	@PatchMapping("employee/removeEnd/{id}")
+	public String removeEnd(@PathVariable(value = "id") int id) {
+		return alarmService.alarmResolved(id);
+	}
+
 	// 수거 진행
 	// 수거자용
 	@PatchMapping("employee/collectionInProgress/{id}")
 	public String collectionInProgress(@PathVariable(value = "id") int id) {
 		return alarmService.collectionAlarmUpdate(id, AlarmType.COLLECTION_IN_PROGRESS, "ROLE_ADMIN");
 	}
-	
+
 	// 수거 완료
-	// 관리자용
+	// 수거자용
+	// 사진 파일 받아야 함
 	@PatchMapping("employee/collectionCompleted/{id}")
 	public String collectionCompleted(@PathVariable(value = "id") int id) {
 		return alarmService.collectionAlarmUpdate(id, AlarmType.COLLECTION_COMPLETED, "ROLE_ADMIN");
 	}
-	
+
 	// 수거 확정
-	// 수거자용
-	@PatchMapping("employee/collectionConFirmed/{id}")
+	// 관리자용
+	@PatchMapping("admin/collectionConFirmed/{id}")
 	public String collectionConFirmed(@PathVariable(value = "id") int id) {
 		return alarmService.collectionAlarmUpdate(id, AlarmType.COLLECTION_CONFIRMED, null);
+	}
+
+	// 수거 확정 수거자 확인 완료
+	// 수거자용
+	@PatchMapping("employee/collectioneEnd/{id}")
+	public String collectioneEnd(@PathVariable(value = "id") int id) {
+		return alarmService.alarmResolved(id);
+	}
+
+	// AlarmType 추가 후 다시 수정
+	// 화재 처리 진행
+	// 수거자용
+	@PatchMapping("employee/fireInProgress/{id}")
+	public String fireInProgress(@PathVariable(value = "id") int id) {
+		return alarmService.fireAlarmUpdate(id, AlarmType.FIRE, "ROLE_ADMIN");
+	}
+
+	// AlarmType 추가 후 다시 수정
+	// 화재 처리 완료
+	// 수거자용
+	@PatchMapping("employee/fireCompleted/{id}")
+	public String fireCompleted(@PathVariable(value = "id") int id) {
+		return alarmService.fireAlarmUpdate(id, AlarmType.FIRE, "ROLE_ADMIN");
+	}
+
+	// AlarmType 추가 후 다시 수정
+	// 화재 처리 확정
+	// 관리자용
+	@PatchMapping("employee/fireConFirmed/{id}")
+	public String fireConFirmed(@PathVariable(value = "id") int id) {
+		return alarmService.fireAlarmUpdate(id, AlarmType.FIRE, "ROLE_ADMIN");
+	}
+
+	// 화재 처리 확정 수거자 확인 완료
+	// 수거자용
+	@PatchMapping("employee/fireEnd/{id}")
+	public String fireEnd(@PathVariable(value = "id") int id) {
+		return alarmService.alarmResolved(id);
 	}
 
 }
