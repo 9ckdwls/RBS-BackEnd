@@ -158,7 +158,7 @@ public class AlarmController {
 	// AlarmType 추가 후 다시 수정
 	// 화재 처리 확정
 	// 관리자용
-	@PatchMapping("employee/fireConFirmed/{id}")
+	@PatchMapping("admin/fireConFirmed/{id}")
 	public String fireConFirmed(@PathVariable(value = "id") int id) {
 		return alarmService.fireAlarmUpdate(id, AlarmType.FIRE, "ROLE_ADMIN");
 	}
