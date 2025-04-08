@@ -49,6 +49,7 @@ public class AlarmController {
 	// 수거자용
 	@PatchMapping("employee/installInProgress/{id}")
 	public String installInProgress(@PathVariable(value = "id") int id) {
+		System.out.println("요청옴;;;;;;;;;;;");
 		return alarmService.alarmUpdate(id, AlarmType.INSTALL_IN_PROGRESS, "ROLE_ADMIN", null);
 	}
 

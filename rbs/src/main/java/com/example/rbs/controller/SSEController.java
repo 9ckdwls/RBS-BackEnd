@@ -17,7 +17,6 @@ public class SSEController {
 	
 	@GetMapping("/SSEsubscribe")
 	public SseEmitter subscribe() {
-		System.out.println("요청옴");
 		return sseService.subscribe();
 	}
 	

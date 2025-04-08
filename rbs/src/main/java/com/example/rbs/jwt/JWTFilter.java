@@ -49,6 +49,7 @@ public class JWTFilter extends OncePerRequestFilter {
 		} catch (ExpiredJwtException e) {
 			PrintWriter writer = response.getWriter();
 			writer.print("accessToken is expired");
+			System.out.println("토큰 만료 됨");
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return;
 		}
@@ -79,7 +80,7 @@ public class JWTFilter extends OncePerRequestFilter {
 				customUserDetails.getAuthorities());
 		// 세션에 사용자 등록
 		SecurityContextHolder.getContext().setAuthentication(authToken);
-
+		
 		filterChain.doFilter(request, response);
 
 	}

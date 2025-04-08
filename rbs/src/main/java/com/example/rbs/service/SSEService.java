@@ -33,8 +33,15 @@ public class SSEService {
 	        emitters.remove(userId);
 	    }
 		
+		System.out.println("요청옴: 에미터 생성 전");
+		
 		SseEmitter emitter = new SseEmitter(0L);
+		
+		System.out.println("요청옴: 에미터 생성 중");
+		
         emitters.put(userId, new UserEmitter(emitter, role));
+        
+        System.out.println("요청옴: 에미터 생성 후");
         
         
 		return emitter;
