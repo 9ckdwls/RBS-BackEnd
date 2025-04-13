@@ -31,7 +31,7 @@ public class AlarmService {
 
 	// 미해결된 알람 가져오기
 	public List<Alarm> unResolved() {
-		return alarmRepository.findRelevantAlarms(userService.getUserRole(), userService.getUserRole());
+		return alarmRepository.findRelevantAlarms(userService.getUserRole(), userService.getUserId());
 	}
 
 	// 관리자가 볼 알람
