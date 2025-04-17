@@ -150,13 +150,13 @@ public class BoxService {
 		return box.getId();
 	}
 
-	// 수거함 상태 변경
+	// 수거함 상태 최신화
 	public void boxStatusUpdate(int id, InstallStatus installStatus) {
 		Box box = findById(id);
 		box.setInstallStatus(installStatus);
 		boxRepository.save(box);
 	}
-	
+
 	// 수거함 상태 변경
 	public void boxFireStatusUpdate(int id) {
 		Box box = findById(id);

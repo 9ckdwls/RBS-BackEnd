@@ -1,10 +1,15 @@
 package com.example.rbs.service;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.rbs.dto.BoxDTO;
 import com.example.rbs.entity.Alarm;
 import com.example.rbs.entity.Alarm.AlarmStatus;
@@ -36,7 +41,8 @@ public class AlarmService {
 
 	// 관리자가 볼 알람
 	public List<Alarm> adminAlarm() {
-		return alarmRepository.findByResolvedAndRoleIn(AlarmStatus.UNRESOLVED, List.of(userService.getUserRole(), "ROLE_ALL"));
+		return alarmRepository.findByResolvedAndRoleIn(AlarmStatus.UNRESOLVED,
+				List.of(userService.getUserRole(), "ROLE_ALL"));
 	}
 
 	// 새로운 알람 생성
@@ -91,7 +97,7 @@ public class AlarmService {
 	// 알람 상태 변경
 	// 수거함 설치/제거 과정
 	@Transactional
-	public String alarmUpdate(int alarmId, AlarmType alarmType, String role, BoxDTO boxDTO) {
+	public String alarmUpdate(int alarmId, AlarmType alarmType, String role, BoxDTO boxDTO, MultipartFile file) {
 		try {
 			Optional<Alarm> alarm = alarmRepository.findById(alarmId);
 			if (alarm.isPresent()) {
@@ -103,16 +109,19 @@ public class AlarmService {
 				if (!alarmType.equals(AlarmType.INSTALL_COMPLETED) && !alarmType.equals(AlarmType.REMOVE_COMPLETED)) {
 					myAlarm.setTargetUserId(myAlarm.getUserId());
 					myAlarm.setUserId(userService.getUserId());
+					
+					// 수거 완료만 좌표 최신화
+					if (alarmType.equals(AlarmType.INSTALL_COMPLETED)) {
+						boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()), boxDTO);
+					} else {
+						boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()));
+					}
+					
+					// 사진 파일 저장
+					saveFile(file);
 				}
 				alarmRepository.save(myAlarm);
 
-				// 설치 완료만 사진과 좌표 업데이트
-				if (alarmType.equals(AlarmType.INSTALL_COMPLETED)) {
-					boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()), boxDTO);
-				} else {
-					boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()));
-				}
-				
 				// 알람 전송
 				sseService.sendAlarmToUser(myAlarm);
 
@@ -129,23 +138,28 @@ public class AlarmService {
 	// 알람 상태 변경
 	// 수거함 수거 예약 과정
 	@Transactional
-	public String collectionAlarmUpdate(int alarmId, AlarmType alarmType, String role) {
+	public String collectionAlarmUpdate(int alarmId, AlarmType alarmType, String role, MultipartFile file) {
 		try {
 			Optional<Alarm> alarm = alarmRepository.findById(alarmId);
 			if (alarm.isPresent()) {
 				Alarm myAlarm = alarm.get();
 				myAlarm.setType(alarmType); // 알람 타입 업데이트
 				myAlarm.setRole(role); // 수거 진행과 완료는 관리자에게 관리자가 최종 확인 하면 null로
-				
+
 				if (alarmType.equals(AlarmType.COLLECTION_CONFIRMED)) { // 수거 확정이라면
 					myAlarm.setTargetUserId(myAlarm.getUserId()); // 수거자가 최종 알람 확인
 					boxService.collectionConFirmed(myAlarm.getBoxId());
 				}
-				
+
 				myAlarm.setUserId(userService.getUserId());
 
 				alarmRepository.save(myAlarm);
 				
+				// 사진 파일 저장
+				if(!file.isEmpty()) {
+					saveFile(file);
+				}
+
 				// 알람 전송
 				sseService.sendAlarmToUser(myAlarm);
 
@@ -160,26 +174,31 @@ public class AlarmService {
 	}
 
 	// 화재 처리 진행
-	public String fireAlarmUpdate(int alarmId, AlarmType alarmType, String role) {
+	public String fireAlarmUpdate(int alarmId, AlarmType alarmType, String role, MultipartFile file) {
 		try {
 			Optional<Alarm> alarm = alarmRepository.findById(alarmId);
 			if (alarm.isPresent()) {
 				Alarm myAlarm = alarm.get();
 				myAlarm.setType(alarmType); // 알람 타입 업데이트
 				myAlarm.setRole(role);
-				
+
 				// AlarmType 추가 후 다시 수정
-				if(alarmType.equals("화재 처리 확정")) {
+				if (alarmType.equals("화재 처리 확정")) {
 					myAlarm.setTargetUserId(myAlarm.getUserId()); // 수거자가 최종 알람 확인
 					boxService.boxFireStatusUpdate(myAlarm.getBoxId());
 				}
-				
+
 				myAlarm.setUserId(userService.getUserId());
-				
+
 				alarmRepository.save(myAlarm);
 				
+				// 사진 파일 저장
+				if(!file.isEmpty()) {
+					saveFile(file);
+				}
+
 				return "Success";
-				
+
 			} else {
 				return "Fail";
 			}
@@ -199,6 +218,27 @@ public class AlarmService {
 			return "Success";
 		} else {
 			return "Fail";
+		}
+	}
+	
+	// 사진 파일 저장
+	public void saveFile(MultipartFile file) {
+		try {
+			// 저장할 디렉토리 경로
+			String uploadDir = "C:/uploads/images/";
+			
+			// 디렉토리가 없으면 생성
+			File dir = new File(uploadDir);
+			if(!dir.exists()) {
+				dir.mkdirs();
+				System.out.println("디렉토리 생성");
+			}
+			
+			// 파일 저장
+			File myFile = new File(uploadDir + UUID.randomUUID().toString() + "_" + file.getOriginalFilename());
+			file.transferTo(myFile);
+		} catch (Exception e) {
+			throw new RuntimeException("파일 저장 오류", e);
 		}
 	}
 

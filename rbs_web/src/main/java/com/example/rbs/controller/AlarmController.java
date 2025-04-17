@@ -3,11 +3,14 @@ package com.example.rbs.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.rbs.dto.BoxDTO;
 import com.example.rbs.entity.Alarm;
@@ -49,26 +52,25 @@ public class AlarmController {
 	// 수거자용
 	@PatchMapping("employee/installInProgress/{id}")
 	public String installInProgress(@PathVariable(value = "id") int id) {
-		System.out.println("요청옴;;;;;;;;;;;");
-		return alarmService.alarmUpdate(id, AlarmType.INSTALL_IN_PROGRESS, "ROLE_ADMIN", null);
+		return alarmService.alarmUpdate(id, AlarmType.INSTALL_IN_PROGRESS, "ROLE_ADMIN", null, null);
 	}
 
 	// 수거함 설치 완료
 	// BoxDTO(Location)
 	// 수거자용
 	@PatchMapping("employee/installCompleted/{id}")
-	public String installCompleted(@PathVariable(value = "id") int id, @RequestBody BoxDTO boxDTO) {
-		return alarmService.alarmUpdate(id, AlarmType.INSTALL_COMPLETED, "ROLE_ADMIN", boxDTO);
+	public String installCompleted(@PathVariable(value = "id") int id, @ModelAttribute BoxDTO boxDTO) {
+		return alarmService.alarmUpdate(id, AlarmType.INSTALL_COMPLETED, "ROLE_ADMIN", boxDTO, boxDTO.getFile());
 	}
 
 	// 수거함 설치 확정
 	// 관리자용
 	@PatchMapping("admin/installConFiremed/{id}")
 	public String installConFiremed(@PathVariable(value = "id") int id) {
-		return alarmService.alarmUpdate(id, AlarmType.INSTALL_CONFIRMED, "null", null);
+		return alarmService.alarmUpdate(id, AlarmType.INSTALL_CONFIRMED, "null", null, null);
 	}
 
-	// 수거함 제거 확정 수거자 확인 완료
+	// 수거함 설치 확정 수거자 확인 완료
 	// 수거자용
 	@PatchMapping("employee/installEnd/{id}")
 	public String installEnd(@PathVariable(value = "id") int id) {
@@ -86,22 +88,21 @@ public class AlarmController {
 	// 수거자용
 	@PatchMapping("employee/removeInProgress/{id}")
 	public String removeInProgress(@PathVariable(value = "id") int id) {
-		return alarmService.alarmUpdate(id, AlarmType.REMOVE_IN_PROGRESS, "ROLE_ADMIN", null);
+		return alarmService.alarmUpdate(id, AlarmType.REMOVE_IN_PROGRESS, "ROLE_ADMIN", null, null);
 	}
 
 	// 수거함 제거 완료
-	// 사진 파일 받아야 함
 	// 수거자용
 	@PatchMapping("employee/removeCompleted/{id}")
-	public String removeCompleted(@PathVariable(value = "id") int id) {
-		return alarmService.alarmUpdate(id, AlarmType.REMOVE_COMPLETED, "ROLE_ADMIN", null);
+	public String removeCompleted(@PathVariable(value = "id") int id, @RequestParam("file") MultipartFile file) {
+		return alarmService.alarmUpdate(id, AlarmType.REMOVE_COMPLETED, "ROLE_ADMIN", null, file);
 	}
 
 	// 수거함 제거 확정
 	// 수거자용
 	@PatchMapping("admin/removeConFiremed/{id}")
 	public String removeConFiremed(@PathVariable(value = "id") int id) {
-		return alarmService.alarmUpdate(id, AlarmType.REMOVE_CONFIRMED, "null", null);
+		return alarmService.alarmUpdate(id, AlarmType.REMOVE_CONFIRMED, "null", null, null);
 	}
 
 	// 수거함 제거 확정 수거자 확인 완료
@@ -115,22 +116,21 @@ public class AlarmController {
 	// 수거자용
 	@PatchMapping("employee/collectionInProgress/{id}")
 	public String collectionInProgress(@PathVariable(value = "id") int id) {
-		return alarmService.collectionAlarmUpdate(id, AlarmType.COLLECTION_IN_PROGRESS, "ROLE_ADMIN");
+		return alarmService.collectionAlarmUpdate(id, AlarmType.COLLECTION_IN_PROGRESS, "ROLE_ADMIN", null);
 	}
 
 	// 수거 완료
 	// 수거자용
-	// 사진 파일 받아야 함
 	@PatchMapping("employee/collectionCompleted/{id}")
-	public String collectionCompleted(@PathVariable(value = "id") int id) {
-		return alarmService.collectionAlarmUpdate(id, AlarmType.COLLECTION_COMPLETED, "ROLE_ADMIN");
+	public String collectionCompleted(@PathVariable(value = "id") int id, @RequestParam("file") MultipartFile file) {
+		return alarmService.collectionAlarmUpdate(id, AlarmType.COLLECTION_COMPLETED, "ROLE_ADMIN", file);
 	}
 
 	// 수거 확정
 	// 관리자용
 	@PatchMapping("admin/collectionConFirmed/{id}")
 	public String collectionConFirmed(@PathVariable(value = "id") int id) {
-		return alarmService.collectionAlarmUpdate(id, AlarmType.COLLECTION_CONFIRMED, null);
+		return alarmService.collectionAlarmUpdate(id, AlarmType.COLLECTION_CONFIRMED, null, null);
 	}
 
 	// 수거 확정 수거자 확인 완료
@@ -145,15 +145,15 @@ public class AlarmController {
 	// 수거자용
 	@PatchMapping("employee/fireInProgress/{id}")
 	public String fireInProgress(@PathVariable(value = "id") int id) {
-		return alarmService.fireAlarmUpdate(id, AlarmType.FIRE, "ROLE_ADMIN");
+		return alarmService.fireAlarmUpdate(id, AlarmType.FIRE, "ROLE_ADMIN", null);
 	}
 
 	// AlarmType 추가 후 다시 수정
 	// 화재 처리 완료
 	// 수거자용
 	@PatchMapping("employee/fireCompleted/{id}")
-	public String fireCompleted(@PathVariable(value = "id") int id) {
-		return alarmService.fireAlarmUpdate(id, AlarmType.FIRE, "ROLE_ADMIN");
+	public String fireCompleted(@PathVariable(value = "id") int id, @RequestParam("file") MultipartFile file) {
+		return alarmService.fireAlarmUpdate(id, AlarmType.FIRE, "ROLE_ADMIN", file);
 	}
 
 	// AlarmType 추가 후 다시 수정
@@ -161,7 +161,7 @@ public class AlarmController {
 	// 관리자용
 	@PatchMapping("admin/fireConFirmed/{id}")
 	public String fireConFirmed(@PathVariable(value = "id") int id) {
-		return alarmService.fireAlarmUpdate(id, AlarmType.FIRE, "ROLE_ADMIN");
+		return alarmService.fireAlarmUpdate(id, AlarmType.FIRE, "ROLE_ADMIN", null);
 	}
 
 	// 화재 처리 확정 수거자 확인 완료

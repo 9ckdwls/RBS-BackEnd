@@ -3,6 +3,7 @@ package com.example.rbs.dto;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,8 @@ public class BoxDTO {
 	private double longitude;
 	
     private double latitude;
+    
+    private MultipartFile file;
     
     public Point toPoint() {
         GeometryFactory geometryFactory = new GeometryFactory();
