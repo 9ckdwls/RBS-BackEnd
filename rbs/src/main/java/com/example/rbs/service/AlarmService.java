@@ -222,6 +222,8 @@ public class AlarmService {
 	}
 	
 	// 사진 파일 저장
+	// 수거함 설치/제거 완료, 수거 완료, 화재처리 완료
+	// box, box_log
 	public void saveFile(MultipartFile file) {
 		try {
 			// 저장할 디렉토리 경로
@@ -231,7 +233,6 @@ public class AlarmService {
 			File dir = new File(uploadDir);
 			if(!dir.exists()) {
 				dir.mkdirs();
-				System.out.println("디렉토리 생성");
 			}
 			
 			// 파일 저장
