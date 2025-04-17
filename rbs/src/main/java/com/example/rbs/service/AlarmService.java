@@ -182,8 +182,8 @@ public class AlarmService {
 				myAlarm.setType(alarmType); // 알람 타입 업데이트
 				myAlarm.setRole(role);
 
-				// AlarmType 추가 후 다시 수정
-				if (alarmType.equals("화재 처리 확정")) {
+				// 화재처리 확정
+				if (alarmType.equals(AlarmType.FIRE_CONFIRMED)) {
 					myAlarm.setTargetUserId(myAlarm.getUserId()); // 수거자가 최종 알람 확인
 					boxService.boxFireStatusUpdate(myAlarm.getBoxId());
 				}

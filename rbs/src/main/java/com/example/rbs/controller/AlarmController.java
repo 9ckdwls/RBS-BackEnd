@@ -140,28 +140,25 @@ public class AlarmController {
 		return alarmService.alarmResolved(id);
 	}
 
-	// AlarmType 추가 후 다시 수정
 	// 화재 처리 진행
 	// 수거자용
 	@PatchMapping("employee/fireInProgress/{id}")
 	public String fireInProgress(@PathVariable(value = "id") int id) {
-		return alarmService.fireAlarmUpdate(id, AlarmType.FIRE, "ROLE_ADMIN", null);
+		return alarmService.fireAlarmUpdate(id, AlarmType.FIRE_IN_PROGRESS, "ROLE_ADMIN", null);
 	}
 
-	// AlarmType 추가 후 다시 수정
 	// 화재 처리 완료
 	// 수거자용
 	@PatchMapping("employee/fireCompleted/{id}")
 	public String fireCompleted(@PathVariable(value = "id") int id, @RequestParam("file") MultipartFile file) {
-		return alarmService.fireAlarmUpdate(id, AlarmType.FIRE, "ROLE_ADMIN", file);
+		return alarmService.fireAlarmUpdate(id, AlarmType.FIRE_COMPLETED, "ROLE_ADMIN", file);
 	}
 
-	// AlarmType 추가 후 다시 수정
 	// 화재 처리 확정
 	// 관리자용
 	@PatchMapping("admin/fireConFirmed/{id}")
 	public String fireConFirmed(@PathVariable(value = "id") int id) {
-		return alarmService.fireAlarmUpdate(id, AlarmType.FIRE, "ROLE_ADMIN", null);
+		return alarmService.fireAlarmUpdate(id, AlarmType.FIRE_CONFIRMED, "ROLE_ADMIN", null);
 	}
 
 	// 화재 처리 확정 수거자 확인 완료
