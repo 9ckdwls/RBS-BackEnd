@@ -47,6 +47,9 @@ public class Alarm {
         COLLECTION_COMPLETED,		// 수거 완료
         COLLECTION_CONFIRMED,		// 수거 확정
 	    FIRE,                       // 화재 발생
+	    FIRE_IN_PROGRESS,			// 화재처리 진행
+	    FIRE_COMPLETED,				// 화재처리 완료
+	    FIRE_CONFIRMED,				// 화재처리 확정
 	    INSTALL_REQUEST,            // 설치 요청
 	    INSTALL_IN_PROGRESS,        // 설치 진행 중
 	    INSTALL_COMPLETED,          // 설치 완료
