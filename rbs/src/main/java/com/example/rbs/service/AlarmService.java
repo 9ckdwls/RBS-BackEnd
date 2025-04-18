@@ -118,7 +118,7 @@ public class AlarmService {
 					}
 					
 					// 사진 파일 저장
-					saveFile(file);
+					//saveFile(file);
 				}
 				alarmRepository.save(myAlarm);
 

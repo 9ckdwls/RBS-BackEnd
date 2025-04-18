@@ -23,25 +23,20 @@ public class SSEService {
 	// ConcurrentHashMap는 멀티스레드에서 안전하게 사용가능한 해시맵
 	private final Map<String, UserEmitter> emitters = new ConcurrentHashMap<>();
 
-	public SseEmitter subscribe() {
-		
+	public SseEmitter subscribe() {		
 		String userId = userService.getUserId();
 		String role = userService.getUserRole();
+		
+		System.out.println("접근 중인 유저: "+userId);
 		
 		if (emitters.containsKey(userId)) {
 	        emitters.get(userId).getEmitter().complete();
 	        emitters.remove(userId);
 	    }
 		
-		System.out.println("요청옴: 에미터 생성 전");
-		
 		SseEmitter emitter = new SseEmitter(0L);
-		
-		System.out.println("요청옴: 에미터 생성 중");
-		
         emitters.put(userId, new UserEmitter(emitter, role));
-        
-        System.out.println("요청옴: 에미터 생성 후");
+        System.out.println("구독 완료: " + userId);
         
         
 		return emitter;
@@ -52,15 +47,17 @@ public class SSEService {
 		
         String alarmTargetUserId = alarm.getTargetUserId();
         String alarmRole = alarm.getRole();
-		
+        
         emitters.forEach((userId, userEmitter) -> {
+        	System.out.println("--------------------------------");
+        	System.out.println("SSE 전송 확인 대상: " + userId);
             String userRole = userEmitter.getRole();
             
             // 해당 targetUserId 이거나 해당 role 이라면
             // ROLE_ALL이면 수거자와 관리자 모두에게
             if (userId.equals(alarmTargetUserId) || userRole.equals(alarmRole) || alarmRole.equals("ROLE_ALL")) {
                 try {
-                    System.out.println("알람 전송");
+                	System.out.println("알람 전송 대상: " + userId);
                     userEmitter.getEmitter().send(SseEmitter.event().name("alarm").data(alarm));
                 } catch (IOException e) {
                     emitters.remove(userId);
