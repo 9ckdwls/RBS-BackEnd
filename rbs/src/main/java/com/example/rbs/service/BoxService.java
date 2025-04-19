@@ -182,4 +182,12 @@ public class BoxService {
 		box.setStore3(0);
 		boxRepository.save(box);
 	}
+
+	// 사진 파일 저장
+	public void savefile(int boxId, String saveFile) {
+		Box box = findById(boxId);
+		box.setFileLocation(saveFile);
+		
+		boxRepository.save(box);
+	}
 }

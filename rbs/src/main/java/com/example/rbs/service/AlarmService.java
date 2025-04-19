@@ -104,21 +104,21 @@ public class AlarmService {
 				Alarm myAlarm = alarm.get();
 				myAlarm.setType(alarmType); // 어떤 알람인지
 				myAlarm.setRole(role); // 권한 설정
-				
+
 				// 설치/제거 완료는 setTargetUserId와 setUserId가 같음
 				if (!alarmType.equals(AlarmType.INSTALL_COMPLETED) && !alarmType.equals(AlarmType.REMOVE_COMPLETED)) {
 					myAlarm.setTargetUserId(myAlarm.getUserId());
 					myAlarm.setUserId(userService.getUserId());
 					
+					// 사진 파일 저장
+					boxService.savefile(myAlarm.getBoxId(), saveFile(file));
+
 					// 수거 완료만 좌표 최신화
 					if (alarmType.equals(AlarmType.INSTALL_COMPLETED)) {
 						boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()), boxDTO);
 					} else {
 						boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()));
 					}
-					
-					// 사진 파일 저장
-					//saveFile(file);
 				}
 				alarmRepository.save(myAlarm);
 
@@ -154,9 +154,9 @@ public class AlarmService {
 				myAlarm.setUserId(userService.getUserId());
 
 				alarmRepository.save(myAlarm);
-				
+
 				// 사진 파일 저장
-				if(!file.isEmpty()) {
+				if (!file.isEmpty()) {
 					saveFile(file);
 				}
 
@@ -191,9 +191,9 @@ public class AlarmService {
 				myAlarm.setUserId(userService.getUserId());
 
 				alarmRepository.save(myAlarm);
-				
+
 				// 사진 파일 저장
-				if(!file.isEmpty()) {
+				if (!file.isEmpty()) {
 					saveFile(file);
 				}
 
@@ -220,24 +220,29 @@ public class AlarmService {
 			return "Fail";
 		}
 	}
-	
+
 	// 사진 파일 저장
 	// 수거함 설치/제거 완료, 수거 완료, 화재처리 완료
 	// box, box_log
-	public void saveFile(MultipartFile file) {
+	public String saveFile(MultipartFile file) {
 		try {
 			// 저장할 디렉토리 경로
 			String uploadDir = "C:/uploads/images/";
-			
+
 			// 디렉토리가 없으면 생성
 			File dir = new File(uploadDir);
-			if(!dir.exists()) {
+			if (!dir.exists()) {
 				dir.mkdirs();
 			}
 			
+			String fileLocation = uploadDir + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+
 			// 파일 저장
-			File myFile = new File(uploadDir + UUID.randomUUID().toString() + "_" + file.getOriginalFilename());
+			File myFile = new File(fileLocation);
 			file.transferTo(myFile);
+			
+			return fileLocation;
+
 		} catch (Exception e) {
 			throw new RuntimeException("파일 저장 오류", e);
 		}
