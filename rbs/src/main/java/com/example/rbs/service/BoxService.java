@@ -9,6 +9,7 @@ import java.util.concurrent.CompletionException;
 import javax.management.RuntimeErrorException;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.example.rbs.dto.BoxDTO;
 import com.example.rbs.entity.Box;
@@ -174,20 +175,21 @@ public class BoxService {
 		boxRepository.save(box);
 	}
 
-	// 수거 완료
-	public void collectionConFirmed(int boxId) {
-		Box box = findById(boxId);
-		box.setStore1(0);
-		box.setStore2(0);
-		box.setStore3(0);
-		boxRepository.save(box);
-	}
-
 	// 사진 파일 저장
 	public void savefile(int boxId, String saveFile) {
 		Box box = findById(boxId);
-		box.setFileLocation(saveFile);
+		box.setFile(saveFile);
 		
+		boxRepository.save(box);
+	}
+
+	// 수거 완료
+	// 수거함 상태 업데이트
+	public void collectionCompleted(int boxId) {
+		Box box = findById(boxId);
+		box.setVolume1(0);
+		box.setVolume2(0);
+		box.setVolume3(0);
 		boxRepository.save(box);
 	}
 }

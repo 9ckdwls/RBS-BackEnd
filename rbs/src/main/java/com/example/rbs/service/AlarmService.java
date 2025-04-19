@@ -25,13 +25,15 @@ public class AlarmService {
 	private BoxService boxService;
 	private UserService userService;
 	private SSEService sseService;
+	private BoxLogService boxLogService;
 
 	public AlarmService(AlarmRepository alarmRepository, BoxService boxService, UserService userService,
-			SSEService sseService) {
+			SSEService sseService, BoxLogService boxLogService) {
 		this.alarmRepository = alarmRepository;
 		this.boxService = boxService;
 		this.userService = userService;
 		this.sseService = sseService;
+		this.boxLogService = boxLogService;
 	}
 
 	// 미해결된 알람 가져오기
@@ -145,20 +147,24 @@ public class AlarmService {
 				Alarm myAlarm = alarm.get();
 				myAlarm.setType(alarmType); // 알람 타입 업데이트
 				myAlarm.setRole(role); // 수거 진행과 완료는 관리자에게 관리자가 최종 확인 하면 null로
+				
+				// 수거자가 수거함 문열기 요청 후
+				// 수거 완료 후 사진과 함께 수거 완료 버튼 누르기
+				// 사진 저장
+				// 사진 경로 저장
+				// IOT 제어: 작성 필요
+				if(alarmType.equals(AlarmType.COLLECTION_COMPLETED)) { // 수거 완료라면
+					boxService.collectionCompleted(myAlarm.getBoxId());
+					boxLogService.collectionCompleted(myAlarm.getBoxId(), saveFile(file));
+				}
 
-				if (alarmType.equals(AlarmType.COLLECTION_CONFIRMED)) { // 수거 확정이라면
+				if(alarmType.equals(AlarmType.COLLECTION_CONFIRMED)) { // 수거 확정이라면
 					myAlarm.setTargetUserId(myAlarm.getUserId()); // 수거자가 최종 알람 확인
-					boxService.collectionConFirmed(myAlarm.getBoxId());
 				}
 
 				myAlarm.setUserId(userService.getUserId());
 
 				alarmRepository.save(myAlarm);
-
-				// 사진 파일 저장
-				if (!file.isEmpty()) {
-					saveFile(file);
-				}
 
 				// 알람 전송
 				sseService.sendAlarmToUser(myAlarm);
@@ -181,6 +187,13 @@ public class AlarmService {
 				Alarm myAlarm = alarm.get();
 				myAlarm.setType(alarmType); // 알람 타입 업데이트
 				myAlarm.setRole(role);
+				
+				// 화재처리 완료 시
+				// 사진 저장 후
+				// 사진 경로 "알람"에 저장
+				if(alarmType.equals(AlarmType.FIRE_COMPLETED)) {
+					myAlarm.setFile(saveFile(file));
+				}
 
 				// 화재처리 확정
 				if (alarmType.equals(AlarmType.FIRE_CONFIRMED)) {
@@ -223,7 +236,6 @@ public class AlarmService {
 
 	// 사진 파일 저장
 	// 수거함 설치/제거 완료, 수거 완료, 화재처리 완료
-	// box, box_log
 	public String saveFile(MultipartFile file) {
 		try {
 			// 저장할 디렉토리 경로
