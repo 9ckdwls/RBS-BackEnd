@@ -36,6 +36,8 @@ public class Alarm {
 	
 	private Date date;
 	
+	private String file;
+	
 	public enum AlarmStatus {
         UNRESOLVED, IN_PROGRESS, RESOLVED
     }
