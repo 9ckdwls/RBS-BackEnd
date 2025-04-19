@@ -56,7 +56,7 @@ public class Box {
 	
 	private int store3;
 	
-	private String fileLocation;
+	private String file;
 	
 	//반환되는 JSON 값을 문자열로 바꾸기
 	@JsonProperty("location")
