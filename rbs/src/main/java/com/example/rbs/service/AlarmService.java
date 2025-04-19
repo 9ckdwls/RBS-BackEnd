@@ -156,6 +156,7 @@ public class AlarmService {
 				if(alarmType.equals(AlarmType.COLLECTION_COMPLETED)) { // 수거 완료라면
 					boxService.collectionCompleted(myAlarm.getBoxId());
 					boxLogService.collectionCompleted(myAlarm.getBoxId(), saveFile(file));
+					boxService.boxControll("close", myAlarm.getBoxId(), 0);
 				}
 
 				if(alarmType.equals(AlarmType.COLLECTION_CONFIRMED)) { // 수거 확정이라면
@@ -175,6 +176,28 @@ public class AlarmService {
 			}
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			return "Fail";
+		}
+	}
+	
+	// 수거함 열기
+	public String boxOpen(int alarmId, int boxId) {
+		Optional<Alarm> alarm = alarmRepository.findById(alarmId);
+		if (alarm.isPresent()) {
+			Alarm myAlarm = alarm.get();
+			
+			// 내가 수거 예약했는지
+			if(myAlarm.getBoxId() == boxId & myAlarm.getResolved().equals(AlarmStatus.UNRESOLVED)
+					& myAlarm.getUserId().equals(userService.getUserId())
+					& myAlarm.getRole().equals("ROLE_ADMIN")
+					& myAlarm.getType().equals(AlarmType.COLLECTION_IN_PROGRESS)){
+				// IOT 제어
+				boxService.boxControll("open", boxId, 0);
+				return "Success";
+			} else {
+				return "내가 예약한 수거함이 아닙니다.";
+			}
+		} else {
 			return "Fail";
 		}
 	}

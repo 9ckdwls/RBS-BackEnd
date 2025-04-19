@@ -1,7 +1,6 @@
 package com.example.rbs.controller;
 
 import java.util.List;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -11,12 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.example.rbs.dto.BoxDTO;
 import com.example.rbs.entity.Alarm;
-import com.example.rbs.entity.Alarm.AlarmStatus;
 import com.example.rbs.entity.Alarm.AlarmType;
-import com.example.rbs.entity.Box.InstallStatus;
 import com.example.rbs.service.AlarmService;
 
 @RestController
@@ -118,7 +114,15 @@ public class AlarmController {
 	public String collectionInProgress(@PathVariable(value = "id") int id) {
 		return alarmService.collectionAlarmUpdate(id, AlarmType.COLLECTION_IN_PROGRESS, "ROLE_ADMIN", null);
 	}
-
+	
+	// 수거함 제어
+	// 수거자용
+	@GetMapping("employee/boxOpen/{alarmId}/{boxId}")
+	public String boxOpen(@PathVariable(value = "alarmId") int alarmId, 
+			@PathVariable(value = "boxId") int boxId) {
+		return alarmService.boxOpen(alarmId, boxId);
+	}
+	
 	// 수거 완료
 	// 수거자용
 	@PatchMapping("employee/collectionCompleted/{id}")

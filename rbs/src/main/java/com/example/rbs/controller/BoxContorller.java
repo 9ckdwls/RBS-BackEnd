@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.rbs.dto.IOTResponseDTO;
 import com.example.rbs.entity.Box;
 import com.example.rbs.service.BoxService;
 
@@ -47,18 +48,18 @@ public class BoxContorller {
 
 	// 수거함 문열기
 	// 테스트 불가 IOT 장비 연결 후 테스트
-	@GetMapping("admin/boxOpen/{role}/{id}/{number}")
-	public String boxOpen(@PathVariable(value = "role") String role, @PathVariable(value = "id") int id
-			, @PathVariable(value = "number") int number) {
-		return boxService.boxControll("open", role, id, number);
+	@GetMapping("admin/boxOpen/{boxId}/{number}")
+	public IOTResponseDTO boxOpen(@PathVariable(value = "id") int boxId,
+			@PathVariable(value = "number") int number) {
+		return boxService.boxControll("open", boxId, number);
 	}
 
 	// 수거함 문닫기
 	// 테스트 불가 IOT 장비 연결 후 테스트
-	@GetMapping("admin/boxClose/{role}/{id}/{number}")
-	public String boxClose(@PathVariable(value = "role") String role, @PathVariable(value = "id") int id
-			, @PathVariable(value = "number") int number) {
-		return boxService.boxControll("close", role, id, number);
+	@GetMapping("admin/boxClose/{boxId}/{number}")
+	public IOTResponseDTO boxClose(@PathVariable(value = "id") int boxId,
+			@PathVariable(value = "number") int number) {
+		return boxService.boxControll("close",boxId, number);
 	}
 
 }

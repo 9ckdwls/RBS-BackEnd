@@ -5,13 +5,15 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.TimeoutException;
 
 import javax.management.RuntimeErrorException;
-
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.example.rbs.dto.BoxDTO;
+import com.example.rbs.dto.IOTResponseDTO;
 import com.example.rbs.entity.Box;
 import com.example.rbs.entity.Box.FireStatus;
 import com.example.rbs.entity.Box.InstallStatus;
@@ -24,10 +26,12 @@ public class BoxService {
 
 	private final BoxRepository boxRepository;
 	private final WebClient.Builder webClientBuilder;
+	private final UserService userService;
 
-	public BoxService(BoxRepository boxRepository, WebClient.Builder webClientBuilder) {
+	public BoxService(BoxRepository boxRepository, WebClient.Builder webClientBuilder, UserService userService) {
 		this.boxRepository = boxRepository;
 		this.webClientBuilder = webClientBuilder;
+		this.userService = userService;
 	}
 
 	// 모든 수거함 조회
@@ -82,40 +86,35 @@ public class BoxService {
 	}
 
 	// 수거함 제어
-	public String boxControll(String controll, String role, int id, int number) {
-		Optional<Box> box = boxRepository.findById(id);
-		if (box.isPresent()) {
-			WebClient webClient = webClientBuilder.baseUrl("http://" + box.get().getIPAddress()).build();
-
-			String uri;
-			if (role.equals("user")) {
-				uri = "user" + controll + number; // user open or close
-			} else if (role.equals("employee")) {
-				uri = "employee" + controll + number; // admin open or close
-			} else {
-				return "권한이 존재하지 않습니다.";
-			}
-
-			Mono<String> responseMono = webClient.get().uri(uri).retrieve().bodyToMono(String.class)
-					.timeout(Duration.ofSeconds(60)) // 시간 초과 처리
-					.onErrorResume(e -> {
-						if (e instanceof java.net.SocketTimeoutException) {
-							return Mono.just("시간 초과로 인해 요청을 처리할 수 없습니다.");
-						} else if (e instanceof ConnectException) {
-							// 네트워크 연결 문제 처리
-							return Mono.just("네트워크 연결 실패: IoT 장비에 연결할 수 없습니다.");
-						} else {
-							return Mono.just("알 수 없는 오류");
-						}
-					});
-			try {
-				return responseMono.toFuture().join();
-			} catch (CompletionException e) {
-				return e.toString();
-			}
+	public IOTResponseDTO boxControll(String controll, int id, int number) {
+		Box box = findById(id);
+		String uri;
+		String role = userService.getUserRole();
+		
+		if (role.equals("employee")) {
+			uri = "employee" + controll + "0"; // employee open or close
+		} else if (role.equals("admin")) {
+			uri = "admin" + controll + number; // admin open or close
 		} else {
-			return "Fail";
+			return new IOTResponseDTO("NO_ROLE", "권한이 존재하지 않습니다.");
 		}
+		
+		WebClient webClient = webClientBuilder.baseUrl("http://" + box.getIPAddress()).build();
+		
+		return webClient.get().uri(uri).retrieve()
+				.onStatus(HttpStatusCode::is4xxClientError,
+						resp -> Mono.error(new RuntimeException("잘못된 요청")))
+		        .onStatus(HttpStatusCode::is5xxServerError,
+		        		resp -> Mono.error(new RuntimeException("서버 에러")))
+		        .bodyToMono(IOTResponseDTO.class)
+		        .timeout(Duration.ofSeconds(60))
+		        .onErrorResume(TimeoutException.class,
+		        		t -> Mono.just(new IOTResponseDTO("TIMEOUT", "시간 초과")))
+		        .onErrorResume(ConnectException.class,
+		        		t -> Mono.just(new IOTResponseDTO("CONNECTION_FAILED", "네트워크 연결 실패")))
+		        .onErrorResume(Exception.class,
+	                    t -> Mono.just(new IOTResponseDTO("UNKNOWN_ERROR", t.getMessage())))
+		        .block();
 	}
 
 	// boxId로 Box 찾기
