@@ -4,8 +4,12 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.rbs.dto.CloseBoxResponseDTO;
+import com.example.rbs.dto.IOTResponseDTO;
 import com.example.rbs.entity.Box;
 import com.example.rbs.service.BoxService;
 
@@ -38,16 +42,30 @@ public class BoxContorller {
 
 	// 수거함 문열기
 	// 테스트 불가 IOT 장비 연결 후 테스트
-	@GetMapping("boxOpen/{id}")
-	public String boxOpen(@PathVariable(value = "role") String role, @PathVariable(value = "id") int id) {
-		return boxService.boxControll("open", id);
+	@GetMapping("boxOpen/{boxId}/{number}")
+	public Object boxOpen(@PathVariable(value = "boxId") int boxId, 
+			@PathVariable(value = "number") int number) {
+		return boxService.boxControll("open", boxId, number);
 	}
 
 	// 수거함 문닫기
 	// 테스트 불가 IOT 장비 연결 후 테스트
-	@GetMapping("boxClose/{id}")
-	public String boxClose(@PathVariable(value = "role") String role, @PathVariable(value = "id") int id) {
-		return boxService.boxControll("close", id);
+	@GetMapping("boxClose/{boxId}/{number}")
+	public Object boxClose(@PathVariable(value = "boxId") int boxId,
+			@PathVariable(value = "number") int number) {
+		return boxService.boxControll("close", boxId, number);
+	}
+	
+	// IOT 장비와 테스를 위한 end포인트
+	@GetMapping("test")
+	public CloseBoxResponseDTO test() {
+		return boxService.test();
+	}
+	
+	// 사진 파일 저장 테스트
+	@PostMapping("test2")
+	public String test(@RequestBody String file) {
+		return boxService.test2(file);
 	}
 
 }
