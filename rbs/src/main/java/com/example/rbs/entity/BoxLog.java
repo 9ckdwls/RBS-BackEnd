@@ -25,9 +25,19 @@ public class BoxLog {
     private String userId;
     
     private Date date;
+    
+    private String type;
+    
+	private int value;
 	
-	private int type; // 수거 : 0 분리 : 1
+	private String status;
 	
-	private int value; // 일반사용자는 point, 수거자는 수익금
+	private String file_battery;
+	
+	private String file_discharged;
+	
+	private String file_not_discharged;
+	
+	private String collection_file;
 
 }
