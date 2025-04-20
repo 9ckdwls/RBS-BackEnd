@@ -9,7 +9,7 @@ import com.example.rbs.entity.User;
 public interface UserRepository extends JpaRepository<User, String>{
 	
 	// 해당 id 존재하는지
-	boolean existsByIdAndPhoneNumber(String id, String phoneNumber);
+	boolean existsByIdOrPhoneNumber(String id, String phoneNumber);
 	
 	// id로 User 찾기
 	Optional<User> findById(String id);
