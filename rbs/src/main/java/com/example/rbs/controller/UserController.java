@@ -103,12 +103,6 @@ public class UserController {
 		return userService.findUserByIdAndRole(id, "ROLE_EMPLOYEE");
 	}
 
-	// userId로 수거함 로그 검색
-	@GetMapping("admin/findBoxLogById/{userId}")
-	public List<BoxLog> findBoxLogById(@PathVariable(value = "userId") String userId) {
-		return userService.findByUserId(userId);
-	}
-
 	// 내정보 보기
 	@GetMapping("admin/MyInfo")
 	public User MyInfo() {

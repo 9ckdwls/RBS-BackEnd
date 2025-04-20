@@ -258,7 +258,7 @@ public class AlarmService {
 	}
 
 	// 사진 파일 저장
-	// 수거함 설치/제거 완료, 수거 완료, 화재처리 완료
+	// 수거함 설치/제거 완료, 분리/수거 완료, 화재처리 완료
 	public String saveFile(MultipartFile file) {
 		try {
 			// 저장할 디렉토리 경로

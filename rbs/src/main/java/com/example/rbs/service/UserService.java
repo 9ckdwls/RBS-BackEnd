@@ -21,12 +21,10 @@ public class UserService {
 
 	private final UserRepository userRepositroy;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
-	private final BoxLogService boxLogService;
 
-	public UserService(UserRepository userRepositroy, BCryptPasswordEncoder bCryptPasswordEncoder, BoxLogService boxLogService) {
+	public UserService(UserRepository userRepositroy, BCryptPasswordEncoder bCryptPasswordEncoder) {
 		this.userRepositroy = userRepositroy;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-		this.boxLogService = boxLogService; 
 	}
 
 	// 회원가입 메소드
@@ -97,11 +95,6 @@ public class UserService {
 			return user.get();
 		}
 		return null;
-	}
-
-	// userId로 수거함 로그 검색
-	public List<BoxLog> findByUserId(String userId) {
-		return boxLogService.findByUserId(userId);
 	}
 
 	// 내 비밀번호 확인

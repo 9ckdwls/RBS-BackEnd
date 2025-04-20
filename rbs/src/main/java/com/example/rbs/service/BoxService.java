@@ -4,13 +4,9 @@ import java.net.ConnectException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeoutException;
-
-import javax.management.RuntimeErrorException;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.example.rbs.dto.BoxDTO;
 import com.example.rbs.dto.IOTResponseDTO;

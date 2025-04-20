@@ -171,5 +171,7 @@ public class AlarmController {
 	public String fireEnd(@PathVariable(value = "id") int id) {
 		return alarmService.alarmResolved(id);
 	}
+	
+	
 
 }
