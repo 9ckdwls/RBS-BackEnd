@@ -29,20 +29,18 @@ public class UserService {
 
 	private final UserRepository userRepositroy;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
-	private final BoxLogRepository boxLogRepository;
 	private final DefaultMessageService messageService;
 	private final PhoneVerificationService phoneVerificationService;
 	
 	@Value("${sms.from-number}") String FROM;
 
 	public UserService(UserRepository userRepositroy, BCryptPasswordEncoder bCryptPasswordEncoder,
-			BoxLogRepository boxLogRepository, PhoneVerificationService phoneVerificationService,
+			PhoneVerificationService phoneVerificationService,
 			@Value("${sms.api-key}") String API_KEY,
 			@Value("${sms.api-secret-key}") String API_SECRET_KEY,
 			@Value("${sms.domain}") String DOMAIN) {
 		this.userRepositroy = userRepositroy;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-		this.boxLogRepository = boxLogRepository;
 		this.phoneVerificationService = phoneVerificationService;
 		this.messageService = NurigoApp.INSTANCE.initialize(API_KEY, API_SECRET_KEY, DOMAIN);
 	}
