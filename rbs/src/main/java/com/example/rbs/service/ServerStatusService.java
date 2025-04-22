@@ -13,8 +13,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Service
 public class ServerStatusService {
 
-	private DataSource dataSource;
-	private WebClient.Builder webClientBuilder;
+	private final DataSource dataSource;
+	private final WebClient.Builder webClientBuilder;
 
 	// 멀티스레드 환경에서 동시 접근을 지원하는 해시맵
 	private final ConcurrentHashMap<String, Long> lastHeartbeatUser = new ConcurrentHashMap<>();

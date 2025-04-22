@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.rbs.entity.Alarm;
 import com.example.rbs.entity.Alarm.AlarmStatus;
+import com.example.rbs.entity.Alarm.AlarmType;
 
 @Repository
 public interface AlarmRepository extends JpaRepository<Alarm, Integer> {
@@ -28,6 +29,10 @@ public interface AlarmRepository extends JpaRepository<Alarm, Integer> {
 	// 관리자가 볼 알람
 	// 권한이 ROLE_ADMIN or ROLE_ALL 이고 미해결된 알람
 	List<Alarm> findByResolvedAndRoleIn(AlarmStatus unresolved, List<String> roles);
+	
+	// 화재 관련 로그
+	@Query("SELECT a FROM Alarm a WHERE a.type IN ('FIRE', 'FIRE_IN_PROGRESS', 'FIRE_COMPLETED')")
+    List<Alarm> findFireLogs();
 
 
 }

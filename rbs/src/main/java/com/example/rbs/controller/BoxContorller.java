@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.rbs.dto.BoxWithImageDto;
 import com.example.rbs.dto.IOTResponseDTO;
 import com.example.rbs.entity.Box;
 import com.example.rbs.service.BoxService;
@@ -24,13 +25,13 @@ public class BoxContorller {
 
 	// 모든 수거함 조회
 	@GetMapping("admin/findAllBox")
-	public List<Box> findAllBox() {
+	public List<BoxWithImageDto> findAllBox() {
 		return boxService.findAllBox();
 	}
 
 	// 수거함 이름으로 검색
 	@GetMapping("admin/findBoxByName/{name}")
-	public Box findBoxByName(@PathVariable(value = "name") String name) {
+	public BoxWithImageDto findBoxByName(@PathVariable(value = "name") String name) {
 		return boxService.findBoxByName(name);
 	}
 

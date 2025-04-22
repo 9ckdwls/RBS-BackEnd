@@ -1,7 +1,10 @@
 package com.example.rbs.service;
 
+import java.io.IOException;
 import java.net.ConnectException;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeoutException;
@@ -9,6 +12,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.example.rbs.dto.BoxDTO;
+import com.example.rbs.dto.BoxWithImageDto;
 import com.example.rbs.dto.IOTResponseDTO;
 import com.example.rbs.entity.Box;
 import com.example.rbs.entity.Box.FireStatus;
@@ -23,27 +27,56 @@ public class BoxService {
 	private final BoxRepository boxRepository;
 	private final WebClient.Builder webClientBuilder;
 	private final UserService userService;
+	private final FileService fileService;
 
-	public BoxService(BoxRepository boxRepository, WebClient.Builder webClientBuilder, UserService userService) {
+	public BoxService(BoxRepository boxRepository, WebClient.Builder webClientBuilder, UserService userService,
+			FileService fileService) {
 		this.boxRepository = boxRepository;
 		this.webClientBuilder = webClientBuilder;
 		this.userService = userService;
+		this.fileService = fileService;
 	}
 
 	// 모든 수거함 조회
-	public List<Box> findAllBox() {
-		return boxRepository.findAll();
+	public List<BoxWithImageDto> findAllBox() {
+		List<Box> boxes = boxRepository.findAll();
+        List<BoxWithImageDto> result = new ArrayList<>();
+
+        for (Box box : boxes) {
+            BoxWithImageDto dto = new BoxWithImageDto();
+            dto.setBox(box);
+            dto.setImageBase64(encodeImage(box.getFile()));
+            result.add(dto);
+        }
+
+        return result;
 	}
 
 	// 수거함 이름으로 검색
-	public Box findBoxByName(String name) {
-		Optional<Box> box = boxRepository.findByName(name);
-		if (box.isPresent()) {
-			return box.get();
-		} else {
-			return null;
-		}
+	public BoxWithImageDto findBoxByName(String name) {
+		Optional<Box> optionalBox = boxRepository.findByName(name);
+
+        if (optionalBox.isPresent()) {
+            Box box = optionalBox.get();
+            BoxWithImageDto dto = new BoxWithImageDto();
+            dto.setBox(box);
+            dto.setImageBase64(encodeImage(box.getFile()));
+            return dto;
+        } else {
+            return null;
+        }
 	}
+	
+	// 사진 파일 경로를 Base64이미지로 변환
+	private String encodeImage(String filePath) {
+        if (filePath == null || filePath.isBlank()) return null;
+
+        try {
+        	return fileService.loadImageFromPath(filePath);
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
 	// 수거함 차단 및 해제
 	public String blockBox(int id) {
