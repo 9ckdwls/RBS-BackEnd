@@ -30,35 +30,33 @@ public class BoxContorller {
 	}
 
 	// 수거함 이름으로 검색
-	@GetMapping("admin/findBoxByName/{name}")
-	public BoxWithImageDto findBoxByName(@PathVariable(value = "name") String name) {
-		return boxService.findBoxByName(name);
+	@GetMapping("admin/findBoxByName/{boxName}")
+	public BoxWithImageDto findBoxByName(@PathVariable(value = "boxName") String boxName) {
+		return boxService.findBoxByName(boxName);
 	}
 
 	// 수거함 차단 및 해제
-	@PatchMapping("admin/blockBox/{id}")
-	public String blockBox(@PathVariable(value = "id") int id) {
-		return boxService.blockBox(id);
+	@PatchMapping("admin/blockBox/{boxId}")
+	public String blockBox(@PathVariable(value = "boxId") int boxId) {
+		return boxService.blockBox(boxId);
 	}
 
 	// 사용 중인 수거함 강제 차단
-	@PatchMapping("admin/superBlockBox/{id}")
-	public String superBlockBox(@PathVariable(value = "id") int id) {
-		return boxService.superBlockBox(id);
+	@PatchMapping("admin/superBlockBox/{boxId}")
+	public String superBlockBox(@PathVariable(value = "boxId") int boxId) {
+		return boxService.superBlockBox(boxId);
 	}
 
 	// 수거함 문열기
-	// 테스트 불가 IOT 장비 연결 후 테스트
 	@GetMapping("admin/boxOpen/{boxId}/{number}")
-	public IOTResponseDTO boxOpen(@PathVariable(value = "id") int boxId,
+	public IOTResponseDTO boxOpen(@PathVariable(value = "boxId") int boxId,
 			@PathVariable(value = "number") int number) {
 		return boxService.boxControll("open", boxId, number);
 	}
 
 	// 수거함 문닫기
-	// 테스트 불가 IOT 장비 연결 후 테스트
 	@GetMapping("admin/boxClose/{boxId}/{number}")
-	public IOTResponseDTO boxClose(@PathVariable(value = "id") int boxId,
+	public IOTResponseDTO boxClose(@PathVariable(value = "boxId") int boxId,
 			@PathVariable(value = "number") int number) {
 		return boxService.boxControll("close",boxId, number);
 	}

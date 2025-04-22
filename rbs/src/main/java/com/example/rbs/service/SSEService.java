@@ -27,7 +27,7 @@ public class SSEService {
 		String userId = userService.getUserId();
 		String role = userService.getUserRole();
 		
-		System.out.println("접근 중인 유저: "+userId);
+		System.out.println("접근 중인 유저: "+ userId);
 		
 		if (emitters.containsKey(userId)) {
 	        emitters.get(userId).getEmitter().complete();

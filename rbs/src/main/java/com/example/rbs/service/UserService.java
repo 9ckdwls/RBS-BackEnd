@@ -70,7 +70,7 @@ public class UserService {
 	}
 
 	// 전화번호 인증 요청
-	public SingleMessageSentResponse smsAuth(String to) {
+	public String smsAuth(String to) {
 		String verificationCode = phoneVerificationService.generateVerificationCode(to);
 		Message message = new Message();
 		// 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
@@ -79,10 +79,23 @@ public class UserService {
 		// 인증 코드 발급 필요
 		message.setText("인증코드: " + verificationCode);
 
-		SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
-		System.out.println(response);
-
-		return response;
+		try {
+			if (!isValidPhoneNumber(to)) {
+		        throw new IllegalArgumentException("phoneNumber is not valid");
+		    }
+	        messageService.sendOne(new SingleMessageSendingRequest(message));
+	        return "Success";
+	    } catch (IllegalArgumentException e) {
+	        return "phoneNuber is not valid: " + e.getMessage();
+	    } catch (Exception e) {
+	        // 다른 예외에 대한 일반적인 메시지 처리
+	        return "SMS error: " + e.getMessage();
+	    }
+	}
+	
+	// 전화번호 검증
+	private boolean isValidPhoneNumber(String phoneNumber) {
+	    return phoneNumber != null && phoneNumber.matches("^010\\d{8}$");
 	}
 
 	// 전화번호 인증 코드 검증
@@ -152,15 +165,15 @@ public class UserService {
 	}
 
 	// 관리자 비밀번호 바꾸기
-	public int updatePw(FindUserDto findUserDto) {
+	public String updatePw(FindUserDto findUserDto) {
 		Optional<User> user = userRepositroy.findById(getUserId());
 		if (user.isPresent()) {
 			User myuser = user.get();
 			myuser.setPw(bCryptPasswordEncoder.encode(findUserDto.getPw()));
 			userRepositroy.save(myuser);
-			return 1;
+			return "Success";
 		}
-		return 0;
+		return "Fail";
 	}
 
 	// 내 정보 확인

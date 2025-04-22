@@ -16,10 +16,10 @@ public class SSEController {
 		this.sseService = sseService;
 	}
 	
+	// 알람 구독하기
 	@GetMapping("/SSEsubscribe")
-	public SseEmitter subscribe(@RequestParam("token") String token) {
-		System.out.println("");
-		System.out.println(token);
+	public SseEmitter subscribe() {
+		System.out.println("구독 접근");
 		return sseService.subscribe();
 	}
 	

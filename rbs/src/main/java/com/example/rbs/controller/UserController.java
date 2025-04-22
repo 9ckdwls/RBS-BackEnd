@@ -31,15 +31,16 @@ public class UserController {
 	}
 
 	// 회원가입 요청
-	// Fail: 요청 다시 Success: 메인 페이지로 이동
+	// JoinDto : id, pw, name, phoneNuber, verificationCode
 	@PostMapping("join")
 	public String join(@RequestBody JoinDto joinDto) {
 		return userService.join(joinDto);
 	}
 
 	// 전화번호 인증 요청
+	// to: 전화번호
 	@PostMapping("/send-one/{to}")
-	public SingleMessageSentResponse sendOne(@PathVariable(value = "to") String to) {
+	public String sendOne(@PathVariable(value = "to") String to) {
 		return userService.smsAuth(to);
 	}
 
@@ -73,7 +74,7 @@ public class UserController {
 	}
 
 	// 사용자 id 찾기
-	// key: name key: phoneNumber
+	// FindUserDto: name, phoneNumber
 	@PostMapping("findId")
 	public String findId(@RequestBody FindUserDto findUserDto) {
 		User user = userService.findId(findUserDto);
@@ -85,7 +86,7 @@ public class UserController {
 	}
 
 	// 사용자 pw 찾기
-	// key: id key: name key: phoneNumber
+	// FindUserDto: id, name, phoneNumber
 	@PostMapping("findPw")
 	public String findPw(@RequestBody FindUserDto findUserDto) {
 		if (userService.findPw(findUserDto) == 1) {
@@ -102,15 +103,15 @@ public class UserController {
 	}
 
 	// id로 회원 검색하기
-	@GetMapping("admin/findUser/{id}")
-	public User findUserById(@PathVariable(value = "id") String id) {
-		return userService.findUserByIdAndRole(id, "ROLE_USER");
+	@GetMapping("admin/findUser/{useId}")
+	public User findUserById(@PathVariable(value = "useId") String useId) {
+		return userService.findUserByIdAndRole(useId, "ROLE_USER");
 	}
 
 	// id로 수거자 검색
-	@GetMapping("admin/findEmployee/{id}")
-	public User findEmployee(@PathVariable(value = "id") String id) {
-		return userService.findUserByIdAndRole(id, "ROLE_EMPLOYEE");
+	@GetMapping("admin/findEmployee/{useId}")
+	public User findEmployee(@PathVariable(value = "useId") String useId) {
+		return userService.findUserByIdAndRole(useId, "ROLE_EMPLOYEE");
 	}
 
 	// 내정보 보기
@@ -120,19 +121,17 @@ public class UserController {
 	}
 
 	// 내 비밀번호 확인
+	// FindUserDto: pw
 	@PostMapping("admin/checkPw")
 	public String checkPw(@RequestBody FindUserDto findUserDto) {
 		return userService.checkPw(findUserDto);
 	}
 
 	// 관리자 비밀번호 바꾸기
+	// FindUserDto: pw
 	@PatchMapping("admin/updatePw")
 	public String updatePw(@RequestBody FindUserDto findUserDto) {
-		if (userService.updatePw(findUserDto) == 1) {
-			return "Success";
-		} else {
-			return "Fail";
-		}
+		return userService.updatePw(findUserDto);
 	}
 
 	// 가입신청한 수거자 보기
@@ -154,6 +153,7 @@ public class UserController {
 	}
 
 	// 사용자 담당 구역 변경하기
+	// location(화성시, 아산시 등)
 	@PatchMapping("admin/changeLocation/{userId}/{location}")
 	public String changeLocation(@PathVariable(value = "userId") String userId,
 			@PathVariable(value = "location") String location) {

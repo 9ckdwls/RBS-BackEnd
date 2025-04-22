@@ -20,8 +20,8 @@ public class BoxLogItemsControll {
 	}
 
 	// 수거로그 아이디로 아이템 가져오기
-	@GetMapping("admin/getBoxLogItems/{id}")
-	public List<BoxLogItems> getBoxLogItems(@PathVariable(value = "id") int id) {
-		return boxLogItemsService.getBoxLogItems(id);
+	@GetMapping("admin/getBoxLogItems/{boxLogId}")
+	public List<BoxLogItems> getBoxLogItems(@PathVariable(value = "boxLogId") int boxLogId) {
+		return boxLogItemsService.getBoxLogItems(boxLogId);
 	}
 }
