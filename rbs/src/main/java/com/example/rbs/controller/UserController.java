@@ -54,10 +54,4 @@ public class UserController {
 	public User myInfo() {
 		return userService.myInfo();
 	}
-	
-	// 수거 및 분리 내역
-	@GetMapping("myBoxLog")
-	public List<BoxLog> myBoxLog() {
-		return userService.myBoxLog();
-	}
 }

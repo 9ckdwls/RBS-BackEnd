@@ -109,11 +109,6 @@ public class UserService {
 		}
 	}
 
-	// 수거 및 분리 내역
-	public List<BoxLog> myBoxLog() {
-		return boxLogRepository.findByUserId(getId());
-	}
-
 	// 전화번호 인증 요청
 	public SingleMessageSentResponse smsAuth(String to) {
 		String verificationCode = phoneVerificationService.generateVerificationCode(to);
