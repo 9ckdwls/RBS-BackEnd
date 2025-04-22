@@ -11,4 +11,5 @@ public class JoinDto {
 	private String pw;
 	private String name;
 	private String phoneNumber;
+	private String verificationCode;
 }

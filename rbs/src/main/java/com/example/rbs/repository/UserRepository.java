@@ -11,7 +11,7 @@ import com.example.rbs.entity.User;
 public interface UserRepository extends JpaRepository<User, String> {
 
 	// id가 존재하는지
-	boolean existsById(String id);
+	boolean existsByIdOrPhoneNumber(String id, String phoneNumber);
 
 	// id로 User 찾기
 	Optional<User> findById(String id);

@@ -10,6 +10,7 @@ import com.example.rbs.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Locked.Read;
+import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 public class UserController {
@@ -32,11 +34,19 @@ public class UserController {
 	// Fail: 요청 다시 Success: 메인 페이지로 이동
 	@PostMapping("join")
 	public String join(@RequestBody JoinDto joinDto) {
-		if (userService.join(joinDto).equals("Fail")) {
-			return "Fail";
-		} else {
-			return "Success";
-		}
+		return userService.join(joinDto);
+	}
+
+	// 전화번호 인증 요청
+	@PostMapping("/send-one/{to}")
+	public SingleMessageSentResponse sendOne(@PathVariable(value = "to") String to) {
+		return userService.smsAuth(to);
+	}
+
+	// 전화번호 인증 코드 검증
+	@PostMapping("/verify-code")
+	public String verifyCode(@RequestParam("phone") String phone, @RequestParam("code") String code) {
+		return userService.verifyCode(phone, code);
 	}
 
 	// 로그인 요청은 /login으로
@@ -142,10 +152,11 @@ public class UserController {
 	public String noJoin(@PathVariable(value = "userId") String userId) {
 		return userService.noJoin(userId);
 	}
-	
+
 	// 사용자 담당 구역 변경하기
 	@PatchMapping("admin/changeLocation/{userId}/{location}")
-	public String changeLocation(@PathVariable(value = "userId") String userId, @PathVariable(value = "location") String location) {
+	public String changeLocation(@PathVariable(value = "userId") String userId,
+			@PathVariable(value = "location") String location) {
 		return userService.changeLocation(userId, location);
 	}
 }
