@@ -20,6 +20,8 @@ public class OrderController {
 	}
 
 	// 장바구니에 상품 추가
+	// List<OrderDTO> : itemId, count
+	// List 이므로 여러 값을 보낼 수 있다.
 	@PostMapping("user/basketAdd")
 	public String basketAdd(@RequestBody List<OrderDTO> orderDTOList) {
 		return orderDetailsService.basketAdd(orderDTOList);
@@ -44,6 +46,8 @@ public class OrderController {
 	}
 
 	// 장바구니 상품 수량 조절 0이면 삭제
+	// List<OrderDTO> : itemId, count
+	// List 이므로 여러 값을 보낼 수 있다.
 	@PatchMapping("user/basketAdjust")
 	public String basketAdjust(@RequestBody List<OrderDTO> orderDTOList) {
 		return orderDetailsService.basketAdjust(orderDTOList);

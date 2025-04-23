@@ -31,14 +31,13 @@ public class UserService {
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final DefaultMessageService messageService;
 	private final PhoneVerificationService phoneVerificationService;
-	
-	@Value("${sms.from-number}") String FROM;
+
+	@Value("${sms.from-number}")
+	String FROM;
 
 	public UserService(UserRepository userRepositroy, BCryptPasswordEncoder bCryptPasswordEncoder,
-			PhoneVerificationService phoneVerificationService,
-			@Value("${sms.api-key}") String API_KEY,
-			@Value("${sms.api-secret-key}") String API_SECRET_KEY,
-			@Value("${sms.domain}") String DOMAIN) {
+			PhoneVerificationService phoneVerificationService, @Value("${sms.api-key}") String API_KEY,
+			@Value("${sms.api-secret-key}") String API_SECRET_KEY, @Value("${sms.domain}") String DOMAIN) {
 		this.userRepositroy = userRepositroy;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 		this.phoneVerificationService = phoneVerificationService;
@@ -47,13 +46,14 @@ public class UserService {
 
 	// 회원가입 또는 가입신청
 	public String join(JoinDTO joinDTO, String role) {
-		
+
 		// 전화번호 인증 코드 검증
-	    if (phoneVerificationService.verifyCode(joinDTO.getPhoneNumber(), joinDTO.getVerificationCode()).equals("Fail")) {
-	    	System.out.println("1");
-	        return "phoneAuth code is not valid";
-	    }
-	    	System.out.println("2");
+		if (phoneVerificationService.verifyCode(joinDTO.getPhoneNumber(), joinDTO.getVerificationCode())
+				.equals("Fail")) {
+			System.out.println("1");
+			return "phoneAuth code is not valid";
+		}
+		System.out.println("2");
 		if (userRepositroy.existsByIdOrPhoneNumber(joinDTO.getId(), joinDTO.getPhoneNumber())) {
 			return "Existing ID or phone number";
 		} else {
@@ -76,7 +76,7 @@ public class UserService {
 	public String joinUser(JoinDTO joinDTO) {
 		return join(joinDTO, "ROLE_USER");
 	}
-	
+
 	// 수거자 회원가입
 	public String joinEmployee(JoinDTO joinDTO) {
 		return join(joinDTO, "ROLE_EMPLOYEE_REQUEST");
@@ -108,19 +108,32 @@ public class UserService {
 	}
 
 	// 전화번호 인증 요청
-	public SingleMessageSentResponse smsAuth(String to) {
+	public String smsAuth(String to) {
 		String verificationCode = phoneVerificationService.generateVerificationCode(to);
 		Message message = new Message();
-        // 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
-        message.setFrom(FROM);
-        message.setTo(to);
-        // 인증 코드 발급 필요
-        message.setText("인증코드: " + verificationCode);
+		// 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
+		message.setFrom(FROM);
+		message.setTo(to);
+		// 인증 코드 발급 필요
+		message.setText("인증코드: " + verificationCode);
 
-        SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
-        System.out.println(response);
+		try {
+			if (!isValidPhoneNumber(to)) {
+				throw new IllegalArgumentException("phoneNumber is not valid");
+			}
+			messageService.sendOne(new SingleMessageSendingRequest(message));
+			return "Success";
+		} catch (IllegalArgumentException e) {
+			return "phoneNuber is not valid: " + e.getMessage();
+		} catch (Exception e) {
+			// 다른 예외에 대한 일반적인 메시지 처리
+			return "SMS error: " + e.getMessage();
+		}
+	}
 
-        return response;
+	// 전화번호 검증
+	private boolean isValidPhoneNumber(String phoneNumber) {
+		return phoneNumber != null && phoneNumber.matches("^010\\d{8}$");
 	}
 
 	// 전화번호 인증 코드 검증
