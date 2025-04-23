@@ -85,7 +85,7 @@ public class UserController {
 		}
 	}
 
-	// 사용자 pw 찾기
+	// 사용자 pw 수정
 	// FindUserDto: id, name, phoneNumber
 	@PostMapping("findPw")
 	public String findPw(@RequestBody FindUserDto findUserDto) {
@@ -152,7 +152,7 @@ public class UserController {
 		return userService.noJoin(userId);
 	}
 
-	// 사용자 담당 구역 변경하기
+	// 수거자 담당 구역 변경하기
 	// location(화성시, 아산시 등)
 	@PatchMapping("admin/changeLocation/{userId}/{location}")
 	public String changeLocation(@PathVariable(value = "userId") String userId,
