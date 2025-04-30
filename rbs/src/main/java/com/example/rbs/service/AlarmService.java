@@ -118,12 +118,13 @@ public class AlarmService {
 					myAlarm.setTargetUserId(myAlarm.getUserId());
 					myAlarm.setUserId(userService.getUserId());
 					
-					// 사진 파일 저장
-					boxService.savefile(myAlarm.getBoxId(), saveFile(file));
+					
 
-					// 수거 완료만 좌표 최신화
+					// 설치 완료만 좌표 최신화
 					if (alarmType.equals(AlarmType.INSTALL_COMPLETED)) {
 						boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()), boxDTO);
+						// 사진 파일 저장
+						boxService.savefile(myAlarm.getBoxId(), saveFile(file));
 					} else {
 						boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()));
 					}
