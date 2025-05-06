@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.example.rbs.dto.BoxWithImageDto;
 import com.example.rbs.dto.CloseBoxResponseDTO;
 import com.example.rbs.dto.IOTResponseDTO;
 import com.example.rbs.entity.Box;

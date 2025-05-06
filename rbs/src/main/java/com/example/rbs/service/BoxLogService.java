@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.rbs.dto.BoxLogWithImageDto;
 import com.example.rbs.entity.BoxLog;
 import com.example.rbs.repository.BoxLogRepository;
 

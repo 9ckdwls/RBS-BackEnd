@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.rbs.dto.AlarmWithImageDto;
 import com.example.rbs.entity.Alarm;
 import com.example.rbs.entity.Alarm.AlarmStatus;
 import com.example.rbs.repository.AlarmRepository;
