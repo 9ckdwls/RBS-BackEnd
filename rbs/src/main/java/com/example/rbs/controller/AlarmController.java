@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.rbs.dto.AlarmWithImageDto;
 import com.example.rbs.dto.BoxDTO;
 import com.example.rbs.entity.Alarm;
 import com.example.rbs.entity.Alarm.AlarmType;
@@ -176,7 +175,7 @@ public class AlarmController {
 	// 화재 로그 보기
 	// 관리자용
 	@GetMapping("admin/fireLog")
-	public List<AlarmWithImageDto> fireLog() {
+	public List<Alarm> fireLog() {
 		return alarmService.fireLog();
 	}
 

@@ -8,8 +8,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.rbs.dto.AlarmWithImageDto;
-import com.example.rbs.dto.BoxLogWithImageDto;
 import com.example.rbs.entity.Alarm;
 import com.example.rbs.entity.BoxLog;
 import com.example.rbs.repository.BoxLogRepository;
@@ -20,66 +18,22 @@ public class BoxLogService {
 	private final BoxLogRepository boxLogRepository;
 	private final UserService userService;
 	private final BoxLogItemsService boxLogItemsService;
-	private final FileService fileService;
 
-	public BoxLogService(BoxLogRepository boxLogRepository, UserService userService, BoxLogItemsService boxLogItemsService,
-			FileService fileService) {
+	public BoxLogService(BoxLogRepository boxLogRepository, UserService userService, BoxLogItemsService boxLogItemsService) {
 		this.boxLogRepository = boxLogRepository;
 		this.userService = userService;
 		this.boxLogItemsService = boxLogItemsService;
-		this.fileService = fileService;
 	}
 
 	// 모든 수거함로그 조회
-	public List<BoxLogWithImageDto> getBoxLog() {
-		List<BoxLog> boxLogs = boxLogRepository.findAll();
-		List<BoxLogWithImageDto> result = new ArrayList<>();
-		
-		for (BoxLog boxLog : boxLogs) {
-			BoxLogWithImageDto dto = new BoxLogWithImageDto();
-            dto.setBoxLog(boxLog);
-            
-            dto.setImageBattery(encodeImage(boxLog.getFile_battery()));
-            dto.setImageDischarged(encodeImage(boxLog.getFile_discharged()));
-            dto.setImageNotDischarged(encodeImage(boxLog.getFile_not_discharged()));
-            dto.setImageCollection(encodeImage(boxLog.getCollection_file()));
-
-            result.add(dto);
-        }
-		
-        return result;
+	public List<BoxLog> getBoxLog() {
+		return boxLogRepository.findAll();
 	}
 
 	// userId로 수거함로그 검색
-	public List<BoxLogWithImageDto> findByUserId(String userId) {
-		List<BoxLog> boxLogs = boxLogRepository.findByUserId(userId);
-		List<BoxLogWithImageDto> result = new ArrayList<>();
-
-		for (BoxLog boxLog : boxLogs) {
-			BoxLogWithImageDto dto = new BoxLogWithImageDto();
-            dto.setBoxLog(boxLog);
-            
-            dto.setImageBattery(encodeImage(boxLog.getFile_battery()));
-            dto.setImageDischarged(encodeImage(boxLog.getFile_discharged()));
-            dto.setImageNotDischarged(encodeImage(boxLog.getFile_not_discharged()));
-            dto.setImageCollection(encodeImage(boxLog.getCollection_file()));
-
-            result.add(dto);
-        }
-		
-        return result;
+	public List<BoxLog> findByUserId(String userId) {
+		return boxLogRepository.findByUserId(userId);
 	}
-	
-	// 사진 파일 경로를 Base64이미지로 변환
-	private String encodeImage(String filePath) {
-        if (filePath == null || filePath.isBlank()) return null;
-
-        try {
-        	return fileService.loadImageFromPath(filePath);
-        } catch (IOException e) {
-            return null;
-        }
-    }
 
 	// 수거 완료
 	// 수거로그 작성

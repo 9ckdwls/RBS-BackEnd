@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.rbs.dto.AlarmWithImageDto;
 import com.example.rbs.dto.BoxDTO;
 import com.example.rbs.entity.Alarm;
 import com.example.rbs.entity.Alarm.AlarmStatus;
@@ -30,16 +29,14 @@ public class AlarmService {
 	private final UserService userService;
 	private final SSEService sseService;
 	private final BoxLogService boxLogService;
-	private final FileService fileService;
 
 	public AlarmService(AlarmRepository alarmRepository, BoxService boxService, UserService userService,
-			SSEService sseService, BoxLogService boxLogService, FileService fileService) {
+			SSEService sseService, BoxLogService boxLogService) {
 		this.alarmRepository = alarmRepository;
 		this.boxService = boxService;
 		this.userService = userService;
 		this.sseService = sseService;
 		this.boxLogService = boxLogService;
-		this.fileService = fileService;
 	}
 
 	// 미해결된 알람 가져오기
@@ -291,24 +288,8 @@ public class AlarmService {
 	}
 	
 	// 화재 로그 보기
-	public List<AlarmWithImageDto> fireLog() {
-		List<Alarm> alarms = alarmRepository.findFireLogs();
-		List<AlarmWithImageDto> result = new ArrayList<>();
-		for (Alarm alarm : alarms) {
-            AlarmWithImageDto dto = new AlarmWithImageDto();
-            dto.setAlarm(alarm);
-
-            try {
-            	String base64Image = fileService.loadImageFromPath(alarm.getFile());
-                dto.setImageBase64(base64Image);
-            } catch (IOException e) {
-                dto.setImageBase64(null); // 파일 없으면 null 처리
-            }
-
-            result.add(dto);
-        }
-
-        return result;
+	public List<Alarm> fireLog() {
+		return alarmRepository.findFireLogs();
 	}
 
 }
