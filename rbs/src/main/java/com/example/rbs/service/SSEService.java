@@ -13,58 +13,65 @@ import com.example.rbs.model.UserEmitter;
 
 @Service
 public class SSEService {
-	
+
 	private final UserService userService;
-	
+
 	public SSEService(UserService userService) {
 		this.userService = userService;
 	}
-	
+
 	// ConcurrentHashMap는 멀티스레드에서 안전하게 사용가능한 해시맵
 	private final Map<String, UserEmitter> emitters = new ConcurrentHashMap<>();
 
-	public SseEmitter subscribe() {		
+	public SseEmitter subscribe() {
 		String userId = userService.getUserId();
 		String role = userService.getUserRole();
-		
-		System.out.println("접근 중인 유저: "+ userId);
-		
+
+		System.out.println("접근 중인 유저: " + userId);
+
 		if (emitters.containsKey(userId)) {
-	        emitters.get(userId).getEmitter().complete();
-	        emitters.remove(userId);
-	    }
-		
+			emitters.get(userId).getEmitter().complete();
+			emitters.remove(userId);
+		}
+
 		SseEmitter emitter = new SseEmitter(0L);
-        emitters.put(userId, new UserEmitter(emitter, role));
-        System.out.println("구독 완료: " + userId);
-        
-        
+		emitters.put(userId, new UserEmitter(emitter, role));
+		System.out.println("구독 완료: " + userId);
+
+		SseEmitter.SseEventBuilder initEvent = SseEmitter.event().name("ok").data("SSE 연결 성공 후 최초 응답");
+		try {
+			emitter.send(initEvent);
+		} catch (IOException e) {
+			// 실패 시 제거
+			emitters.remove(userId);
+		}
+
 		return emitter;
 	}
-	
-	// 알람 전송
-	public void sendAlarmToUser (Alarm alarm) {
-		
-        String alarmTargetUserId = alarm.getTargetUserId();
-        String alarmRole = alarm.getRole();
-        
-        emitters.forEach((userId, userEmitter) -> {
-        	System.out.println("--------------------------------");
-        	System.out.println("SSE 전송 확인 대상: " + userId);
-            String userRole = userEmitter.getRole();
-            
-            // 해당 targetUserId 이거나 해당 role 이라면
-            // ROLE_ALL이면 수거자와 관리자 모두에게
-            if (userId.equals(alarmTargetUserId) || userRole.equals(alarmRole) || alarmRole.equals("ROLE_ALL")) {
-                try {
-                	System.out.println("알람 전송 대상: " + userId);
-                    userEmitter.getEmitter().send(SseEmitter.event().name("alarm").data(alarm));
-                } catch (IOException e) {
-                    emitters.remove(userId);
-                }
-            }
-        });
 
-    }
+	// 알람 전송
+	public void sendAlarmToUser(Alarm alarm) {
+
+		String alarmTargetUserId = alarm.getTargetUserId();
+		String alarmRole = alarm.getRole();
+
+		emitters.forEach((userId, userEmitter) -> {
+			System.out.println("--------------------------------");
+			System.out.println("SSE 전송 확인 대상: " + userId);
+			String userRole = userEmitter.getRole();
+
+			// 해당 targetUserId 이거나 해당 role 이라면
+			// ROLE_ALL이면 수거자와 관리자 모두에게
+			if (userId.equals(alarmTargetUserId) || userRole.equals(alarmRole) || alarmRole.equals("ROLE_ALL")) {
+				try {
+					System.out.println("알람 전송 대상: " + userId);
+					userEmitter.getEmitter().send(SseEmitter.event().name("alarm").data(alarm));
+				} catch (IOException e) {
+					emitters.remove(userId);
+				}
+			}
+		});
+
+	}
 
 }
