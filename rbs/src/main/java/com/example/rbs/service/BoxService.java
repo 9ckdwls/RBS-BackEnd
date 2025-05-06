@@ -35,74 +35,41 @@ public class BoxService {
 	private final BoxRepository boxRepository;
 	private final WebClient.Builder webClientBuilder;
 	private final UserService userService;
-	private final FileService fileService;
 
-	public BoxService(BoxRepository boxRepository, WebClient.Builder webClientBuilder, UserService userService,
-			FileService fileService) {
+	public BoxService(BoxRepository boxRepository, WebClient.Builder webClientBuilder, UserService userService) {
 		this.boxRepository = boxRepository;
 		this.webClientBuilder = webClientBuilder;
 		this.userService = userService;
-		this.fileService = fileService;
 	}
 
 	// 모든 수거함 조회
-	public List<BoxWithImageDto> findAllBox() {
-		List<Box> boxes = boxRepository.findAll();
-		List<BoxWithImageDto> result = new ArrayList<>();
-
-        for (Box box : boxes) {
-            BoxWithImageDto dto = new BoxWithImageDto();
-            dto.setBox(box);
-            dto.setImageBase64(encodeImage(box.getFile()));
-            result.add(dto);
-        }
-
-        return result;
+	public List<Box> findAllBox() {
+		return boxRepository.findAll();
 	}
 
 	// 수거함 id로 검색
-	public BoxWithImageDto findBoxById(int id) {
+	public Box findBoxById(int id) {
 		Optional<Box> optionalBox = boxRepository.findById(id);
 		if (optionalBox.isPresent()) {
-			Box box = optionalBox.get();
-			BoxWithImageDto dto = new BoxWithImageDto();
-            dto.setBox(box);
-            dto.setImageBase64(encodeImage(box.getFile()));
-            return dto;
+			return optionalBox.get();
 		} else {
 			return null;
 		}
 	}
 
 	// 수거함 이름으로 검색
-	public BoxWithImageDto findBoxByName(String name) {
+	public Box findBoxByName(String name) {
 		Optional<Box> optionalBox  = boxRepository.findByName(name);
 		if (optionalBox.isPresent()) {
-			Box box = optionalBox.get();
-			BoxWithImageDto dto = new BoxWithImageDto();
-            dto.setBox(box);
-            dto.setImageBase64(encodeImage(box.getFile()));
-            return dto;
+			return optionalBox.get();
 		} else {
-			return null;
-		}
-	}
-
-	// 사진 파일 경로를 Base64이미지로 변환
-	private String encodeImage(String filePath) {
-		if (filePath == null || filePath.isBlank())
-			return null;
-
-		try {
-			return fileService.loadImageFromPath(filePath);
-		} catch (IOException e) {
 			return null;
 		}
 	}
 
 	// 수거함 제어
 	public Object boxControll(String controll, int boxId, int number) {
-		Box box = findBoxById(boxId).getBox();
+		Box box = findBoxById(boxId);
 		String uri;
 		String role = userService.getRole();
 

@@ -20,7 +20,7 @@ public class BoxLogController {
 
 	// 수거 및 분리 내역
 	@GetMapping("myBoxLog")
-	public List<BoxLogWithImageDto> myBoxLog() {
+	public List<BoxLog> myBoxLog() {
 		return boxLogService.myBoxLog();
 	}
 }

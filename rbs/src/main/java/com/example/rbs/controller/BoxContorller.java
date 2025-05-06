@@ -24,19 +24,19 @@ public class BoxContorller {
 
 	// 모든 수거함 조회
 	@GetMapping("findAllBox")
-	public List<BoxWithImageDto> findAllBox() {
+	public List<Box> findAllBox() {
 		return boxService.findAllBox();
 	}
 	
 	// 수거함 id로 검색
 	@GetMapping("findBoxById/{id}")
-	public BoxWithImageDto findBoxById(@PathVariable(value = "id") int id) {
+	public Box findBoxById(@PathVariable(value = "id") int id) {
 		return boxService.findBoxById(id);
 	}
 
 	// 수거함 이름으로 검색
 	@GetMapping("findBoxByName/{name}")
-	public BoxWithImageDto findBoxByName(@PathVariable(value = "name") String name) {
+	public Box findBoxByName(@PathVariable(value = "name") String name) {
 		return boxService.findBoxByName(name);
 	}
 
