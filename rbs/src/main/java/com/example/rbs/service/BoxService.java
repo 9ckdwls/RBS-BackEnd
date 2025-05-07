@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeoutException;
 
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -75,9 +77,13 @@ public class BoxService {
 		uri = controll + number;
 
 		WebClient webClient = webClientBuilder.baseUrl("http://" + box.getIPAddress()).build();
-
-		if (controll.equals("open")) {
-			IOTResponseDTO response = webClient.get().uri(uri).retrieve().bodyToMono(IOTResponseDTO.class)
+		
+		if (controll.equals("boxOpen")) {
+			IOTResponseDTO response = webClient
+					.post()
+					.uri(uri)
+					.retrieve()
+					.bodyToMono(IOTResponseDTO.class)
 					.timeout(Duration.ofSeconds(60))
 					.onErrorResume(TimeoutException.class, t -> Mono.just(new IOTResponseDTO("TIMEOUT", "시간 초과")))
 					.onErrorResume(ConnectException.class,
@@ -85,9 +91,13 @@ public class BoxService {
 					.block();
 
 			return response;
-		} else if (controll.equals("close")) {
+		} else if (controll.equals("boxClose")) {
 			// 문 닫기 요청 → 사진 및 수거 로그도 포함된 응답 받기
-			CloseBoxResponseDTO response = webClient.get().uri(uri).retrieve().bodyToMono(CloseBoxResponseDTO.class)
+			CloseBoxResponseDTO response = webClient
+					.post()
+					.uri(uri)
+					.retrieve()
+					.bodyToMono(CloseBoxResponseDTO.class)
 					.timeout(Duration.ofSeconds(60))
 					.onErrorResume(TimeoutException.class,
 							t -> Mono.just(new CloseBoxResponseDTO("TIMEOUT", "시간 초과", null)))

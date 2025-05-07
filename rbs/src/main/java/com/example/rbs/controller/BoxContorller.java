@@ -44,7 +44,9 @@ public class BoxContorller {
 	@GetMapping("boxOpen/{boxId}/{number}")
 	public Object boxOpen(@PathVariable(value = "boxId") int boxId, 
 			@PathVariable(value = "number") int number) {
-		return boxService.boxControll("open", boxId, number);
+		Object response = boxService.boxControll("boxOpen", boxId, number);
+		System.out.println("IOT 문열기 후 응답" + response);
+		return response;
 	}
 
 	// 수거함 문닫기
@@ -52,7 +54,8 @@ public class BoxContorller {
 	@GetMapping("boxClose/{boxId}/{number}")
 	public Object boxClose(@PathVariable(value = "boxId") int boxId,
 			@PathVariable(value = "number") int number) {
-		return boxService.boxControll("close", boxId, number);
+		Object response = boxService.boxControll("boxClose", boxId, number);
+		return response;
 	}
 	
 	// IOT 장비와 테스를 위한 end포인트
