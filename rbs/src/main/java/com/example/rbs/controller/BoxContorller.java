@@ -47,16 +47,16 @@ public class BoxContorller {
 
 	// 수거함 문열기
 	@GetMapping("admin/boxOpen/{boxId}/{number}")
-	public IOTResponseDTO boxOpen(@PathVariable(value = "boxId") int boxId,
+	public Object boxOpen(@PathVariable(value = "boxId") int boxId,
 			@PathVariable(value = "number") int number) {
-		return boxService.boxControll("open", boxId, number);
+		return boxService.boxControll("boxOpen", boxId, number);
 	}
 
 	// 수거함 문닫기
 	@GetMapping("admin/boxClose/{boxId}/{number}")
-	public IOTResponseDTO boxClose(@PathVariable(value = "boxId") int boxId,
+	public Object boxClose(@PathVariable(value = "boxId") int boxId,
 			@PathVariable(value = "number") int number) {
-		return boxService.boxControll("close",boxId, number);
+		return boxService.boxControll("boxClose",boxId, number);
 	}
 
 }

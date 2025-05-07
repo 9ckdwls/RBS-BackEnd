@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.example.rbs.dto.BoxDTO;
+import com.example.rbs.dto.CloseBoxResponseDTO;
 import com.example.rbs.dto.IOTResponseDTO;
 import com.example.rbs.entity.Box;
 import com.example.rbs.entity.Box.FireStatus;
@@ -42,11 +43,11 @@ public class BoxService {
 	public Box findBoxByName(String name) {
 		Optional<Box> optionalBox = boxRepository.findByName(name);
 
-        if (optionalBox.isPresent()) {
-            return optionalBox.get();
-        } else {
-            return null;
-        }
+		if (optionalBox.isPresent()) {
+			return optionalBox.get();
+		} else {
+			return null;
+		}
 	}
 
 	// 수거함 차단 및 해제
@@ -86,35 +87,52 @@ public class BoxService {
 	}
 
 	// 수거함 제어
-	public IOTResponseDTO boxControll(String controll, int id, int number) {
+	public Object boxControll(String controll, int id, int number) {
 		Box box = findById(id);
 		String uri;
 		String role = userService.getUserRole();
-		
-		if (role.equals("employee")) {
-			uri = "employee" + controll + "0"; // employee open or close
-		} else if (role.equals("admin")) {
-			uri = "admin" + controll + number; // admin open or close
-		} else {
-			return new IOTResponseDTO("NO_ROLE", "권한이 존재하지 않습니다.");
-		}
-		
+
+		uri = controll + number;
+
 		WebClient webClient = webClientBuilder.baseUrl("http://" + box.getIPAddress()).build();
-		
-		return webClient.get().uri(uri).retrieve()
-				.onStatus(HttpStatusCode::is4xxClientError,
-						resp -> Mono.error(new RuntimeException("잘못된 요청")))
-		        .onStatus(HttpStatusCode::is5xxServerError,
-		        		resp -> Mono.error(new RuntimeException("서버 에러")))
-		        .bodyToMono(IOTResponseDTO.class)
-		        .timeout(Duration.ofSeconds(60))
-		        .onErrorResume(TimeoutException.class,
-		        		t -> Mono.just(new IOTResponseDTO("TIMEOUT", "시간 초과")))
-		        .onErrorResume(ConnectException.class,
-		        		t -> Mono.just(new IOTResponseDTO("CONNECTION_FAILED", "네트워크 연결 실패")))
-		        .onErrorResume(Exception.class,
-	                    t -> Mono.just(new IOTResponseDTO("UNKNOWN_ERROR", t.getMessage())))
-		        .block();
+
+		if (controll.equals("boxOpen")) {
+			IOTResponseDTO response = webClient
+					.post()
+					.uri(uri)
+					.retrieve()
+					.bodyToMono(IOTResponseDTO.class)
+					.timeout(Duration.ofSeconds(60))
+					.onErrorResume(TimeoutException.class, t -> Mono.just(new IOTResponseDTO("TIMEOUT", "시간 초과")))
+					.onErrorResume(ConnectException.class,
+							t -> Mono.just(new IOTResponseDTO("CONNECTION_FAILED", "네트워크 연결 실패")))
+					.block();
+
+			return response;
+		} else if (controll.equals("boxClose")) {
+			// 문 닫기 요청 → 사진 및 수거 로그도 포함된 응답 받기
+			CloseBoxResponseDTO response = webClient
+					.post()
+					.uri(uri)
+					.retrieve()
+					.bodyToMono(CloseBoxResponseDTO.class)
+					.timeout(Duration.ofSeconds(60))
+					.onErrorResume(TimeoutException.class,
+							t -> Mono.just(new CloseBoxResponseDTO("TIMEOUT", "시간 초과", null)))
+					.onErrorResume(ConnectException.class,
+							t -> Mono.just(new CloseBoxResponseDTO("CONNECTION_FAILED", "네트워크 연결 실패", null)))
+					.block();
+
+			if (response.getStatus().equals("SUCCESS")) {
+				// 사진 저장
+				// 수거로그 아이템 저장
+				return response;
+			} else {
+				return response;
+			}
+		} else {
+			return "Fail";
+		}
 	}
 
 	// boxId로 Box 찾기
@@ -178,7 +196,7 @@ public class BoxService {
 	public void savefile(int boxId, String saveFile) {
 		Box box = findById(boxId);
 		box.setFile(saveFile);
-		
+
 		boxRepository.save(box);
 	}
 
