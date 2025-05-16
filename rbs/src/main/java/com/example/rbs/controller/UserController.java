@@ -154,9 +154,10 @@ public class UserController {
 
 	// 수거자 담당 구역 변경하기
 	// location(화성시, 아산시 등)
-	@PatchMapping("admin/changeLocation/{userId}/{location}")
+	@PatchMapping("admin/changeLocation/{userId}/{location1}/{location2}")
 	public String changeLocation(@PathVariable(value = "userId") String userId,
-			@PathVariable(value = "location") String location) {
-		return userService.changeLocation(userId, location);
+			@PathVariable(value = "location1") String location1,
+			@PathVariable(value = "location2") String location2) {
+		return userService.changeLocation(userId, location1, location2);
 	}
 }

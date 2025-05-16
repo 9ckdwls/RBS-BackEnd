@@ -216,11 +216,12 @@ public class UserService {
 	}
 
 	// 사용자 담당 구역 변경하기
-	public String changeLocation(String userId, String location) {
+	public String changeLocation(String userId, String location1, String location2) {
 		Optional<User> user = userRepositroy.findById(userId);
 		if (user.isPresent()) {
 			User myUser = user.get();
-			myUser.setLocation(location);
+			myUser.setLocation1(location1);
+			myUser.setLocation2(location2);
 			userRepositroy.save(myUser);
 			return "Success";
 		}
