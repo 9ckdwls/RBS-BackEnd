@@ -16,7 +16,8 @@ public class User {
 	private String id;
 	private String pw;
 	
-	private String location;
+	private String location1;
+	private String location2;
 	
 	private String name;
 	
