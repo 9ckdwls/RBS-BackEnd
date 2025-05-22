@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class IOTResponseDTO {
 	private String status;
-    private String message;
     
-    public IOTResponseDTO(String status, String message) {
+    public IOTResponseDTO(String status) {
         this.status = status;
-        this.message = message;
     }
 }

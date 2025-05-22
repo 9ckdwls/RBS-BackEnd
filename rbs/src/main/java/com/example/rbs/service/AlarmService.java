@@ -162,9 +162,10 @@ public class AlarmService {
 				
 				// 수거자가 수거함 문열기 요청 후
 				// 수거 완료 후 사진과 함께 수거 완료 버튼 누르기
-				// 사진 저장
-				// 사진 경로 저장
-				// IOT 제어: 작성 필요
+				// 1. 수거함 상태 변경
+				// 2. 사진 저장
+				// 3. 사진 경로 저장 및 로그
+				// 4. IOT 제어
 				if(alarmType.equals(AlarmType.COLLECTION_COMPLETED)) { // 수거 완료라면
 					boxService.collectionCompleted(myAlarm.getBoxId());
 					boxLogService.collectionCompleted(myAlarm.getBoxId(), saveFile(file));

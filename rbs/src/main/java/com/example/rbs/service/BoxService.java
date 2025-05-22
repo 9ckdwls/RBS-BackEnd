@@ -1,12 +1,16 @@
 package com.example.rbs.service;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.ConnectException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -27,11 +31,14 @@ public class BoxService {
 	private final BoxRepository boxRepository;
 	private final WebClient.Builder webClientBuilder;
 	private final UserService userService;
+	private final BoxLogService boxLogService;
 
-	public BoxService(BoxRepository boxRepository, WebClient.Builder webClientBuilder, UserService userService) {
+	public BoxService(BoxRepository boxRepository, WebClient.Builder webClientBuilder, UserService userService,
+			BoxLogService boxLogService) {
 		this.boxRepository = boxRepository;
 		this.webClientBuilder = webClientBuilder;
 		this.userService = userService;
+		this.boxLogService = boxLogService;
 	}
 
 	// 모든 수거함 조회
@@ -103,10 +110,12 @@ public class BoxService {
 					.retrieve()
 					.bodyToMono(IOTResponseDTO.class)
 					.timeout(Duration.ofSeconds(60))
-					.onErrorResume(TimeoutException.class, t -> Mono.just(new IOTResponseDTO("TIMEOUT", "시간 초과")))
+					.onErrorResume(TimeoutException.class, t -> Mono.just(new IOTResponseDTO("Fail")))
 					.onErrorResume(ConnectException.class,
-							t -> Mono.just(new IOTResponseDTO("CONNECTION_FAILED", "네트워크 연결 실패")))
+							t -> Mono.just(new IOTResponseDTO("Fail")))
 					.block();
+			System.out.println("IOT 문열기 후 결과는?");
+			System.out.println(response);
 
 			return response;
 		} else if (controll.equals("boxClose")) {
@@ -118,18 +127,14 @@ public class BoxService {
 					.bodyToMono(CloseBoxResponseDTO.class)
 					.timeout(Duration.ofSeconds(60))
 					.onErrorResume(TimeoutException.class,
-							t -> Mono.just(new CloseBoxResponseDTO("TIMEOUT", "시간 초과", null)))
+							t -> Mono.just(new CloseBoxResponseDTO("Fail")))
 					.onErrorResume(ConnectException.class,
-							t -> Mono.just(new CloseBoxResponseDTO("CONNECTION_FAILED", "네트워크 연결 실패", null)))
+							t -> Mono.just(new CloseBoxResponseDTO("Fail")))
 					.block();
-
-			if (response.getStatus().equals("SUCCESS")) {
-				// 사진 저장
-				// 수거로그 아이템 저장
-				return response;
-			} else {
-				return response;
-			}
+			
+			System.out.println("IOT 문닫기 후 결과는?");
+			System.out.println(response);
+			return response;
 		} else {
 			return "Fail";
 		}
