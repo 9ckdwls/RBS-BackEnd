@@ -114,17 +114,15 @@ public class AlarmService {
 				if (!alarmType.equals(AlarmType.INSTALL_COMPLETED) && !alarmType.equals(AlarmType.REMOVE_COMPLETED)) {
 					myAlarm.setTargetUserId(myAlarm.getUserId());
 					myAlarm.setUserId(userService.getUserId());
-					
-					
-
-					// 설치 완료만 좌표 최신화
-					if (alarmType.equals(AlarmType.INSTALL_COMPLETED)) {
-						boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()), boxDTO);
-						// 사진 파일 저장
-						boxService.savefile(myAlarm.getBoxId(), saveFile(file));
-					} else {
-						boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()));
-					}
+				}
+				
+				// 설치 완료만 좌표 최신화
+				if (alarmType.equals(AlarmType.INSTALL_COMPLETED)) {
+					boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()), boxDTO);
+					// 사진 파일 저장
+					boxService.savefile(myAlarm.getBoxId(), saveFile(file));
+				} else {
+					boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()));
 				}
 				alarmRepository.save(myAlarm);
 
@@ -274,7 +272,7 @@ public class AlarmService {
 				dir.mkdirs();
 			}
 			
-			String fileLocation = uploadDir + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+			String fileLocation = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
 
 			// 파일 저장
 			File myFile = new File(fileLocation);
