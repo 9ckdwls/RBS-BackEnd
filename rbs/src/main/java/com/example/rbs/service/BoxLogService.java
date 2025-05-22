@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,16 @@ public class BoxLogService {
 		this.boxLogRepository = boxLogRepository;
 		this.userService = userService;
 		this.boxLogItemsService = boxLogItemsService;
+	}
+	
+	// 수거로그 id로 찾기
+	public BoxLog findById(int boxLogId) {
+		Optional<BoxLog> boxLog = boxLogRepository.findById(boxLogId);
+		if(boxLog.isPresent()) {
+			return boxLog.get();
+		} else {
+			return null;
+		}
 	}
 
 	// 모든 수거함로그 조회

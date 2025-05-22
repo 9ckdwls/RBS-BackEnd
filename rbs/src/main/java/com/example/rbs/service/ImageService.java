@@ -4,11 +4,57 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.example.rbs.entity.BoxLog;
+
 @Service
 public class ImageService {
+	
+	private final BoxService boxService;
+	private final AlarmService alarmService;
+	private final BoxLogService boxLogService;
+	
+	public ImageService(BoxService boxService, AlarmService alarmService, BoxLogService boxLogService) {
+		this.boxService = boxService;
+		this.alarmService = alarmService;
+		this.boxLogService = boxLogService;
+	}
+	
+	// 수거함 이미지
+	public byte[] getBoxImage(int boxId) {
+		return getImage(boxService.findById(boxId).getFile());
+	}
+	
+	// 화재처리 이미지
+	public byte[] getFireImage(int alarmId) {
+		return getImage(alarmService.findById(alarmId).getFile());
+	}
+	
+	// 수거 이미지
+	public byte[] getCollectionImage(int boxLogId) {
+		return getImage(boxLogService.findById(boxLogId).getCollection_file());
+	}
+	
+	// 분리 이미지
+	public Map<String, byte[]> getItemsImage(int boxLogId) {
+		Map<String, byte[]> images = new HashMap<>();
+		BoxLog log = boxLogService.findById(boxLogId);
+		if (log.getFile_battery() != null) {
+            images.put("battery", getImage(log.getFile_battery()));
+        }
+        if (log.getFile_discharged() != null) {
+            images.put("discharged", getImage(log.getFile_discharged()));
+        }
+        if (log.getFile_not_discharged() != null) {
+            images.put("notDischarged", getImage(log.getFile_not_discharged()));
+        }
+		return images;
+	}
 
 	// 사진 파일 얻기
 	public byte[] getImage(String file) {

@@ -38,6 +38,16 @@ public class AlarmService {
 		this.sseService = sseService;
 		this.boxLogService = boxLogService;
 	}
+	
+	// 알람id로 알람 찾기
+	public Alarm findById(int alarmId) {
+		Optional<Alarm> alarm = alarmRepository.findById(alarmId);
+		if(alarm.isPresent()) {
+			return alarm.get();
+		} else {
+			return null;
+		}
+	}
 
 	// 미해결된 알람 가져오기
 	public List<Alarm> unResolved() {
