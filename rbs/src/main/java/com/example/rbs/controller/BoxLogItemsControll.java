@@ -19,9 +19,4 @@ public class BoxLogItemsControll {
 		this.boxLogItemsService = boxLogItemsService;
 	}
 
-	// 수거로그 아이디로 아이템 가져오기
-	@GetMapping("admin/getBoxLogItems/{boxLogId}")
-	public List<BoxLogItems> getBoxLogItems(@PathVariable(value = "boxLogId") int boxLogId) {
-		return boxLogItemsService.getBoxLogItems(boxLogId);
-	}
 }

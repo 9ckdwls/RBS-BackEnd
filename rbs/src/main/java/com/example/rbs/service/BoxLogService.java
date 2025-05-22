@@ -8,8 +8,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.rbs.dto.BoxLogResponse;
 import com.example.rbs.entity.Alarm;
 import com.example.rbs.entity.BoxLog;
+import com.example.rbs.entity.BoxLogItems;
 import com.example.rbs.repository.BoxLogRepository;
 
 @Service
@@ -26,13 +28,27 @@ public class BoxLogService {
 	}
 
 	// 모든 수거함로그 조회
-	public List<BoxLog> getBoxLog() {
-		return boxLogRepository.findAll();
+	public List<BoxLogResponse> getBoxLog() {
+		List<BoxLog> boxLogList = boxLogRepository.findAll();
+		return boxLogChange(boxLogList);
+		
 	}
 
 	// userId로 수거함로그 검색
-	public List<BoxLog> findByUserId(String userId) {
-		return boxLogRepository.findByUserId(userId);
+	public List<BoxLogResponse> findByUserId(String userId) {
+		return boxLogChange(boxLogRepository.findByUserId(userId));
+	}
+	
+	private List<BoxLogResponse> boxLogChange(List<BoxLog> boxLogList) {
+		List<BoxLogResponse> boxLogResponse = new ArrayList<>();
+		for(BoxLog boxLog : boxLogList) {
+			BoxLogResponse dto = new BoxLogResponse();
+			dto.setBoxLog(boxLog);
+			dto.setItems(boxLogItemsService.getBoxLogItems(boxLog.getLogId()));
+			
+			boxLogResponse.add(dto);
+		}
+		return boxLogResponse;
 	}
 
 	// 수거 완료
