@@ -23,7 +23,7 @@ public class ServerStatusController {
 	}
 	
 	// 서버 상태 확인
-	// DB, 앱 백 서버, 사용자 앱 프론트 서버, 수거자 앱 프론트 서버 상태
+	// DB, 앱 백 서버, 파이썬 서버
 	@GetMapping("admin/serverStatus")
 	public Map<String, String> serverStatus() {
 		return serverStatusService.serverStatus();
