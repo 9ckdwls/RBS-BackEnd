@@ -23,4 +23,10 @@ public class AlarmController {
 		return alarmService.fireLog();
 	}
 
+	// 서버 상태
+	@GetMapping("server-status")
+	public String serverStatus() {
+		return "ok";
+	}
+
 }
