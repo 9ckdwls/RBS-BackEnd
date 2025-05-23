@@ -5,15 +5,14 @@ import lombok.Data;
 @Data
 public class CloseBoxResponseDTO {
 	private String status;
-    private String message;
+	private String timestamp;
+	private int result;
     private String image;
     
     // 기본 생성자
     public CloseBoxResponseDTO() {}
     
-    public CloseBoxResponseDTO(String status, String message, String image) {
+    public CloseBoxResponseDTO(String status) {
         this.status = status;
-        this.message = message;
-        this.image = image;
     }
 }

@@ -57,17 +57,4 @@ public class BoxContorller {
 		Object response = boxService.boxControll("boxClose", boxId, number);
 		return response;
 	}
-	
-	// IOT 장비와 테스를 위한 end포인트
-	@GetMapping("test")
-	public CloseBoxResponseDTO test() {
-		return boxService.test();
-	}
-	
-	// 사진 파일 저장 테스트
-	@PostMapping("test2")
-	public String test(@RequestBody String file) {
-		return boxService.test2(file);
-	}
-
 }
