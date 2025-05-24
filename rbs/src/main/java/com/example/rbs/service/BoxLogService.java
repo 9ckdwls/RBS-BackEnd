@@ -74,7 +74,7 @@ public class BoxLogService {
 		boxLog.setUserId(userService.getUserId());
 		
 		
-		List<BoxLog> boxLogList = boxLogRepository.findByBoxIdAndStaus(boxId, "수거 전");
+		List<BoxLog> boxLogList = boxLogRepository.findByBoxIdAndStatus(boxId, "수거 전");
 		
 		boxLog.setValue(0); // IOT 장비 제어 후 추가
 		boxLogRepository.save(boxLog);
