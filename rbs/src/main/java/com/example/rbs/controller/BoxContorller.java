@@ -56,7 +56,7 @@ public class BoxContorller {
 	@GetMapping("admin/boxClose/{boxId}/{number}")
 	public Object boxClose(@PathVariable(value = "boxId") int boxId,
 			@PathVariable(value = "number") int number) {
-		return boxService.boxControll("boxClose",boxId, number);
+		return boxService.boxControll("boxAdClose",boxId, number);
 	}
 
 }

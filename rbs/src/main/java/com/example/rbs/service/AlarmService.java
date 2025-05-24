@@ -169,7 +169,7 @@ public class AlarmService {
 				if(alarmType.equals(AlarmType.COLLECTION_COMPLETED)) { // 수거 완료라면
 					boxService.collectionCompleted(myAlarm.getBoxId());
 					boxLogService.collectionCompleted(myAlarm.getBoxId(), saveFile(file));
-					boxService.boxControll("boxClose", myAlarm.getBoxId(), 0);
+					boxService.boxControll("boxAdClose", myAlarm.getBoxId(), 0);
 				}
 
 				if(alarmType.equals(AlarmType.COLLECTION_CONFIRMED)) { // 수거 확정이라면
@@ -286,8 +286,10 @@ public class AlarmService {
 			String fileLocation = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
 
 			// 파일 저장
-			File myFile = new File(fileLocation);
+			File myFile = new File(uploadDir + fileLocation);
 			file.transferTo(myFile);
+			
+			System.out.println("사진 파일 저장완료!!!!!!!!!!!");
 			
 			return fileLocation;
 

@@ -1,12 +1,17 @@
 package com.example.rbs.dto;
 
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 
 @Data
 public class CloseBoxResponseDTO {
 	private String status;
+	@JsonProperty("timestamp")
     private String timeStamp;
-    private String result;
+    private Map<String, Integer> result;
     private String image;
     
     	

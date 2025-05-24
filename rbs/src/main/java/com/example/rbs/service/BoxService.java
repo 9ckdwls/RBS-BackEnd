@@ -15,6 +15,8 @@ import java.util.concurrent.TimeoutException;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+
 import com.example.rbs.dto.BoxDTO;
 import com.example.rbs.dto.CloseBoxResponseDTO;
 import com.example.rbs.dto.IOTResponseDTO;
@@ -114,30 +116,28 @@ public class BoxService {
 					.onErrorResume(ConnectException.class,
 							t -> Mono.just(new IOTResponseDTO("Fail")))
 					.block();
-			System.out.println("IOT 문열기 후 결과는?");
-			System.out.println(response);
-
 			return response;
-		} else if (controll.equals("boxClose")) {
-			// 문 닫기 요청 → 사진 및 수거 로그도 포함된 응답 받기
-			CloseBoxResponseDTO response = webClient
-					.post()
-					.uri(uri)
-					.retrieve()
-					.bodyToMono(CloseBoxResponseDTO.class)
-					.timeout(Duration.ofSeconds(60))
-					.onErrorResume(TimeoutException.class,
-							t -> Mono.just(new CloseBoxResponseDTO("Fail")))
-					.onErrorResume(ConnectException.class,
-							t -> Mono.just(new CloseBoxResponseDTO("Fail")))
-					.block();
-			
-			System.out.println("IOT 문닫기 후 결과는?");
-			System.out.println(response);
-			return response;
-		} else {
-			return "Fail";
-		}
+		} else if (controll.equals("boxAdClose")) {
+		    CloseBoxResponseDTO response = webClient
+		            .post()
+		            .uri(uri)
+		            .retrieve()
+		            .bodyToMono(CloseBoxResponseDTO.class)
+		            .timeout(Duration.ofSeconds(60))
+		            // 에러가 나면 무조건 새 DTO("Fail") 리턴
+		            .onErrorReturn(new CloseBoxResponseDTO("Fail"))
+		            .block();
+		    	
+		    if(response.getStatus().equals("200")) {
+		    	System.out.println("성공");
+		    } else {
+		    	System.out.println("실패");
+		    }
+		        System.out.println(response);
+		        return response;
+		    } else {
+		        return "Fail";
+		    }
 	}
 
 	// boxId로 Box 찾기
