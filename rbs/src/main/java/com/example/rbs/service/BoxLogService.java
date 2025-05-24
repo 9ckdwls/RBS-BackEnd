@@ -64,7 +64,7 @@ public class BoxLogService {
 
 	// 수거 완료
 	// 수거로그 작성
-	public void collectionCompleted(int boxId, String saveFile) {
+	public int collectionCompleted(int boxId, String saveFile) {
 		BoxLog boxLog = new BoxLog();
 		boxLog.setBoxId(boxId);
 		boxLog.setCollection_file(saveFile);
@@ -80,6 +80,8 @@ public class BoxLogService {
 		boxLogRepository.save(boxLog);
 		
 		boxLogItemsService.collectionCompleted(boxId, boxLog.getLogId(), boxLogList);
+		
+		return boxLog.getLogId();
 	}
 
 }

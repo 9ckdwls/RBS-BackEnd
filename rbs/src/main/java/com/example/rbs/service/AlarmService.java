@@ -135,6 +135,11 @@ public class AlarmService {
 					boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()));
 				}
 				alarmRepository.save(myAlarm);
+				
+				// 제거 완료
+				if(alarmType.equals(AlarmType.REMOVE_COMPLETED)) {
+					boxService.removeBox(myAlarm.getBoxId(), saveFile(file));
+				}
 
 				// 알람 전송
 				sseService.sendAlarmToUser(myAlarm);
@@ -167,9 +172,9 @@ public class AlarmService {
 				// 3. 사진 경로 저장 및 로그
 				// 4. IOT 제어
 				if(alarmType.equals(AlarmType.COLLECTION_COMPLETED)) { // 수거 완료라면
-					boxService.collectionCompleted(myAlarm.getBoxId());
-					boxLogService.collectionCompleted(myAlarm.getBoxId(), saveFile(file));
 					boxService.boxControll("boxAdClose", myAlarm.getBoxId(), 0);
+					boxService.collectionCompleted(myAlarm.getBoxId());
+					myAlarm.setBoxLogId(boxLogService.collectionCompleted(myAlarm.getBoxId(), saveFile(file)));
 				}
 
 				if(alarmType.equals(AlarmType.COLLECTION_CONFIRMED)) { // 수거 확정이라면

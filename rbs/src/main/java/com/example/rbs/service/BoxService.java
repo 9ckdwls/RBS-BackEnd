@@ -214,4 +214,9 @@ public class BoxService {
 		box.setVolume3(0);
 		boxRepository.save(box);
 	}
+
+	public void removeBox(int boxId, String saveFile) {
+		Box box = findById(boxId);
+		box.setFile(saveFile);
+	}
 }
