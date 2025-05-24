@@ -3,11 +3,13 @@ package com.example.rbs.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.example.rbs.entity.Alarm;
 import com.example.rbs.entity.Alarm.AlarmStatus;
+import com.example.rbs.entity.Box;
 import com.example.rbs.repository.AlarmRepository;
 
 @Service
@@ -24,6 +26,15 @@ public class AlarmService {
 	// 화재처리 내역 보기
 	public List<Alarm> fireLog() {
 		return alarmRepository.findByResolvedAndTargetUserId(AlarmStatus.RESOLVED, userService.getId());
+	}
+
+	public Alarm findById(int alarmId) {
+		Optional<Alarm> alarm = alarmRepository.findById(alarmId);
+		if(alarm.isPresent()) {
+			return alarm.get();
+		} else {
+			return null;
+		}
 	}
 
 }
