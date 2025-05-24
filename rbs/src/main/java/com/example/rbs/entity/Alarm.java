@@ -22,6 +22,8 @@ public class Alarm {
 	
 	private int boxId;
 	
+	private int boxLogId;
+	
 	private String userId;
 	
 	private String targetUserId;
