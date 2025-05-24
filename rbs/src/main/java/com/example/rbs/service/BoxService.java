@@ -93,23 +93,23 @@ public class BoxService {
 			return response;
 		} else if (controll.equals("boxClose")) {
 			// 문 닫기 요청 → 사진 및 수거 로그도 포함된 응답 받기
+			System.out.println("문닫기 요청");
 			CloseBoxResponseDTO response = webClient
 					.post()
 					.uri(uri)
 					.retrieve()
 					.bodyToMono(CloseBoxResponseDTO.class)
 					.timeout(Duration.ofSeconds(60))
-					.onErrorResume(TimeoutException.class,
-							t -> Mono.just(new CloseBoxResponseDTO("Fail")))
-					.onErrorResume(ConnectException.class,
-							t -> Mono.just(new CloseBoxResponseDTO("Fail")))
-					.block();
-			System.out.println("IOT 제어 후 응답");
-			System.out.println(response);
+		            .block();
+			if(response.getStatus().equals("200")) {
+				
+			} else {
+				return null;
+			}
 			// Box 수거 상태 업데이트
 			// 로그 작성
 			// 사진파일 저장
-			saveFile(response.getImage());
+			//saveFile(response.getImage());
 
 			return response;
 		} else {

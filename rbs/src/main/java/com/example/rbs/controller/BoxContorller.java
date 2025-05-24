@@ -45,7 +45,6 @@ public class BoxContorller {
 	public Object boxOpen(@PathVariable(value = "boxId") int boxId, 
 			@PathVariable(value = "number") int number) {
 		Object response = boxService.boxControll("boxOpen", boxId, number);
-		System.out.println("IOT 문열기 후 응답" + response);
 		return response;
 	}
 
