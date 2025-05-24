@@ -14,4 +14,6 @@ public interface BoxLogRepository extends JpaRepository<BoxLog, Integer> {
 	
 	// userId로 수거함로그 검색
 	List<BoxLog> findByUserId(String userId);
+
+	List<BoxLog> findByLogIdAndStatus(int boxId, String string);
 }

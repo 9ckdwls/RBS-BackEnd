@@ -36,11 +36,14 @@ public class BoxService {
 	private final BoxRepository boxRepository;
 	private final WebClient.Builder webClientBuilder;
 	private final UserService userService;
+	private final BoxLogService boxLogService;
 
-	public BoxService(BoxRepository boxRepository, WebClient.Builder webClientBuilder, UserService userService) {
+	public BoxService(BoxRepository boxRepository, WebClient.Builder webClientBuilder, UserService userService,
+			BoxLogService boxLogService) {
 		this.boxRepository = boxRepository;
 		this.webClientBuilder = webClientBuilder;
 		this.userService = userService;
+		this.boxLogService = boxLogService;
 	}
 
 	// 모든 수거함 조회
@@ -60,7 +63,7 @@ public class BoxService {
 
 	// 수거함 이름으로 검색
 	public Box findBoxByName(String name) {
-		Optional<Box> optionalBox  = boxRepository.findByName(name);
+		Optional<Box> optionalBox = boxRepository.findByName(name);
 		if (optionalBox.isPresent()) {
 			return optionalBox.get();
 		} else {
@@ -77,46 +80,39 @@ public class BoxService {
 		uri = controll + number;
 
 		WebClient webClient = webClientBuilder.baseUrl("http://" + box.getIPAddress()).build();
-		
+
 		if (controll.equals("boxOpen")) {
-			IOTResponseDTO response = webClient
-					.post()
-					.uri(uri)
-					.retrieve()
-					.bodyToMono(IOTResponseDTO.class)
+			IOTResponseDTO response = webClient.post().uri(uri).retrieve().bodyToMono(IOTResponseDTO.class)
 					.timeout(Duration.ofSeconds(60))
 					.onErrorResume(TimeoutException.class, t -> Mono.just(new IOTResponseDTO("Fail")))
-					.onErrorResume(ConnectException.class,
-							t -> Mono.just(new IOTResponseDTO("Fail")))
-					.block();
+					.onErrorResume(ConnectException.class, t -> Mono.just(new IOTResponseDTO("Fail"))).block();
 
 			return response;
 		} else if (controll.equals("boxClose")) {
 			// 문 닫기 요청 → 사진 및 수거 로그도 포함된 응답 받기
 			System.out.println("문닫기 요청");
-			CloseBoxResponseDTO response = webClient
-					.post()
-					.uri(uri)
-					.retrieve()
-					.bodyToMono(CloseBoxResponseDTO.class)
-					.timeout(Duration.ofSeconds(60))
-		            .block();
-			if(response.getStatus().equals("200")) {
-				
+			CloseBoxResponseDTO response = webClient.post().uri(uri).retrieve().bodyToMono(CloseBoxResponseDTO.class)
+					.timeout(Duration.ofSeconds(60)).block();
+			if (response.getStatus().equals("200")) {
+
 			} else {
 				return null;
 			}
 			// Box 수거 상태 업데이트
-			// 로그 작성
-			// 사진파일 저장
-			//saveFile(response.getImage());
+			// 로그 작성 및 사진파일 저장
+			boxLogService.logUpdate(boxId, response.getResult(), saveFile(response.getImage()));
 
 			return response;
 		} else {
 			return "Fail";
 		}
 	}
-	
+
+	// 수거함 사용 끝
+	public String boxEnd(int boxId) {
+		return boxLogService.boxEnd(boxId);
+	}
+
 	private String saveFile(String file) {
 		try {
 			if (file != null) {

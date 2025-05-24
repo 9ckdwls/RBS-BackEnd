@@ -56,4 +56,10 @@ public class BoxContorller {
 		Object response = boxService.boxControll("boxClose", boxId, number);
 		return response;
 	}
+	
+	// 수거함 사용 끝
+	@GetMapping("boxEnd/{boxId}")
+	public String boxEnd(@PathVariable(value = "boxId") int boxId) {
+		return boxService.boxEnd(boxId);
+	}
 }

@@ -21,4 +21,11 @@ public class BoxLogItemsService {
 		List<BoxLogItems> boxLogItems = boxLogItemsRepository.findByBoxLogId(id);
 		return boxLogItems;
 	}
+
+	public void saveLogItem(String name, int count, int logId) {
+		BoxLogItems boxLogItems = new BoxLogItems();
+		boxLogItems.setBoxLogId(logId);
+		boxLogItems.setName(name);
+		boxLogItemsRepository.save(boxLogItems);
+	}
 }
