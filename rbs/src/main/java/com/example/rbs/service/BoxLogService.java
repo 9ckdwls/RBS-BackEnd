@@ -70,14 +70,16 @@ public class BoxLogService {
 		boxLog.setCollection_file(saveFile);
 		boxLog.setDate(new Date());
 		boxLog.setType("수거");
+		boxLog.setStatus("수거 후");
 		boxLog.setUserId(userService.getUserId());
+		
+		
+		List<BoxLog> boxLogList = boxLogRepository.findByBoxIdAndStaus(boxId, "수거 전");
+		
 		boxLog.setValue(0); // IOT 장비 제어 후 추가
 		boxLogRepository.save(boxLog);
 		
-		List<BoxLog> boxLogList = boxLogRepository.findByBoxIdAndStatus(boxId, "수거 전");
-		
-		// 수거로그 아이템
-		boxLogItemsService.collectionCompleted(boxLog.getBoxId(), boxLog.getLogId(), boxLogList);
+		boxLogItemsService.collectionCompleted(boxId, boxLog.getLogId(), boxLogList);
 	}
 
 }
