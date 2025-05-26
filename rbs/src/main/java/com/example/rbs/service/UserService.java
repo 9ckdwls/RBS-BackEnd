@@ -64,6 +64,8 @@ public class UserService {
 		user.setPoint(0);
 		user.setDate(new Date());
 		user.setRole("ROLE_ADMIN");
+		user.setLocation1(joinDTO.getLocation1());
+		user.setLocation2(joinDTO.getLocation2());
 
 		userRepositroy.save(user);
 		return "Success";

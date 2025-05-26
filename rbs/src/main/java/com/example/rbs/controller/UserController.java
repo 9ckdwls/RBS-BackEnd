@@ -31,7 +31,7 @@ public class UserController {
 	}
 
 	// 회원가입 요청
-	// JoinDto : id, pw, name, phoneNuber, verificationCode
+	// JoinDto : id, pw, name, phoneNuber, verificationCode, locaton1, location2
 	@PostMapping("join")
 	public String join(@RequestBody JoinDto joinDto) {
 		return userService.join(joinDto);

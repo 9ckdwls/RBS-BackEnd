@@ -12,4 +12,6 @@ public class JoinDto {
 	private String name;
 	private String phoneNumber;
 	private String verificationCode;
+	private String location1;
+	private String location2;
 }
