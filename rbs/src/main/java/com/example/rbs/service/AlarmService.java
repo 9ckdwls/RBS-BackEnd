@@ -14,6 +14,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.rbs.dto.BoxDTO;
+import com.example.rbs.dto.FireDto;
 import com.example.rbs.entity.Alarm;
 import com.example.rbs.entity.Alarm.AlarmStatus;
 import com.example.rbs.entity.Alarm.AlarmType;
@@ -320,6 +321,14 @@ public class AlarmService {
 	// 화재 로그 보기
 	public List<Alarm> fireLog() {
 		return alarmRepository.findFireLogs();
+	}
+
+	// 화재 발생
+	// public void createAlarm(int boxId, String role, AlarmType alarmType) {
+	public String fire(FireDto fireDto) {
+		createAlarm(fireDto.getBoxId(), "ROLE_ALL", AlarmType.FIRE);
+		boxService.fire(fireDto);
+		return null;
 	}
 
 }

@@ -19,6 +19,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import com.example.rbs.dto.BoxDTO;
 import com.example.rbs.dto.CloseBoxResponseDTO;
+import com.example.rbs.dto.FireDto;
 import com.example.rbs.dto.IOTResponseDTO;
 import com.example.rbs.entity.Box;
 import com.example.rbs.entity.Box.FireStatus;
@@ -220,4 +221,19 @@ public class BoxService {
 		box.setFile(saveFile);
 		boxRepository.save(box);
 	}
+
+	public void fire(FireDto fireDto) {
+		Box box = findById(fireDto.getBoxId());
+		if(fireDto.getNum() == 1) {
+			box.setFireStatus1(FireStatus.FIRE);
+		} else if(fireDto.getNum() == 2) {
+			box.setFireStatus1(FireStatus.FIRE);
+		} else if(fireDto.getNum() == 3) {
+			box.setFireStatus1(FireStatus.FIRE);
+		} 
+		
+		boxRepository.save(box);
+	}
+
+
 }
