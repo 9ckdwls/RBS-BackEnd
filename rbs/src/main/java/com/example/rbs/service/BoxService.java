@@ -86,6 +86,16 @@ public class BoxService {
 		WebClient webClient = webClientBuilder.baseUrl("http://" + box.getIPAddress()).build();
 
 		if (controll.equals("boxOpen")) {
+			if(number==0) {
+				box.setStore1(1);
+			} else if(number==1) {
+				box.setStore2(1);
+			} else if(number==2) {
+				box.setStore3(1);
+			}
+			
+			boxRepository.save(box);
+			
 			IOTResponseDTO response = webClient.post().uri(uri).retrieve().bodyToMono(IOTResponseDTO.class)
 					.timeout(Duration.ofSeconds(60))
 					.onErrorResume(TimeoutException.class, t -> Mono.just(new IOTResponseDTO("Fail")))
@@ -95,13 +105,17 @@ public class BoxService {
 		} else if (controll.equals("boxClose")) {
 			// 문 닫기 요청 → 사진 및 수거 로그도 포함된 응답 받기
 			System.out.println("문닫기 요청");
+			
 			CloseBoxResponseDTO response = webClient.post().uri(uri).retrieve().bodyToMono(CloseBoxResponseDTO.class)
 					.timeout(Duration.ofSeconds(60)).block();
-			if (response.getStatus().equals("200")) {
-
-			} else {
-				return null;
+			if(number==0) {
+				box.setStore1(0);
+			} else if(number==1) {
+				box.setStore2(0);
+			} else if(number==2) {
+				box.setStore3(0);
 			}
+			boxRepository.save(box);
 			
 			Map<String, Integer> resultMap = response.getResult();
 			int volum;
