@@ -131,9 +131,23 @@ public class AlarmService {
 					boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()), boxDTO);
 					// 사진 파일 저장
 					boxService.savefile(myAlarm.getBoxId(), saveFile(file));
-				} else {
-					boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()));
-				}
+				} 
+				switch (alarmType) {
+			    case INSTALL_REQUEST:
+			    case INSTALL_IN_PROGRESS:
+			    case INSTALL_CONFIRMED:
+			    case REMOVE_REQUEST:
+			    case REMOVE_IN_PROGRESS:
+			    case REMOVE_COMPLETED:
+			    case REMOVE_CONFIRMED:
+			        boxService.boxStatusUpdate(
+			            myAlarm.getBoxId(),
+			            InstallStatus.valueOf(alarmType.name())
+			        );
+			        break;
+			    default:
+			        break;
+			}
 				alarmRepository.save(myAlarm);
 				
 				// 제거 완료
