@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletionException;
@@ -98,7 +99,21 @@ public class BoxService {
 			} else {
 				return null;
 			}
+			
+			Map<String, Integer> resultMap = response.getResult();
+			
 			// Box 수거 상태 업데이트
+			if (resultMap != null && resultMap.containsKey("battery")) {
+			    int batteryCount = resultMap.get("battery");
+			    box.setVolume1(box.getVolume1() + batteryCount * 1);
+			} else if(resultMap != null && resultMap.containsKey("discharged")) {
+				int batteryCount = resultMap.get("discharged");
+			    box.setVolume2(box.getVolume2() + batteryCount * 5);
+			} else if(resultMap != null && resultMap.containsKey("notDischarged")) {
+				int batteryCount = resultMap.get("notDischarged");
+			    box.setVolume2(box.getVolume3() + batteryCount * 5);
+			}
+			
 			// 로그 작성 및 사진파일 저장
 			boxLogService.logUpdate(boxId, response.getResult(), saveFile(response.getImage()));
 
