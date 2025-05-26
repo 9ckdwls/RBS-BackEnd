@@ -25,7 +25,7 @@ public class AlarmService {
 
 	// 화재처리 내역 보기
 	public List<Alarm> fireLog() {
-		return alarmRepository.findByResolvedAndTargetUserId(AlarmStatus.RESOLVED, userService.getId());
+		return alarmRepository.findResolvedFireLogsByTargetUser(userService.getId());
 	}
 
 	public Alarm findById(int alarmId) {
