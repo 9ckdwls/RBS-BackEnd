@@ -102,7 +102,7 @@ public class BoxService {
 			
 			Map<String, Integer> resultMap = response.getResult();
 			
-			// Box 수거 상태 업데이트
+			// Box 용량 업데이트
 			if (resultMap != null && resultMap.containsKey("battery")) {
 			    int batteryCount = resultMap.get("battery");
 			    box.setVolume1(box.getVolume1() + batteryCount * 1);
@@ -116,7 +116,6 @@ public class BoxService {
 			
 			// 로그 작성 및 사진파일 저장
 			boxLogService.logUpdate(boxId, response.getResult(), saveFile(response.getImage()));
-
 			return response;
 		} else {
 			return "Fail";
@@ -124,8 +123,10 @@ public class BoxService {
 	}
 
 	// 수거함 사용 끝
-	public String boxEnd(int boxId) {
-		return boxLogService.boxEnd(boxId);
+	public int boxEnd(int boxId) {
+		int point = boxLogService.boxEnd(boxId);
+		userService.updatePoint(point);
+		return point;
 	}
 
 	private String saveFile(String file) {

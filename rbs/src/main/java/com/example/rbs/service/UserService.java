@@ -142,4 +142,12 @@ public class UserService {
 	public String verifyCode(String phone, String code) {
 		return phoneVerificationService.verifyCode(phone, code);
 	}
+
+	public void updatePoint(int point) {
+		Optional<User> user = userRepositroy.findById(getId());
+		if(user.isPresent()) {
+			User myUser = user.get();
+			myUser.setPoint(myUser.getPoint() + point);
+		}
+	}
 }

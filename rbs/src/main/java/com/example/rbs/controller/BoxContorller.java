@@ -59,7 +59,7 @@ public class BoxContorller {
 	
 	// 수거함 사용 끝
 	@GetMapping("boxEnd/{boxId}")
-	public String boxEnd(@PathVariable(value = "boxId") int boxId) {
+	public int boxEnd(@PathVariable(value = "boxId") int boxId) {
 		return boxService.boxEnd(boxId);
 	}
 }

@@ -1,6 +1,7 @@
 package com.example.rbs.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -15,5 +16,5 @@ public interface BoxLogRepository extends JpaRepository<BoxLog, Integer> {
 	// userId로 수거함로그 검색
 	List<BoxLog> findByUserId(String userId);
 
-	List<BoxLog> findByLogIdAndStatus(int boxId, String string);
+	Optional<BoxLog> findByLogIdAndStatus(int boxId, String string);
 }

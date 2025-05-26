@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.swing.Box;
+
 import org.springframework.stereotype.Service;
 
 import com.example.rbs.dto.BoxLogResponse;
@@ -53,12 +55,19 @@ public class BoxLogService {
 		return boxLogResponse;
 	}
 
-	public void logUpdate(int boxId, Map<String, Integer> result, String saveFile) {
-		BoxLog boxLog = new BoxLog();
-		boxLog.setBoxId(boxId);
-		boxLog.setType("분리");
-		boxLog.setStatus("분리 중");
-		boxLog.setUserId(userService.getId());
+	public int logUpdate(int boxId, Map<String, Integer> result, String saveFile) {
+		Optional<BoxLog> opBoxlog = boxLogRepository.findByLogIdAndStatus(boxId, "분리 중");
+		BoxLog boxLog;
+		if(opBoxlog.isEmpty()) {
+			boxLog = new BoxLog();
+			boxLog.setBoxId(boxId);
+			boxLog.setType("분리");
+			boxLog.setStatus("분리 중");
+			boxLog.setUserId(userService.getId());
+		} else {
+			boxLog = opBoxlog.get();
+		}
+		
 		
 		String name;
 		int count;
@@ -66,31 +75,38 @@ public class BoxLogService {
 		if (result.containsKey("battery")) {
 			name = "battery";
 			count = result.get("battery");
+			boxLog.setValue(boxLog.getValue() + count * 5);
 			boxLog.setFile_battery(saveFile);
 		} else if (result.containsKey("discharged")) {
 			name = "discharged";
 			count = result.get("discharged");
+			boxLog.setValue(boxLog.getValue() + count * 10);
 			boxLog.setFile_discharged(saveFile);
 		} else if (result.containsKey("notDischarged")) {
 			name = "notDischarged";
 			count = result.get("notDischarged");
+			boxLog.setValue(boxLog.getValue() + count * 15);
 			boxLog.setFile_not_discharged(saveFile);
 		} else {
-			return;
+			return 0;
 		}
 		boxLogRepository.save(boxLog);
 		boxLogItemsService.saveLogItem(name, count, boxLog.getLogId());
 		
+		return count * 5;
+		
 	}
 
 	// 수거함 사용 끝
-	public String boxEnd(int boxId) {
-		List<BoxLog> boxLogList = boxLogRepository.findByLogIdAndStatus(boxId, "분리 중");
-		for(BoxLog boxLog : boxLogList) {
-			boxLog.setDate(new Date());
-			boxLog.setStatus("수거 전");
+	public int boxEnd(int boxId) {
+		Optional<BoxLog> boxlog = boxLogRepository.findByLogIdAndStatus(boxId, "분리 중");
+		if(boxlog.isPresent()) {
+			BoxLog myBoxLog = boxlog.get();
+			myBoxLog.setDate(new Date());
+			myBoxLog.setStatus("수거 전");
+			return myBoxLog.getValue();
 		}
-		return "Success";
+		return 0;
 	}
 
 		
