@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.example.rbs.entity.BoxLog;
 import com.example.rbs.entity.BoxLogItems;
@@ -13,6 +15,12 @@ import com.example.rbs.repository.BoxLogItemsRepository;
 public class BoxLogItemsService {
 
 	private final BoxLogItemsRepository boxLogItemsRepository;
+	@Value("${battery}")
+	int battery;
+	@Value("${discharged}")
+	int discharged;
+	@Value("${notDischarged}")
+	int notDischarged;
 
 	public BoxLogItemsService(BoxLogItemsRepository boxLogItemsRepository) {
 		this.boxLogItemsRepository = boxLogItemsRepository;
@@ -29,9 +37,9 @@ public class BoxLogItemsService {
 	public int collectionCompleted(int boxId, int boxLogId, List<BoxLog> boxLogList) {
 	    // 1) 아이템별 단가 정의
 	    Map<String, Integer> unitPriceMap = Map.of(
-	        "배터리", 5,
-	        "방전된", 10,
-	        "방전되지 않은", 15
+	        "battery", battery,
+	        "discharged", discharged,
+	        "notDischarged", notDischarged
 	    );
 	    
 	    int totalValue = 0;
