@@ -41,6 +41,12 @@ public class BoxService {
 	private final BoxLogService boxLogService;
 	@Value("${web.server.IP}")
     private String webIP;
+	@Value("${battery.volum}")
+	private int volum1;
+	@Value("${discharged.volum}")
+	private int volum2;
+	@Value("${notDischarged.volum}")
+	private int volum3;
 
 	public BoxService(BoxRepository boxRepository, WebClient.Builder webClientBuilder, UserService userService,
 			BoxLogService boxLogService) {
@@ -123,15 +129,15 @@ public class BoxService {
 			// Box 용량 업데이트
 			if (resultMap != null && resultMap.containsKey("battery")) {
 			    int batteryCount = resultMap.get("battery");
-			    volum = box.getVolume1() + batteryCount * 1;
+			    volum = box.getVolume1() + batteryCount * volum1;
 			    box.setVolume1(volum);
 			} else if(resultMap != null && resultMap.containsKey("discharged")) {
 				int batteryCount = resultMap.get("discharged");
-				volum = box.getVolume2() + batteryCount * 5;
+				volum = box.getVolume2() + batteryCount * volum2;
 			    box.setVolume2(volum);
 			} else if(resultMap != null && resultMap.containsKey("notDischarged")) {
 				int batteryCount = resultMap.get("notDischarged");
-				volum = box.getVolume3() + batteryCount * 5;
+				volum = box.getVolume3() + batteryCount * volum3;
 			    box.setVolume3(volum);
 			}
 			

@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import javax.swing.Box;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.example.rbs.dto.BoxLogResponse;
@@ -22,6 +23,12 @@ public class BoxLogService {
 	private final BoxLogRepository boxLogRepository;
 	private final UserService userService;
 	private final BoxLogItemsService boxLogItemsService;
+	@Value("${battery}")
+	private int battery;
+	@Value("${discharged}")
+	private int discharged;
+	@Value("${notDischarged}")
+	private int notDischarged;
 
 	public BoxLogService(BoxLogRepository boxLogRepository, UserService userService, BoxLogItemsService boxLogItemsService) {
 		this.boxLogRepository = boxLogRepository;
@@ -76,17 +83,17 @@ public class BoxLogService {
 		if (result.containsKey("battery")) {
 			name = "battery";
 			count = result.get("battery");
-			boxLog.setValue(boxLog.getValue() + count * 5);
+			boxLog.setValue(boxLog.getValue() + count * battery);
 			boxLog.setFile_battery(saveFile);
 		} else if (result.containsKey("discharged")) {
 			name = "discharged";
 			count = result.get("discharged");
-			boxLog.setValue(boxLog.getValue() + count * 10);
+			boxLog.setValue(boxLog.getValue() + count * discharged);
 			boxLog.setFile_discharged(saveFile);
 		} else if (result.containsKey("notDischarged")) {
 			name = "notDischarged";
 			count = result.get("notDischarged");
-			boxLog.setValue(boxLog.getValue() + count * 15);
+			boxLog.setValue(boxLog.getValue() + count * notDischarged);
 			boxLog.setFile_not_discharged(saveFile);
 		} else {
 			return 0;
