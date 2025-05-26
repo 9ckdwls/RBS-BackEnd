@@ -19,6 +19,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeoutException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,8 @@ public class BoxService {
 	private final WebClient.Builder webClientBuilder;
 	private final UserService userService;
 	private final BoxLogService boxLogService;
+	@Value("${web.server.IP}")
+    private String webIP;
 
 	public BoxService(BoxRepository boxRepository, WebClient.Builder webClientBuilder, UserService userService,
 			BoxLogService boxLogService) {
@@ -101,18 +104,24 @@ public class BoxService {
 			}
 			
 			Map<String, Integer> resultMap = response.getResult();
+			int volum;
 			
 			// Box 용량 업데이트
 			if (resultMap != null && resultMap.containsKey("battery")) {
 			    int batteryCount = resultMap.get("battery");
-			    box.setVolume1(box.getVolume1() + batteryCount * 1);
+			    volum = box.getVolume1() + batteryCount * 1;
+			    box.setVolume1(volum);
 			} else if(resultMap != null && resultMap.containsKey("discharged")) {
 				int batteryCount = resultMap.get("discharged");
-			    box.setVolume2(box.getVolume2() + batteryCount * 5);
+				volum = box.getVolume2() + batteryCount * 5;
+			    box.setVolume2(volum);
 			} else if(resultMap != null && resultMap.containsKey("notDischarged")) {
 				int batteryCount = resultMap.get("notDischarged");
-			    box.setVolume2(box.getVolume3() + batteryCount * 5);
+				volum = box.getVolume3() + batteryCount * 5;
+			    box.setVolume3(volum);
 			}
+			
+			boxRepository.save(box);
 			
 			// 로그 작성 및 사진파일 저장
 			boxLogService.logUpdate(boxId, response.getResult(), saveFile(response.getImage()));
@@ -126,6 +135,33 @@ public class BoxService {
 	public int boxEnd(int boxId) {
 		int point = boxLogService.boxEnd(boxId);
 		userService.updatePoint(point);
+		
+		Box box = findBoxById(boxId);
+		int maxVolume = Math.max(box.getVolume1(),
+                Math.max(box.getVolume2(), box.getVolume3()));
+		if (maxVolume >= 50) {
+			String alertType = (maxVolume >= 70) ? "수거 필요" : "수거 권장";
+	        
+	        WebClient webClient = webClientBuilder.baseUrl(webIP).build();
+	        webClient.post()
+	        .uri("/alerts")
+	        .contentType(MediaType.APPLICATION_JSON)
+	        .bodyValue(Map.of(
+	            "boxId", box.getId(),
+	            "alertType", alertType
+	        ))
+	        .retrieve()
+	        .bodyToMono(Void.class)
+	        .doOnError(err -> 
+            System.err.printf(
+                    "알림 전송 실패: boxId=%d, alertType=%s, err=%s%n",
+                    box.getId(), alertType, err.getMessage()
+                )
+            )
+	        .block();  // 비동기 전송
+	        
+	    }
+			
 		return point;
 	}
 
