@@ -1,18 +1,12 @@
 package com.example.rbs.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.stereotype.Service;
-
 import com.example.rbs.dto.BoxLogResponse;
-import com.example.rbs.entity.Alarm;
 import com.example.rbs.entity.BoxLog;
-import com.example.rbs.entity.BoxLogItems;
 import com.example.rbs.repository.BoxLogRepository;
 
 @Service
@@ -76,11 +70,13 @@ public class BoxLogService {
 		
 		List<BoxLog> boxLogList = boxLogRepository.findByBoxIdAndStatus(boxId, "수거 전");
 		
-		boxLog.setValue(0); // IOT 장비 제어 후 추가
 		boxLogRepository.save(boxLog);
 		
-		boxLogItemsService.collectionCompleted(boxId, boxLog.getLogId(), boxLogList);
+		int value = boxLogItemsService.collectionCompleted(boxId, boxLog.getLogId(), boxLogList);
+		boxLog.setValue(value);
+		boxLogRepository.save(boxLog);
 		
+		userService.updatePonint(value);
 		return boxLog.getLogId();
 	}
 

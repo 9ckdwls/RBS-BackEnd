@@ -229,4 +229,15 @@ public class UserService {
 		}
 		return "Fail";
 	}
+
+	public void updatePonint(int value) {
+		Optional<User> user = userRepositroy.findById(getUserId());
+		if(user.isPresent()) {
+			User myUser = user.get();
+			myUser.setPoint(myUser.getPoint() + value);
+			userRepositroy.save(myUser);
+		} else {
+			return;
+		}
+	}
 }
