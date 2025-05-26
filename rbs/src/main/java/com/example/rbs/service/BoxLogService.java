@@ -12,6 +12,7 @@ import javax.swing.Box;
 import org.springframework.stereotype.Service;
 
 import com.example.rbs.dto.BoxLogResponse;
+import com.example.rbs.dto.CloseBoxResponseDTO;
 import com.example.rbs.entity.BoxLog;
 import com.example.rbs.repository.BoxLogRepository;
 
@@ -107,6 +108,42 @@ public class BoxLogService {
 			return myBoxLog.getValue();
 		}
 		return 0;
+	}
+
+	// 익명 사용자 수거함 이용
+	public String boxUse(CloseBoxResponseDTO dto, String saveFile) {
+		BoxLog boxLog = new BoxLog();
+		boxLog = new BoxLog();
+		boxLog.setBoxId(dto.getBoxId());
+		boxLog.setType("분리");
+		boxLog.setStatus("수거 전");
+		boxLog.setUserId("익명의 사용자");
+		
+		Map<String, Integer> result = dto.getResult();
+		String name;
+		int count=0;
+		
+		if (result.containsKey("battery")) {
+			name = "battery";
+			count = result.get("battery");
+			boxLog.setValue(boxLog.getValue() + count * 5);
+			boxLog.setFile_battery(saveFile);
+		} else if (result.containsKey("discharged")) {
+			name = "discharged";
+			count = result.get("discharged");
+			boxLog.setValue(boxLog.getValue() + count * 10);
+			boxLog.setFile_discharged(saveFile);
+		} else if (result.containsKey("notDischarged")) {
+			name = "notDischarged";
+			count = result.get("notDischarged");
+			boxLog.setValue(boxLog.getValue() + count * 15);
+			boxLog.setFile_not_discharged(saveFile);
+		} else {
+			return "Fail";
+		}
+		boxLogRepository.save(boxLog);
+		boxLogItemsService.saveLogItem(name, count, boxLog.getLogId());
+		return null;
 	}
 
 		

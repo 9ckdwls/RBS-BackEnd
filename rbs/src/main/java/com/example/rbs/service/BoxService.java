@@ -194,4 +194,10 @@ public class BoxService {
 			return null;
 		}
 	}
+
+	// 익명 사용자 수거함 이용
+	public String boxUse(CloseBoxResponseDTO dto) {
+		return boxLogService.boxUse(dto, saveFile(dto.getImage()));
+	}
+
 }

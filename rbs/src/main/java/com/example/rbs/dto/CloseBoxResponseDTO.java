@@ -13,6 +13,7 @@ public class CloseBoxResponseDTO {
     private String timeStamp;
     private Map<String, Integer> result;
     private String image;
+    private int boxId;
     
     	
     // 기본 생성자

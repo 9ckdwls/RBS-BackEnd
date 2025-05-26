@@ -26,7 +26,7 @@ public class BoxContorller {
 	public List<Box> findAllBox() {
 		return boxService.findAllBox();
 	}
-	
+
 	// 수거함 id로 검색
 	@GetMapping("findBoxById/{id}")
 	public Box findBoxById(@PathVariable(value = "id") int id) {
@@ -42,8 +42,7 @@ public class BoxContorller {
 	// 수거함 문열기
 	// 테스트 불가 IOT 장비 연결 후 테스트
 	@GetMapping("boxOpen/{boxId}/{number}")
-	public Object boxOpen(@PathVariable(value = "boxId") int boxId, 
-			@PathVariable(value = "number") int number) {
+	public Object boxOpen(@PathVariable(value = "boxId") int boxId, @PathVariable(value = "number") int number) {
 		Object response = boxService.boxControll("boxOpen", boxId, number);
 		return response;
 	}
@@ -51,15 +50,20 @@ public class BoxContorller {
 	// 수거함 문닫기
 	// 테스트 불가 IOT 장비 연결 후 테스트
 	@GetMapping("boxClose/{boxId}/{number}")
-	public Object boxClose(@PathVariable(value = "boxId") int boxId,
-			@PathVariable(value = "number") int number) {
+	public Object boxClose(@PathVariable(value = "boxId") int boxId, @PathVariable(value = "number") int number) {
 		Object response = boxService.boxControll("boxClose", boxId, number);
 		return response;
 	}
-	
+
 	// 수거함 사용 끝
 	@GetMapping("boxEnd/{boxId}")
 	public int boxEnd(@PathVariable(value = "boxId") int boxId) {
 		return boxService.boxEnd(boxId);
+	}
+
+	// 익명 사용자 수거함 이용
+	@PostMapping("boxUse/{boxId}/{number}")
+	public String boxUse(@RequestBody CloseBoxResponseDTO dto) {
+		return boxService.boxUse(dto);
 	}
 }
