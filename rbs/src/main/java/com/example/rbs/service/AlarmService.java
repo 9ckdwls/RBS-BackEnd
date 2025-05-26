@@ -14,6 +14,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.rbs.dto.BoxDTO;
+import com.example.rbs.dto.CollectionDTO;
 import com.example.rbs.dto.FireDto;
 import com.example.rbs.entity.Alarm;
 import com.example.rbs.entity.Alarm.AlarmStatus;
@@ -324,11 +325,28 @@ public class AlarmService {
 	}
 
 	// 화재 발생
-	// public void createAlarm(int boxId, String role, AlarmType alarmType) {
 	public String fire(FireDto fireDto) {
 		createAlarm(fireDto.getBoxId(), "ROLE_ALL", AlarmType.FIRE);
 		boxService.fire(fireDto);
 		return null;
+	}
+
+	// 수거 알람 발생
+	public String collection(CollectionDTO dto) {
+		List<Alarm> alarms = alarmRepository.findUnresolvedCollectionAlarms(dto.getBoxId());
+		if(alarms.isEmpty()) {
+			if(dto.getAlertType().equals("수거 필요")) {
+				createAlarm(dto.getBoxId(), "ROLE_EMPLOYEE", AlarmType.COLLECTION_RECOMMENDED);
+			} else if(dto.getAlertType().equals("수거 권장")) {
+				createAlarm(dto.getBoxId(), "ROLE_EMPLOYEE", AlarmType.COLLECTION_NEEDED);
+			}
+		} else if(alarms.get(0).getType() == AlarmType.COLLECTION_RECOMMENDED){
+			alarms.get(0).setType(AlarmType.COLLECTION_NEEDED);
+			alarmRepository.save(alarms.get(0));
+		} else {
+			return "ok";
+		}
+		return "ok";
 	}
 
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.rbs.dto.BoxDTO;
+import com.example.rbs.dto.CollectionDTO;
 import com.example.rbs.dto.FireDto;
 import com.example.rbs.entity.Alarm;
 import com.example.rbs.entity.Alarm.AlarmType;
@@ -185,5 +186,11 @@ public class AlarmController {
 	public String fire(@RequestBody FireDto fireDto) {
 		System.out.println(fireDto);
 		return alarmService.fire(fireDto);
+	}
+	
+	// 수거 알람 발생
+	@PostMapping("/alerts")
+	public String collection(@RequestBody CollectionDTO dto) {
+		return alarmService.collection(dto);
 	}
 }

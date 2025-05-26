@@ -33,6 +33,15 @@ public interface AlarmRepository extends JpaRepository<Alarm, Integer> {
 	// 화재 관련 로그
 	@Query("SELECT a FROM Alarm a WHERE a.type IN ('FIRE', 'FIRE_IN_PROGRESS', 'FIRE_COMPLETED')")
     List<Alarm> findFireLogs();
+	
+	@Query("""
+		      SELECT a
+		        FROM Alarm a
+		       WHERE a.boxId = :boxId
+		         AND a.resolved = 'UNRESOLVED'
+		         AND a.type IN ('COLLECTION_RECOMMENDED')
+		    """)
+		    List<Alarm> findUnresolvedCollectionAlarms(@Param("boxId") int boxId);
 
 
 }
