@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -15,6 +17,8 @@ public class ServerStatusService {
 
 	private final DataSource dataSource;
 	private final WebClient.Builder webClientBuilder;
+	@Value("${flask.url.base}")
+	private String flaskURL;
 
 	public ServerStatusService(DataSource dataSource, WebClient.Builder webClientBuilder) {
 		this.dataSource = dataSource;
@@ -53,7 +57,7 @@ public class ServerStatusService {
 
 		// Flask 서버 상태 확인
 		try {
-			String flaskResponse = webClient.get().uri("http://localhost:5000/server-status").retrieve()
+			String flaskResponse = webClient.get().uri(flaskURL + "/server-status").retrieve()
 					.bodyToMono(String.class).timeout(Duration.ofSeconds(5)).block();
 
 			if (flaskResponse != null && flaskResponse.contains("\"status\":\"success\"")) {
