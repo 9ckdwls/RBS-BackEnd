@@ -155,7 +155,40 @@ public class BoxService {
 	public int boxEnd(int boxId) {
 		int point = boxLogService.boxEnd(boxId);
 		userService.updatePoint(point);
+		alarm(boxId);
+		return point;
+	}
+
+	// 익명 사용자 수거함 이용
+	public String boxUse(CloseBoxResponseDTO dto) {
+		alarm(dto.getBoxId());
+		Map<String, Integer> resultMap = dto.getResult();
+		int volum;
 		
+		Box box = findBoxById(dto.getBoxId());
+	
+		
+		// Box 용량 업데이트
+		if (resultMap != null && resultMap.containsKey("battery")) {
+		    int batteryCount = resultMap.get("battery");
+		    volum = box.getVolume1() + batteryCount * volum1;
+		    box.setVolume1(volum);
+		} else if(resultMap != null && resultMap.containsKey("discharged")) {
+			int batteryCount = resultMap.get("discharged");
+			volum = box.getVolume2() + batteryCount * volum2;
+		    box.setVolume2(volum);
+		} else if(resultMap != null && resultMap.containsKey("notDischarged")) {
+			int batteryCount = resultMap.get("notDischarged");
+			volum = box.getVolume3() + batteryCount * volum3;
+		    box.setVolume3(volum);
+		}
+		
+		boxRepository.save(box);
+		return boxLogService.boxUse(dto, saveFile(dto.getImage()));
+	}
+	
+	// 수거 권장 및 필요 알람
+	private void alarm(int boxId) {
 		Box box = findBoxById(boxId);
 		int maxVolume = Math.max(box.getVolume1(),
                 Math.max(box.getVolume2(), box.getVolume3()));
@@ -179,12 +212,9 @@ public class BoxService {
                 )
             )
 	        .block();  // 비동기 전송
-	        
 	    }
-			
-		return point;
 	}
-
+	
 	private String saveFile(String file) {
 		try {
 			if (file != null) {
@@ -213,11 +243,6 @@ public class BoxService {
 		} catch (Exception e) {
 			return null;
 		}
-	}
-
-	// 익명 사용자 수거함 이용
-	public String boxUse(CloseBoxResponseDTO dto) {
-		return boxLogService.boxUse(dto, saveFile(dto.getImage()));
 	}
 
 }
