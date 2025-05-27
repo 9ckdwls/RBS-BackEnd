@@ -62,8 +62,9 @@ public class BoxContorller {
 	}
 
 	// 익명 사용자 수거함 이용
-	@PostMapping("boxUse/{boxId}/{number}")
+	@PostMapping("boxUse")
 	public String boxUse(@RequestBody CloseBoxResponseDTO dto) {
+		System.out.println(dto);
 		return boxService.boxUse(dto);
 	}
 }

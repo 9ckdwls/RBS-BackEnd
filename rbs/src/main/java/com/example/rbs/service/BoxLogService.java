@@ -122,6 +122,7 @@ public class BoxLogService {
 		BoxLog boxLog = new BoxLog();
 		boxLog = new BoxLog();
 		boxLog.setBoxId(dto.getBoxId());
+		boxLog.setDate(new Date());
 		boxLog.setType("분리");
 		boxLog.setStatus("수거 전");
 		boxLog.setUserId("익명의 사용자");

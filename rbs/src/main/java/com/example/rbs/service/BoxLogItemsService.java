@@ -26,6 +26,7 @@ public class BoxLogItemsService {
 		BoxLogItems boxLogItems = new BoxLogItems();
 		boxLogItems.setBoxLogId(logId);
 		boxLogItems.setName(name);
+		boxLogItems.setCount(count);
 		boxLogItemsRepository.save(boxLogItems);
 	}
 }

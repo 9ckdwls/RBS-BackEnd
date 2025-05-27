@@ -199,14 +199,14 @@ public class BoxService {
 
 				// 파일 이름: UUID + 확장자
 				String fileName = UUID.randomUUID().toString() + "_boxLog.jpg";
-				String filePath = fileName;
+				String filePath = uploadDir + fileName;
 
 				// 파일 저장
 				File imageFile = new File(filePath);
 				try (OutputStream os = new FileOutputStream(imageFile)) {
 					os.write(imageBytes);
 				}
-				return filePath;
+				return fileName;
 			} else {
 				return null;
 			}
