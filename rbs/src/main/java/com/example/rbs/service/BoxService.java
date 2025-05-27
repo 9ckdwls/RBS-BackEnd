@@ -70,10 +70,35 @@ public class BoxService {
 			} else if (myBox.getUsageStatus() == UsageStatus.AVAILABLE) { // 차단하기
 				myBox.setUsageStatus(UsageStatus.BLOCKED);
 				boxRepository.save(myBox);
+				
+				WebClient webClient = webClientBuilder.baseUrl("http://" + myBox.getIPAddress()).build();
+				webClient
+				.post()
+				.uri("boxStop")
+				.retrieve()
+				.bodyToMono(IOTResponseDTO.class)
+				.timeout(Duration.ofSeconds(60))
+				.onErrorResume(TimeoutException.class, t -> Mono.just(new IOTResponseDTO("Fail")))
+				.onErrorResume(ConnectException.class,
+						t -> Mono.just(new IOTResponseDTO("Fail")))
+				.block();
+				
 				return "차단 성공";
 			} else if (myBox.getUsageStatus() == UsageStatus.BLOCKED) { // 차단 해제하기
 				myBox.setUsageStatus(UsageStatus.AVAILABLE);
 				boxRepository.save(myBox);
+				
+				WebClient webClient = webClientBuilder.baseUrl("http://" + myBox.getIPAddress()).build();
+				webClient
+				.post()
+				.uri("boxRun")
+				.retrieve()
+				.bodyToMono(IOTResponseDTO.class)
+				.timeout(Duration.ofSeconds(60))
+				.onErrorResume(TimeoutException.class, t -> Mono.just(new IOTResponseDTO("Fail")))
+				.onErrorResume(ConnectException.class,
+						t -> Mono.just(new IOTResponseDTO("Fail")))
+				.block();
 				return "차단 해제 성공";
 			} else {
 				return "Fail";
