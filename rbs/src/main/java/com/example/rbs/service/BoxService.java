@@ -227,9 +227,9 @@ public class BoxService {
 		if(fireDto.getNum() == 1) {
 			box.setFireStatus1(FireStatus.FIRE);
 		} else if(fireDto.getNum() == 2) {
-			box.setFireStatus1(FireStatus.FIRE);
+			box.setFireStatus2(FireStatus.FIRE);
 		} else if(fireDto.getNum() == 3) {
-			box.setFireStatus1(FireStatus.FIRE);
+			box.setFireStatus3(FireStatus.FIRE);
 		} 
 		
 		boxRepository.save(box);

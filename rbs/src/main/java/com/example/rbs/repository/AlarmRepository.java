@@ -1,5 +1,6 @@
 package com.example.rbs.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +43,13 @@ public interface AlarmRepository extends JpaRepository<Alarm, Integer> {
 		         AND a.type IN ('COLLECTION_RECOMMENDED')
 		    """)
 		    List<Alarm> findUnresolvedCollectionAlarms(@Param("boxId") int boxId);
+	
+    //타입 리스트, resolved 상태로 Alarm 조회
+	List<Alarm> findByBoxIdAndTypeInAndResolved(
+	        int boxId,
+	        Collection<AlarmType> types,
+	        AlarmStatus resolved
+	    );
 
 
 }

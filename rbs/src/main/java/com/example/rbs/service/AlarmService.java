@@ -3,6 +3,7 @@ package com.example.rbs.service;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -261,11 +262,10 @@ public class AlarmService {
 				myAlarm.setUserId(userService.getUserId());
 
 				alarmRepository.save(myAlarm);
+				
+				// 알람 전송
+				sseService.sendAlarmToUser(myAlarm);
 
-				// 사진 파일 저장
-				if (!file.isEmpty()) {
-					saveFile(file);
-				}
 
 				return "Success";
 
@@ -326,8 +326,16 @@ public class AlarmService {
 
 	// 화재 발생
 	public String fire(FireDto fireDto) {
-		createAlarm(fireDto.getBoxId(), "ROLE_ALL", AlarmType.FIRE);
 		boxService.fire(fireDto);
+		List<AlarmType> fireTypes = Arrays.stream(AlarmType.values())
+	            .filter(t -> t.name().startsWith("FIRE"))
+	            .toList();
+		List<Alarm> alarmList = alarmRepository.findByBoxIdAndTypeInAndResolved(fireDto.getBoxId(), fireTypes, AlarmStatus.UNRESOLVED);
+		if(!alarmList.isEmpty()) {
+			System.out.println("이미 발생한 화재 알람");
+			return "ok";
+		}
+		createAlarm(fireDto.getBoxId(), "ROLE_ALL", AlarmType.FIRE);
 		return null;
 	}
 
