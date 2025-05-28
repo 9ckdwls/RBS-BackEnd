@@ -191,6 +191,8 @@ public class AlarmController {
 	// 수거 알람 발생
 	@PostMapping("/alerts")
 	public String collection(@RequestBody CollectionDTO dto) {
+		System.out.println("웹 서버측");
+		System.out.println(dto);
 		return alarmService.collection(dto);
 	}
 }

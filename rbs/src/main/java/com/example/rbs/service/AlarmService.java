@@ -344,9 +344,9 @@ public class AlarmService {
 		List<Alarm> alarms = alarmRepository.findUnresolvedCollectionAlarms(dto.getBoxId());
 		if(alarms.isEmpty()) {
 			if(dto.getAlertType().equals("수거 필요")) {
-				createAlarm(dto.getBoxId(), "ROLE_EMPLOYEE", AlarmType.COLLECTION_RECOMMENDED);
-			} else if(dto.getAlertType().equals("수거 권장")) {
 				createAlarm(dto.getBoxId(), "ROLE_EMPLOYEE", AlarmType.COLLECTION_NEEDED);
+			} else if(dto.getAlertType().equals("수거 권장")) {
+				createAlarm(dto.getBoxId(), "ROLE_EMPLOYEE", AlarmType.COLLECTION_RECOMMENDED);
 			}
 		} else if(alarms.get(0).getType() == AlarmType.COLLECTION_RECOMMENDED){
 			alarms.get(0).setType(AlarmType.COLLECTION_NEEDED);
