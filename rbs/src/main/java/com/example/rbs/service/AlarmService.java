@@ -224,7 +224,7 @@ public class AlarmService {
 					& myAlarm.getRole().equals("ROLE_ADMIN")
 					& myAlarm.getType().equals(AlarmType.COLLECTION_IN_PROGRESS)){
 				// IOT 제어
-				boxService.boxControll("boxOpen", boxId, 0);
+				boxService.boxControll("boxOpen", boxId, 3);
 				return "Success";
 			} else {
 				return "내가 예약한 수거함이 아닙니다.";
