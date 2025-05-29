@@ -28,6 +28,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.example.rbs.dto.CloseBoxResponseDTO;
 import com.example.rbs.dto.IOTResponseDTO;
 import com.example.rbs.entity.Box;
+import com.example.rbs.entity.Box.InstallStatus;
 import com.example.rbs.repository.BoxRepository;
 
 import reactor.core.publisher.Mono;
@@ -56,9 +57,15 @@ public class BoxService {
 		this.boxLogService = boxLogService;
 	}
 
-	// 모든 수거함 조회
+	// 설치된 수거함 조회
 	public List<Box> findAllBox() {
-		return boxRepository.findAll();
+		List<InstallStatus> statuses = List.of(
+	            InstallStatus.INSTALL_CONFIRMED,
+	            InstallStatus.REMOVE_REQUEST,
+	            InstallStatus.REMOVE_IN_PROGRESS,
+	            InstallStatus.REMOVE_COMPLETED
+	        );
+		return boxRepository.findByInstallStatusIn(statuses);
 	}
 
 	// 수거함 id로 검색
