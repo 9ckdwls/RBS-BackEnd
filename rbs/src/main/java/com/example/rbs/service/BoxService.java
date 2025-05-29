@@ -241,12 +241,14 @@ public class BoxService {
 		boxRepository.save(box);
 	}
 
+	// 수거함 제거 사진 파일 저장
 	public void removeBox(int boxId, String saveFile) {
 		Box box = findById(boxId);
 		box.setFile(saveFile);
 		boxRepository.save(box);
 	}
 
+	// 화재 발생
 	public void fire(FireDto fireDto) {
 		Box box = findById(fireDto.getBoxId());
 		if(fireDto.getNum() == 1) {
@@ -255,7 +257,11 @@ public class BoxService {
 			box.setFireStatus2(FireStatus.FIRE);
 		} else if(fireDto.getNum() == 3) {
 			box.setFireStatus3(FireStatus.FIRE);
-		} 
+		} else {
+			box.setFireStatus1(FireStatus.FIRE);
+			box.setFireStatus2(FireStatus.FIRE);
+			box.setFireStatus3(FireStatus.FIRE);
+		}
 		
 		boxRepository.save(box);
 	}
