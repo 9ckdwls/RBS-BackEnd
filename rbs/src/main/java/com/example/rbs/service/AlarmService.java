@@ -60,7 +60,7 @@ public class AlarmService {
 	// 관리자가 볼 알람
 	public List<Alarm> adminAlarm() {
 		return alarmRepository.findByResolvedAndRoleIn(AlarmStatus.UNRESOLVED,
-				List.of(userService.getUserRole(), "ROLE_ALL"));
+				List.of(userService.getUserRole(), "ROLE_ALL", "ROLE_REQUEST"));
 	}
 
 	// 새로운 알람 생성
@@ -87,7 +87,7 @@ public class AlarmService {
 			// installRequest(boxDTO) name, IPAddress, Location
 			int boxId = boxService.installRequest(boxDTO);
 			// createAlarm(int boxId, String role, AlarmType alarmType)
-			createAlarm(boxId, "ROLE_ALL", AlarmType.INSTALL_REQUEST);
+			createAlarm(boxId, "ROLE_REQUEST", AlarmType.INSTALL_REQUEST);
 
 			return "Success";
 		} catch (Exception e) {
@@ -103,7 +103,7 @@ public class AlarmService {
 		try {
 			boxService.boxStatusUpdate(boxId, InstallStatus.REMOVE_REQUEST);
 			// createAlarm(int boxId, String role, AlarmType alarmType)
-			createAlarm(boxId, "ROLE_ALL", AlarmType.REMOVE_REQUEST);
+			createAlarm(boxId, "ROLE_REQUEST", AlarmType.REMOVE_REQUEST);
 
 			return "Success";
 		} catch (Exception e) {
@@ -197,14 +197,11 @@ public class AlarmService {
 				if(alarmType.equals(AlarmType.COLLECTION_CONFIRMED)) { // 수거 확정이라면
 					myAlarm.setTargetUserId(myAlarm.getUserId()); // 수거자가 최종 알람 확인
 				}
-
 				myAlarm.setUserId(userService.getUserId());
-
 				alarmRepository.save(myAlarm);
-
 				// 알람 전송
 				sseService.sendAlarmToUser(myAlarm);
-
+				System.out.println("전송 후");
 				return "Success";
 			} else {
 				return "Fail";
