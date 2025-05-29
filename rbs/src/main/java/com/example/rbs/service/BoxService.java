@@ -136,11 +136,11 @@ public class BoxService {
 			    volum = box.getVolume1() + batteryCount * volum1;
 			    box.setVolume1(volum);
 			} else if(resultMap != null && number == 2) {
-				int batteryCount = resultMap.get("digital");
+				int batteryCount = resultMap.get("Electronic devices");
 				volum = box.getVolume2() + batteryCount * volum2;
 			    box.setVolume2(volum);
 			} else if(resultMap != null && number == 3) {
-				int batteryCount = resultMap.get("digital");
+				int batteryCount = resultMap.get("Electronic devices");
 				volum = box.getVolume3() + batteryCount * volum3;
 			    box.setVolume3(volum);
 			}
@@ -178,8 +178,8 @@ public class BoxService {
 		    int batteryCount = resultMap.get("battery");
 		    volum = box.getVolume1() + batteryCount * volum1;
 		    box.setVolume1(volum);
-		} else if(resultMap != null && resultMap.containsKey("digital")) {
-			int batteryCount = resultMap.get("digital");
+		} else if(resultMap != null && resultMap.containsKey("Electronic devices")) {
+			int batteryCount = resultMap.get("Electronic devices");
 			volum = box.getVolume3() + batteryCount * volum3;
 		    box.setVolume3(volum);
 		}

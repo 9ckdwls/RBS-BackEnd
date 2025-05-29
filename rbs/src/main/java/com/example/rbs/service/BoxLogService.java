@@ -88,13 +88,13 @@ public class BoxLogService {
 			boxLog.setFile_battery(saveFile);
 		} else if (number == 2) {
 			name = "discharged";
-			count = result.get("digital");
+			count = result.get("Electronic devices");
 			value = count * discharged;
 			boxLog.setValue(boxLog.getValue() + value);
 			boxLog.setFile_discharged(saveFile);
 		} else if (number == 3) {
 			name = "notDischarged";
-			count = result.get("digital");
+			count = result.get("Electronic devices");
 			value = count * notDischarged;
 			boxLog.setValue(boxLog.getValue() + value);
 			boxLog.setFile_not_discharged(saveFile);
@@ -137,17 +137,12 @@ public class BoxLogService {
 		if (result.containsKey("battery")) {
 			name = "battery";
 			count = result.get("battery");
-			boxLog.setValue(boxLog.getValue() + count * 5);
+			boxLog.setValue(boxLog.getValue() + count * battery);
 			boxLog.setFile_battery(saveFile);
-		} else if (result.containsKey("discharged")) {
-			name = "discharged";
-			count = result.get("discharged");
-			boxLog.setValue(boxLog.getValue() + count * 10);
-			boxLog.setFile_discharged(saveFile);
-		} else if (result.containsKey("notDischarged")) {
+		} else if (result.containsKey("Electronic devices")) {
 			name = "notDischarged";
-			count = result.get("notDischarged");
-			boxLog.setValue(boxLog.getValue() + count * 15);
+			count = result.get("Electronic devices");
+			boxLog.setValue(boxLog.getValue() + count * notDischarged);
 			boxLog.setFile_not_discharged(saveFile);
 		} else {
 			return "Fail";
