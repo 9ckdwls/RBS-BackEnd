@@ -189,7 +189,7 @@ public class AlarmService {
 				// 3. 사진 경로 저장 및 로그
 				// 4. IOT 제어
 				if(alarmType.equals(AlarmType.COLLECTION_COMPLETED)) { // 수거 완료라면
-					boxService.boxControll("boxAdClose", myAlarm.getBoxId(), 0);
+					boxService.boxControll("boxAdClose", myAlarm.getBoxId(), 3);
 					boxService.collectionCompleted(myAlarm.getBoxId());
 					myAlarm.setBoxLogId(boxLogService.collectionCompleted(myAlarm.getBoxId(), saveFile(file)));
 				}
