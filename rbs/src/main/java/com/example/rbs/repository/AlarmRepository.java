@@ -40,7 +40,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, Integer> {
 		        FROM Alarm a
 		       WHERE a.boxId = :boxId
 		         AND a.resolved = 'UNRESOLVED'
-		         AND a.type IN ('COLLECTION_RECOMMENDED')
+		         AND a.type IN ('COLLECTION_RECOMMENDED', 'COLLECTION_NEEDED')
 		    """)
 		    List<Alarm> findUnresolvedCollectionAlarms(@Param("boxId") int boxId);
 	
