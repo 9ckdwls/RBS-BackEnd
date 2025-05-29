@@ -63,7 +63,7 @@ public class BoxLogService {
 		return boxLogResponse;
 	}
 
-	public int logUpdate(int boxId, Map<String, Integer> result, String saveFile) {
+	public int logUpdate(int boxId, Map<String, Integer> result, String saveFile, int number) {
 		Optional<BoxLog> opBoxlog = boxLogRepository.findByLogIdAndStatus(boxId, "분리 중");
 		BoxLog boxLog;
 		if(opBoxlog.isEmpty()) {
@@ -76,24 +76,27 @@ public class BoxLogService {
 			boxLog = opBoxlog.get();
 		}
 		
-		
 		String name;
 		int count;
+		int value=0;
 		
-		if (result.containsKey("battery")) {
+		if (number == 1) {
 			name = "battery";
 			count = result.get("battery");
-			boxLog.setValue(boxLog.getValue() + count * battery);
+			value = count * battery;
+			boxLog.setValue(boxLog.getValue() + value);
 			boxLog.setFile_battery(saveFile);
-		} else if (result.containsKey("discharged")) {
+		} else if (number == 2) {
 			name = "discharged";
-			count = result.get("discharged");
-			boxLog.setValue(boxLog.getValue() + count * discharged);
+			count = result.get("digital");
+			value = count * discharged;
+			boxLog.setValue(boxLog.getValue() + value);
 			boxLog.setFile_discharged(saveFile);
-		} else if (result.containsKey("notDischarged")) {
+		} else if (number == 3) {
 			name = "notDischarged";
-			count = result.get("notDischarged");
-			boxLog.setValue(boxLog.getValue() + count * notDischarged);
+			count = result.get("digital");
+			value = count * notDischarged;
+			boxLog.setValue(boxLog.getValue() + value);
 			boxLog.setFile_not_discharged(saveFile);
 		} else {
 			return 0;
@@ -101,7 +104,7 @@ public class BoxLogService {
 		boxLogRepository.save(boxLog);
 		boxLogItemsService.saveLogItem(name, count, boxLog.getLogId());
 		
-		return count * 5;
+		return value;
 		
 	}
 

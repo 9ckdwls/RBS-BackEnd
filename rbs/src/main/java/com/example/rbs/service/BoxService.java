@@ -82,7 +82,7 @@ public class BoxService {
 	}
 
 	// 수거함 제어
-	public Object boxControll(String controll, int boxId, int number) {
+	public int boxControll(String controll, int boxId, int number) {
 		Box box = findBoxById(boxId);
 		String uri;
 		String role = userService.getRole();
@@ -107,7 +107,7 @@ public class BoxService {
 					.onErrorResume(TimeoutException.class, t -> Mono.just(new IOTResponseDTO("Fail")))
 					.onErrorResume(ConnectException.class, t -> Mono.just(new IOTResponseDTO("Fail"))).block();
 
-			return response;
+			return 1;
 		} else if (controll.equals("boxClose")) {
 			// 문 닫기 요청 → 사진 및 수거 로그도 포함된 응답 받기
 			System.out.println("문닫기 요청");
@@ -126,17 +126,21 @@ public class BoxService {
 			Map<String, Integer> resultMap = response.getResult();
 			int volum;
 			
+			if (resultMap == null) {
+			    return 0;
+			}
+			
 			// Box 용량 업데이트
-			if (resultMap != null && resultMap.containsKey("battery")) {
+			if (resultMap != null && number == 1) {
 			    int batteryCount = resultMap.get("battery");
 			    volum = box.getVolume1() + batteryCount * volum1;
 			    box.setVolume1(volum);
-			} else if(resultMap != null && resultMap.containsKey("discharged")) {
-				int batteryCount = resultMap.get("discharged");
+			} else if(resultMap != null && number == 2) {
+				int batteryCount = resultMap.get("digital");
 				volum = box.getVolume2() + batteryCount * volum2;
 			    box.setVolume2(volum);
-			} else if(resultMap != null && resultMap.containsKey("notDischarged")) {
-				int batteryCount = resultMap.get("notDischarged");
+			} else if(resultMap != null && number == 3) {
+				int batteryCount = resultMap.get("digital");
 				volum = box.getVolume3() + batteryCount * volum3;
 			    box.setVolume3(volum);
 			}
@@ -144,10 +148,9 @@ public class BoxService {
 			boxRepository.save(box);
 			
 			// 로그 작성 및 사진파일 저장
-			boxLogService.logUpdate(boxId, response.getResult(), saveFile(response.getImage()));
-			return response;
+			return boxLogService.logUpdate(boxId, response.getResult(), saveFile(response.getImage()), number);
 		} else {
-			return "Fail";
+			return 0;
 		}
 	}
 
@@ -161,29 +164,28 @@ public class BoxService {
 
 	// 익명 사용자 수거함 이용
 	public String boxUse(CloseBoxResponseDTO dto) {
-		alarm(dto.getBoxId());
 		Map<String, Integer> resultMap = dto.getResult();
 		int volum;
 		
+		if (resultMap == null) {
+		    return "Fail";
+		}
+		
 		Box box = findBoxById(dto.getBoxId());
-	
 		
 		// Box 용량 업데이트
 		if (resultMap != null && resultMap.containsKey("battery")) {
 		    int batteryCount = resultMap.get("battery");
 		    volum = box.getVolume1() + batteryCount * volum1;
 		    box.setVolume1(volum);
-		} else if(resultMap != null && resultMap.containsKey("discharged")) {
-			int batteryCount = resultMap.get("discharged");
-			volum = box.getVolume2() + batteryCount * volum2;
-		    box.setVolume2(volum);
-		} else if(resultMap != null && resultMap.containsKey("notDischarged")) {
-			int batteryCount = resultMap.get("notDischarged");
+		} else if(resultMap != null && resultMap.containsKey("digital")) {
+			int batteryCount = resultMap.get("digital");
 			volum = box.getVolume3() + batteryCount * volum3;
 		    box.setVolume3(volum);
 		}
 		
 		boxRepository.save(box);
+		alarm(dto.getBoxId());
 		return boxLogService.boxUse(dto, saveFile(dto.getImage()));
 	}
 	
@@ -193,7 +195,7 @@ public class BoxService {
 		int maxVolume = Math.max(box.getVolume1(),
                 Math.max(box.getVolume2(), box.getVolume3()));
 		if (maxVolume >= 50) {
-			String alertType = (maxVolume >= 70) ? "수거 필요" : "수거 권장";
+			String alertType = (maxVolume >= 80) ? "수거 필요" : "수거 권장";
 	        
 	        WebClient webClient = webClientBuilder.baseUrl(webIP).build();
 	        webClient.post()
