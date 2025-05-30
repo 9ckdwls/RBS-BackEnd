@@ -132,6 +132,18 @@ public class BoxService {
 		WebClient webClient = webClientBuilder.baseUrl("http://" + box.getIPAddress()).build();
 
 		if (controll.equals("boxOpen")) {
+			if(number==0) {
+				box.setStore1(1);
+			} else if(number==1) {
+				box.setStore2(1);
+			} else if(number==2) {
+				box.setStore3(1);
+			} else if(number==3) {
+				box.setStore4(1);
+			}
+			boxRepository.save(box);
+			
+			
 			IOTResponseDTO response = webClient
 					.post()
 					.uri(uri)
@@ -144,6 +156,18 @@ public class BoxService {
 					.block();
 			return response;
 		} else if (controll.equals("boxAdClose")) {
+			if(number==0) {
+				box.setStore1(0);
+			} else if(number==1) {
+				box.setStore2(0);
+			} else if(number==2) {
+				box.setStore3(0);
+			} else if(number==3) {
+				box.setStore4(0);
+			}
+			boxRepository.save(box);
+			
+			
 		    CloseBoxResponseDTO response = webClient
 		            .post()
 		            .uri(uri)
