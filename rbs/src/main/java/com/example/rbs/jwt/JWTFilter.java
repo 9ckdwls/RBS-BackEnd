@@ -34,7 +34,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
 		// access이 없거나 Bearer로 시작하지 않으면 인증X
 		if (access == null || !access.startsWith("Bearer ")) {
-			System.out.println("accessToken null");
 			filterChain.doFilter(request, response);
 			return;
 		}

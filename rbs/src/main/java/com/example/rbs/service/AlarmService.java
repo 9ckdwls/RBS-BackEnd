@@ -51,18 +51,21 @@ public class AlarmService {
 			return null;
 		}
 	}
-
+	
 	// 미해결된 알람 가져오기
 	public List<Alarm> unResolved() {
 		return alarmRepository.findRelevantAlarms(userService.getUserRole(), userService.getUserId());
 	}
-
+	
 	// 관리자가 볼 알람
 	public List<Alarm> adminAlarm() {
-		return alarmRepository.findByResolvedAndRoleIn(AlarmStatus.UNRESOLVED,
-				List.of(userService.getUserRole(), "ROLE_ALL", "ROLE_REQUEST"));
+		return alarmRepository.findAdminAlarms(AlarmStatus.UNRESOLVED,
+				List.of(userService.getUserRole(), "ROLE_ALL"), List.of(
+					    AlarmType.REMOVE_REQUEST,
+					    AlarmType.INSTALL_REQUEST
+					));
 	}
-
+	
 	// 새로운 알람 생성
 	public void createAlarm(int boxId, String role, AlarmType alarmType) {
 		Alarm alarm = new Alarm();
@@ -87,7 +90,7 @@ public class AlarmService {
 			// installRequest(boxDTO) name, IPAddress, Location
 			int boxId = boxService.installRequest(boxDTO);
 			// createAlarm(int boxId, String role, AlarmType alarmType)
-			createAlarm(boxId, "ROLE_REQUEST", AlarmType.INSTALL_REQUEST);
+			createAlarm(boxId, "ROLE_EMPLOYEE", AlarmType.INSTALL_REQUEST);
 
 			return "Success";
 		} catch (Exception e) {
@@ -103,7 +106,7 @@ public class AlarmService {
 		try {
 			boxService.boxStatusUpdate(boxId, InstallStatus.REMOVE_REQUEST);
 			// createAlarm(int boxId, String role, AlarmType alarmType)
-			createAlarm(boxId, "ROLE_REQUEST", AlarmType.REMOVE_REQUEST);
+			createAlarm(boxId, "ROLE_EMPLOYEE", AlarmType.REMOVE_REQUEST);
 
 			return "Success";
 		} catch (Exception e) {
@@ -134,7 +137,13 @@ public class AlarmService {
 					boxService.boxStatusUpdate(myAlarm.getBoxId(), InstallStatus.valueOf(alarmType.name()), boxDTO);
 					// 사진 파일 저장
 					boxService.savefile(myAlarm.getBoxId(), saveFile(file));
-				} 
+				}
+				
+				// 제거 완료
+				if(alarmType.equals(AlarmType.REMOVE_COMPLETED)) {
+					boxService.removeBox(myAlarm.getBoxId(), saveFile(file));
+				}
+				
 				switch (alarmType) {
 			    case INSTALL_REQUEST:
 			    case INSTALL_IN_PROGRESS:
@@ -153,11 +162,6 @@ public class AlarmService {
 			}
 				alarmRepository.save(myAlarm);
 				
-				// 제거 완료
-				if(alarmType.equals(AlarmType.REMOVE_COMPLETED)) {
-					boxService.removeBox(myAlarm.getBoxId(), saveFile(file));
-				}
-
 				// 알람 전송
 				sseService.sendAlarmToUser(myAlarm);
 
@@ -199,9 +203,9 @@ public class AlarmService {
 				}
 				myAlarm.setUserId(userService.getUserId());
 				alarmRepository.save(myAlarm);
+				
 				// 알람 전송
 				sseService.sendAlarmToUser(myAlarm);
-				System.out.println("전송 후");
 				return "Success";
 			} else {
 				return "Fail";
@@ -221,7 +225,6 @@ public class AlarmService {
 			// 내가 수거 예약했는지
 			if(myAlarm.getBoxId() == boxId & myAlarm.getResolved().equals(AlarmStatus.UNRESOLVED)
 					& myAlarm.getUserId().equals(userService.getUserId())
-					& myAlarm.getRole().equals("ROLE_ADMIN")
 					& myAlarm.getType().equals(AlarmType.COLLECTION_IN_PROGRESS)){
 				// IOT 제어
 				boxService.boxControll("boxOpen", boxId, 3);

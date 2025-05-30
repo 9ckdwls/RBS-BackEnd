@@ -55,10 +55,10 @@ public class SecurityConfig {
 		// 혹시 모를 나머지 요청도 ADMIN 권한이 있어야 접근 가능
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/login", "join", "loginFail", "logout", "findId", "findPw", "SSEsubscribe", "/send-one/{to}", "/verify-code", "/fire", "/alerts").permitAll()
+                        .requestMatchers("/", "/login", "join", "loginFail", "logout", "findId", "findPw", "/send-one/{to}", "/verify-code", "/fire", "/alerts").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/employee/**").hasRole("EMPLOYEE")
-                        .requestMatchers("/alarm/**").authenticated()
+                        .requestMatchers("/alarm/**", "/SSEsubscribe").authenticated()
                         .anyRequest().hasRole("ADMIN")
                 );
         

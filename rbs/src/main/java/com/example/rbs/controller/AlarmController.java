@@ -44,6 +44,7 @@ public class AlarmController {
 	// 관리자용
 	@PostMapping("admin/installRequest")
 	public String installRequest(@RequestBody BoxDTO boxDTO) {
+		System.out.println("설치요청 후 최초 IP주소:" + boxDTO.getIPAddress());
 		return alarmService.installRequest(boxDTO);
 	}
 
@@ -164,7 +165,7 @@ public class AlarmController {
 	// 관리자용
 	@PatchMapping("admin/fireConFirmed/{alarmId}")
 	public String fireConFirmed(@PathVariable(value = "alarmId") int alarmId) {
-		return alarmService.fireAlarmUpdate(alarmId, AlarmType.FIRE_CONFIRMED, "ROLE_ADMIN", null);
+		return alarmService.fireAlarmUpdate(alarmId, AlarmType.FIRE_CONFIRMED, null, null);
 	}
 
 	// 화재 처리 확정 수거자 확인 완료
