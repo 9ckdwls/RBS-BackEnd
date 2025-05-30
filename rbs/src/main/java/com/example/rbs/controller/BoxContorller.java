@@ -50,8 +50,8 @@ public class BoxContorller {
 	// 수거함 문닫기
 	// 테스트 불가 IOT 장비 연결 후 테스트
 	@GetMapping("boxClose/{boxId}/{number}")
-	public Object boxClose(@PathVariable(value = "boxId") int boxId, @PathVariable(value = "number") int number) {
-		Object response = boxService.boxControll("boxClose", boxId, number);
+	public int boxClose(@PathVariable(value = "boxId") int boxId, @PathVariable(value = "number") int number) {
+		int response = boxService.boxControll("boxClose", boxId, number);
 		return response;
 	}
 
