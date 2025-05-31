@@ -290,5 +290,13 @@ public class BoxService {
 		boxRepository.save(box);
 	}
 
+	// 수거함 화재 신고
+	public String boxFire(int boxId) {
+		Box box = findById(boxId);
+		// 실제 서비스에서는 119 상황실
+		userService.smsFire("01074709475", box);
+		return null;
+	}
+
 
 }

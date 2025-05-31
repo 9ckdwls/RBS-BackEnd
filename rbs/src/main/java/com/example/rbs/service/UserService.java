@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.rbs.dto.FindUserDto;
 import com.example.rbs.dto.JoinDto;
+import com.example.rbs.entity.Box;
 import com.example.rbs.entity.User;
 import com.example.rbs.repository.UserRepository;
 
@@ -30,12 +31,12 @@ public class UserService {
 	private final DefaultMessageService messageService;
 	private final PhoneVerificationService phoneVerificationService;
 
-	@Value("${sms.from-number}") String FROM;
+	@Value("${sms.from-number}")
+	String FROM;
 
 	public UserService(UserRepository userRepositroy, BCryptPasswordEncoder bCryptPasswordEncoder,
-			PhoneVerificationService phoneVerificationService,
-			@Value("${sms.api-key}") String API_KEY, @Value("${sms.api-secret-key}") String API_SECRET_KEY,
-			@Value("${sms.domain}") String DOMAIN) {
+			PhoneVerificationService phoneVerificationService, @Value("${sms.api-key}") String API_KEY,
+			@Value("${sms.api-secret-key}") String API_SECRET_KEY, @Value("${sms.domain}") String DOMAIN) {
 		this.userRepositroy = userRepositroy;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 		this.phoneVerificationService = phoneVerificationService;
@@ -83,21 +84,40 @@ public class UserService {
 
 		try {
 			if (!isValidPhoneNumber(to)) {
-		        throw new IllegalArgumentException("phoneNumber is not valid");
-		    }
-	        messageService.sendOne(new SingleMessageSendingRequest(message));
-	        return "Success";
-	    } catch (IllegalArgumentException e) {
-	        return "phoneNuber is not valid: " + e.getMessage();
-	    } catch (Exception e) {
-	        // 다른 예외에 대한 일반적인 메시지 처리
-	        return "SMS error: " + e.getMessage();
-	    }
+				throw new IllegalArgumentException("phoneNumber is not valid");
+			}
+			messageService.sendOne(new SingleMessageSendingRequest(message));
+			return "Success";
+		} catch (IllegalArgumentException e) {
+			return "phoneNuber is not valid: " + e.getMessage();
+		} catch (Exception e) {
+			// 다른 예외에 대한 일반적인 메시지 처리
+			return "SMS error: " + e.getMessage();
+		}
 	}
-	
+
+	// 화재 신고
+	public String smsFire(String to, Box box) {
+		Message message = new Message();
+		// 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
+		message.setFrom(FROM);
+		message.setTo(to);
+		message.setText(box.getLocationAsText() + "수거함에서 화재 발생");
+
+		try {
+			messageService.sendOne(new SingleMessageSendingRequest(message));
+			return "Success";
+		} catch (IllegalArgumentException e) {
+			return "phoneNuber is not valid: " + e.getMessage();
+		} catch (Exception e) {
+			// 다른 예외에 대한 일반적인 메시지 처리
+			return "SMS error: " + e.getMessage();
+		}
+	}
+
 	// 전화번호 검증
 	private boolean isValidPhoneNumber(String phoneNumber) {
-	    return phoneNumber != null && phoneNumber.matches("^010\\d{8}$");
+		return phoneNumber != null && phoneNumber.matches("^010\\d{8}$");
 	}
 
 	// 전화번호 인증 코드 검증
@@ -232,7 +252,7 @@ public class UserService {
 
 	public void updatePonint(int value) {
 		Optional<User> user = userRepositroy.findById(getUserId());
-		if(user.isPresent()) {
+		if (user.isPresent()) {
 			User myUser = user.get();
 			myUser.setPoint(myUser.getPoint() + value);
 			userRepositroy.save(myUser);

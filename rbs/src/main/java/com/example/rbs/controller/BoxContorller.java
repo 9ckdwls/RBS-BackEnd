@@ -58,5 +58,11 @@ public class BoxContorller {
 			@PathVariable(value = "number") int number) {
 		return boxService.boxControll("boxAdClose",boxId, number);
 	}
+	
+	// 수거함 화재 신고
+	@GetMapping("admin/boxFire/{boxId}")
+	public String boxFire(@PathVariable(value ="boxId") int boxId) {
+		return boxService.boxFire(boxId);
+	}
 
 }
