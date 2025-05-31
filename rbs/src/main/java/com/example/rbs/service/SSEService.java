@@ -61,12 +61,12 @@ public class SSEService {
 		// 수거 진행 alarmTargetUserId = NULL / alarmUserId = 해당 수거자 / alarmRole = ROLE_ADMIN
 		// 수거 완료 alarmTargetUserId = NULL / alarmUserId = 해당 수거자 / alarmRole = ROLE_ADMIN
 		// 수거 확정 alarmTargetUserId = 해당 수거자 / alarmUserId = 해당 관리자 / alarmRole = NULL
-
+		
 		// 화재 요청 alarmTargetUserId = NULL / alarmUserId = NULL / alarmRole = ROLE_ALL
 		// 화재 진행 alarmTargetUserId = NULL / alarmUserId = 해당 수거자 / alarmRole = ROLE_ADMIN
 		// 화재 완료 alarmTargetUserId = NULL / alarmUserId = 해당 수거자 / alarmRole = ROLE_ADMIN
 		// 화재 확정 alarmTargetUserId = 해당 수거자 / alarmUserId = 해당 관리자 / alarmRole = NULL
-
+		
 		// 모든 알람의 확정 단계에서 관리자에게는 전송X
 		
 		String alarmTargetUserId = alarm.getTargetUserId();
