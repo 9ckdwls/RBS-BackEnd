@@ -125,12 +125,12 @@ public class BoxService {
 				}
 				box.setStore1(0);
 			} else if (number == 1) {
-				if (box.getStore1() == 0) {
+				if (box.getStore2() == 0) {
 					return 0;
 				}
 				box.setStore2(0);
 			} else if (number == 2) {
-				if (box.getStore1() == 0) {
+				if (box.getStore3() == 0) {
 					return 0;
 				}
 				box.setStore3(0);
