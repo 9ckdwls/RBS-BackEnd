@@ -227,8 +227,7 @@ public class AlarmService {
 					& myAlarm.getUserId().equals(userService.getUserId())
 					& myAlarm.getType().equals(AlarmType.COLLECTION_IN_PROGRESS)){
 				// IOT 제어
-				boxService.boxControll("boxOpen", boxId, 3);
-				return "Success";
+				return (String)boxService.boxControll("boxOpen", boxId, 3);
 			} else {
 				return "내가 예약한 수거함이 아닙니다.";
 			}

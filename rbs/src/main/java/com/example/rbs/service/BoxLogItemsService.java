@@ -59,7 +59,7 @@ public class BoxLogItemsService {
 	        String name = entry.getKey();
 	        int count = entry.getValue();
 	        int unitPrice = unitPriceMap.getOrDefault(name, 0);
-	        totalValue = count * unitPrice;
+	        totalValue += count * unitPrice;
 
 	        BoxLogItems agg = new BoxLogItems();
 	        agg.setBoxLogId(boxLogId);

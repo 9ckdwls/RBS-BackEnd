@@ -132,6 +132,9 @@ public class BoxService {
 		WebClient webClient = webClientBuilder.baseUrl("http://" + box.getIPAddress()).build();
 
 		if (controll.equals("boxOpen")) {
+			if(box.getStore1()==1 || box.getStore2()==1 || box.getStore3()==1 || box.getStore4()==1) {
+				return "Fail";
+			}
 			if(number==0) {
 				box.setStore1(1);
 			} else if(number==1) {
@@ -142,7 +145,6 @@ public class BoxService {
 				box.setStore4(1);
 			}
 			boxRepository.save(box);
-			
 			
 			IOTResponseDTO response = webClient
 					.post()
@@ -157,16 +159,27 @@ public class BoxService {
 			return response;
 		} else if (controll.equals("boxAdClose")) {
 			if(number==0) {
+				if(box.getStore1()==0) {
+					return "Fail";
+				}
 				box.setStore1(0);
 			} else if(number==1) {
+				if(box.getStore2()==0) {
+					return "Fail";
+				}
 				box.setStore2(0);
 			} else if(number==2) {
+				if(box.getStore3()==0) {
+					return "Fail";
+				}
 				box.setStore3(0);
 			} else if(number==3) {
+				if(box.getStore4()==0) {
+					return "Fail";
+				}
 				box.setStore4(0);
 			}
 			boxRepository.save(box);
-			
 			
 		    CloseBoxResponseDTO response = webClient
 		            .post()
