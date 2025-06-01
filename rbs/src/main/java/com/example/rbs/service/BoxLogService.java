@@ -80,19 +80,19 @@ public class BoxLogService {
 		int count;
 		int value=0;
 		
-		if (number == 1) {
+		if (number == 0) {
 			name = "battery";
 			count = result.get("battery");
 			value = count * battery;
 			boxLog.setValue(boxLog.getValue() + value);
 			boxLog.setFile_battery(saveFile);
-		} else if (number == 2) {
+		} else if (number == 1) {
 			name = "discharged";
 			count = result.get("Electronic devices");
 			value = count * discharged;
 			boxLog.setValue(boxLog.getValue() + value);
 			boxLog.setFile_discharged(saveFile);
-		} else if (number == 3) {
+		} else if (number == 2) {
 			name = "notDischarged";
 			count = result.get("Electronic devices");
 			value = count * notDischarged;

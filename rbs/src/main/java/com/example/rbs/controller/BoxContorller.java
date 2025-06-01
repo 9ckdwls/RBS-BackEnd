@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.rbs.dto.CloseBoxResponseDTO;
+import com.example.rbs.dto.CloseBoxUserResponseDTO;
 import com.example.rbs.entity.Box;
 import com.example.rbs.service.BoxService;
 
@@ -61,10 +62,17 @@ public class BoxContorller {
 		return boxService.boxEnd(boxId);
 	}
 
-	// 익명 사용자 수거함 이용
+	// 익명 사용자 수거함 닫기
 	@PostMapping("boxUse")
 	public String boxUse(@RequestBody CloseBoxResponseDTO dto) {
 		System.out.println(dto);
 		return boxService.boxUse(dto);
+	}
+	
+	// 사용자 수거함 이용
+	@PostMapping("boxUseUser")
+	public void boxUseUser(@RequestBody CloseBoxUserResponseDTO dto) {
+		System.out.println(dto);
+		boxService.boxUseUser(dto);
 	}
 }
