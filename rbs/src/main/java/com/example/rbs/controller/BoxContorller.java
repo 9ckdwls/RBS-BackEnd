@@ -62,17 +62,24 @@ public class BoxContorller {
 		return boxService.boxEnd(boxId);
 	}
 
+	// 익명 사용자 수거함 사용
+	@PostMapping("boxOpen")
+	public void boxUserOpen(@RequestBody CloseBoxUserResponseDTO dto) {
+		System.out.println("익명 사용자 문열기" + dto);
+		boxService.userBoxOpen(dto);
+	}
+
 	// 익명 사용자 수거함 닫기
 	@PostMapping("boxUse")
 	public String boxUse(@RequestBody CloseBoxResponseDTO dto) {
-		System.out.println(dto);
+		System.out.println("익명 사용자 문닫기" + dto);
 		return boxService.boxUse(dto);
 	}
-	
-	// 사용자 수거함 이용
+
+	// 사용자 수거함 닫기
 	@PostMapping("boxUseUser")
 	public void boxUseUser(@RequestBody CloseBoxUserResponseDTO dto) {
-		System.out.println(dto);
+		System.out.println("일반 사용자 문닫기"+dto);
 		boxService.boxUseUser(dto);
 	}
 }

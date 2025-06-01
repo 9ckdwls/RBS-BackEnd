@@ -142,7 +142,7 @@ public class BoxService {
 					.bodyToMono(CloseBoxResponseDTO.class).timeout(Duration.ofSeconds(60))
 					.onErrorReturn(new CloseBoxResponseDTO("Fail")).block();
 			boxRepository.save(box);
-			
+
 			return 1;
 		} else {
 			return 0;
@@ -157,7 +157,20 @@ public class BoxService {
 		return point;
 	}
 
-	// 익명 사용자 수거함 이용
+	// 익명 사용자 수거함 사용
+	public void userBoxOpen(CloseBoxUserResponseDTO dto) {
+		Box box =findBoxById(dto.getBoxId());
+		if(dto.getNum()==0) {
+			box.setStore1(1);
+		} else if(dto.getNum()==0) {
+			box.setStore2(1);
+		} else if(dto.getNum()==0) {
+			box.setStore3(1);
+		}
+		boxRepository.save(box);
+	}
+
+	// 익명 사용자 수거함 닫기
 	public String boxUse(CloseBoxResponseDTO dto) {
 		Map<String, Integer> resultMap = dto.getResult();
 		int volum;
@@ -184,11 +197,11 @@ public class BoxService {
 		return boxLogService.boxUse(dto, saveFile(dto.getImage()));
 	}
 
-	// 사용자 수거함 이용
+	// 사용자 수거함 닫기
 	public void boxUseUser(CloseBoxUserResponseDTO dto) {
-		
+
 		Box box = findBoxById(dto.getBoxId());
-		
+
 		Map<String, Integer> resultMap = dto.getResult();
 
 		int volum;
