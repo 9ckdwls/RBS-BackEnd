@@ -82,14 +82,12 @@ public class SSEService {
 			// ROLE_ALL이면 수거자와 관리자 모두에게
 			if (userId.equals(alarmTargetUserId) || userId.equals(alarmUserId) || userRole.equals(alarmRole)
 					|| "ROLE_ALL".equals(alarmRole)) {
-				if (!(alarmType.name().endsWith("CONFIRMED") && userRole.equals("ROLE_ADMIN"))) {
-					try {
-						System.out.println("알람 전송 대상: " + userId);
-						userEmitter.getEmitter().send(SseEmitter.event().name("alarm").data(alarm));
-					} catch (IOException e) {
-						System.out.println("SSE 전송중 에러!");
-						emitters.remove(userId);
-					}
+				try {
+					System.out.println("알람 전송 대상: " + userId);
+					userEmitter.getEmitter().send(SseEmitter.event().name("alarm").data(alarm));
+				} catch (IOException e) {
+					System.out.println("SSE 전송중 에러!");
+					emitters.remove(userId);
 				}
 			}
 		});

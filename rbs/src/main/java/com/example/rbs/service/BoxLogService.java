@@ -11,21 +11,22 @@ import com.example.rbs.repository.BoxLogRepository;
 
 @Service
 public class BoxLogService {
-	
+
 	private final BoxLogRepository boxLogRepository;
 	private final UserService userService;
 	private final BoxLogItemsService boxLogItemsService;
 
-	public BoxLogService(BoxLogRepository boxLogRepository, UserService userService, BoxLogItemsService boxLogItemsService) {
+	public BoxLogService(BoxLogRepository boxLogRepository, UserService userService,
+			BoxLogItemsService boxLogItemsService) {
 		this.boxLogRepository = boxLogRepository;
 		this.userService = userService;
 		this.boxLogItemsService = boxLogItemsService;
 	}
-	
+
 	// 수거로그 id로 찾기
 	public BoxLog findById(int boxLogId) {
 		Optional<BoxLog> boxLog = boxLogRepository.findById(boxLogId);
-		if(boxLog.isPresent()) {
+		if (boxLog.isPresent()) {
 			return boxLog.get();
 		} else {
 			return null;
@@ -36,21 +37,21 @@ public class BoxLogService {
 	public List<BoxLogResponse> getBoxLog() {
 		List<BoxLog> boxLogList = boxLogRepository.findAll();
 		return boxLogChange(boxLogList);
-		
+
 	}
 
 	// userId로 수거함로그 검색
 	public List<BoxLogResponse> findByUserId(String userId) {
 		return boxLogChange(boxLogRepository.findByUserId(userId));
 	}
-	
+
 	private List<BoxLogResponse> boxLogChange(List<BoxLog> boxLogList) {
 		List<BoxLogResponse> boxLogResponse = new ArrayList<>();
-		for(BoxLog boxLog : boxLogList) {
+		for (BoxLog boxLog : boxLogList) {
 			BoxLogResponse dto = new BoxLogResponse();
 			dto.setBoxLog(boxLog);
 			dto.setItems(boxLogItemsService.getBoxLogItems(boxLog.getLogId()));
-			
+
 			boxLogResponse.add(dto);
 		}
 		return boxLogResponse;
@@ -66,16 +67,22 @@ public class BoxLogService {
 		boxLog.setType("수거");
 		boxLog.setStatus("수거 후");
 		boxLog.setUserId(userService.getUserId());
-		
-		
+
 		List<BoxLog> boxLogList = boxLogRepository.findByBoxIdAndStatus(boxId, "수거 전");
-		
+		for (BoxLog myBoxLog : boxLogList) {
+
+			myBoxLog.setStatus("수거 후");
+
+			boxLogRepository.save(myBoxLog);
+
+		}
+
 		boxLogRepository.save(boxLog);
-		
+
 		int value = boxLogItemsService.collectionCompleted(boxId, boxLog.getLogId(), boxLogList);
 		boxLog.setValue(value);
 		boxLogRepository.save(boxLog);
-		
+
 		userService.updatePonint(value);
 		return boxLog.getLogId();
 	}
