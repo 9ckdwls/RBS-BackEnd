@@ -232,6 +232,7 @@ public class AlarmService {
 			if(myAlarm.getBoxId() == boxId & myAlarm.getResolved().equals(AlarmStatus.UNRESOLVED)
 					& myAlarm.getUserId().equals(userService.getUserId())
 					& myAlarm.getType().equals(AlarmType.COLLECTION_IN_PROGRESS)){
+				System.out.println("내가 예약");
 				// IOT 제어
 				return (String)boxService.boxControll("boxOpen", boxId, 3);
 			} else {
@@ -354,8 +355,10 @@ public class AlarmService {
 				createAlarm(dto.getBoxId(), "ROLE_EMPLOYEE", AlarmType.COLLECTION_RECOMMENDED);
 			}
 		} else if(alarms.get(0).getType() == AlarmType.COLLECTION_RECOMMENDED){
-			alarms.get(0).setType(AlarmType.COLLECTION_NEEDED);
-			alarmRepository.save(alarms.get(0));
+			Alarm alarm = alarms.get(0);
+			alarm.setType(AlarmType.COLLECTION_NEEDED);
+			alarmRepository.save(alarm);
+			sseService.sendAlarmToUser(alarm);
 		} else {
 			return "ok";
 		}

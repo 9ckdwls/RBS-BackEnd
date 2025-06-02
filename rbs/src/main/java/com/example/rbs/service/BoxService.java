@@ -135,6 +135,7 @@ public class BoxService {
 			if(box.getStore1()==1 || box.getStore2()==1 || box.getStore3()==1 || box.getStore4()==1) {
 				return "Fail";
 			}
+			System.out.println("문상태 확인 전");
 			if(number==0) {
 				box.setStore1(1);
 			} else if(number==1) {
@@ -145,6 +146,7 @@ public class BoxService {
 				box.setStore4(1);
 			}
 			boxRepository.save(box);
+			System.out.println("문상태 확인 후");
 			
 			IOTResponseDTO response = webClient
 					.post()
@@ -156,7 +158,8 @@ public class BoxService {
 					.onErrorResume(ConnectException.class,
 							t -> Mono.just(new IOTResponseDTO("Fail")))
 					.block();
-			return response;
+			System.out.println("비동기 통신 완료");
+			return response.getStatus();
 		} else if (controll.equals("boxAdClose")) {
 			if(number==0) {
 				if(box.getStore1()==0) {
