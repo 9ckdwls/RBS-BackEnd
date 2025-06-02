@@ -63,15 +63,15 @@ public class BoxLogService {
 		return boxLogResponse;
 	}
 
-	public int logUpdate(int boxId, Map<String, Integer> result, String saveFile, int number) {
-		Optional<BoxLog> opBoxlog = boxLogRepository.findByLogIdAndStatus(boxId, "분리 중");
+	public int logUpdate(int boxId, Map<String, Integer> result, String saveFile, int number, String userId) {
+		Optional<BoxLog> opBoxlog = boxLogRepository.findByBoxIdAndStatus(boxId, "분리 중");
 		BoxLog boxLog;
 		if(opBoxlog.isEmpty()) {
 			boxLog = new BoxLog();
 			boxLog.setBoxId(boxId);
 			boxLog.setType("분리");
 			boxLog.setStatus("분리 중");
-			boxLog.setUserId(userService.getId());
+			boxLog.setUserId(userId);
 		} else {
 			boxLog = opBoxlog.get();
 		}
@@ -110,11 +110,13 @@ public class BoxLogService {
 
 	// 수거함 사용 끝
 	public int boxEnd(int boxId) {
-		Optional<BoxLog> boxlog = boxLogRepository.findByLogIdAndStatus(boxId, "분리 중");
+		Optional<BoxLog> boxlog = boxLogRepository.findByBoxIdAndStatus(boxId, "분리 중");
 		if(boxlog.isPresent()) {
+			System.out.println("기존에 로그 존재");
 			BoxLog myBoxLog = boxlog.get();
 			myBoxLog.setDate(new Date());
 			myBoxLog.setStatus("수거 전");
+			boxLogRepository.save(myBoxLog);
 			return myBoxLog.getValue();
 		}
 		return 0;

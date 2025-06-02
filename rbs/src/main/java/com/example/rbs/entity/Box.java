@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.locationtech.jts.geom.Point;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Getter
 @Setter
+@Data
 public class Box {
 	
 	@Id

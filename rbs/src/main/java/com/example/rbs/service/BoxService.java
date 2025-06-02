@@ -32,6 +32,7 @@ import com.example.rbs.entity.Box;
 import com.example.rbs.entity.Box.InstallStatus;
 import com.example.rbs.repository.BoxRepository;
 
+import jakarta.transaction.Transactional;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -135,13 +136,12 @@ public class BoxService {
 				}
 				box.setStore3(0);
 			}
-
+			boxRepository.save(box);
 			String userId = userService.getId();
 			Map<String, Object> payload = Collections.singletonMap("userId", userId);
 			CloseBoxResponseDTO response = webClient.post().uri(uri).bodyValue(payload).retrieve()
 					.bodyToMono(CloseBoxResponseDTO.class).timeout(Duration.ofSeconds(60))
 					.onErrorReturn(new CloseBoxResponseDTO("Fail")).block();
-			boxRepository.save(box);
 
 			return 1;
 		} else {
@@ -162,9 +162,9 @@ public class BoxService {
 		Box box =findBoxById(dto.getBoxId());
 		if(dto.getNum()==0) {
 			box.setStore1(1);
-		} else if(dto.getNum()==0) {
+		} else if(dto.getNum()==1) {
 			box.setStore2(1);
-		} else if(dto.getNum()==0) {
+		} else if(dto.getNum()==2) {
 			box.setStore3(1);
 		}
 		boxRepository.save(box);
@@ -172,14 +172,23 @@ public class BoxService {
 
 	// 익명 사용자 수거함 닫기
 	public String boxUse(CloseBoxResponseDTO dto) {
+		Box box = findBoxById(dto.getBoxId());
+		
+		if(dto.getNum()==0) {
+			box.setStore1(0);
+		} else if(dto.getNum()==1) {
+			box.setStore2(0);
+		} else if(dto.getNum()==2) {
+			box.setStore3(0);
+		}
+		boxRepository.save(box);
+		
 		Map<String, Integer> resultMap = dto.getResult();
 		int volum;
 
 		if (resultMap == null) {
 			return "Fail";
 		}
-
-		Box box = findBoxById(dto.getBoxId());
 
 		// Box 용량 업데이트
 		if (resultMap != null && resultMap.containsKey("battery")) {
@@ -204,7 +213,7 @@ public class BoxService {
 
 		Map<String, Integer> resultMap = dto.getResult();
 
-		int volum;
+		int volum = 0;
 
 		if (resultMap == null) {
 			return;
@@ -227,11 +236,14 @@ public class BoxService {
 			volum = box.getVolume3() + batteryCount * volum3;
 			box.setVolume3(volum);
 		}
-
 		boxRepository.save(box);
 
 		// 로그 작성 및 사진파일 저장
-		boxLogService.logUpdate(box.getId(), dto.getResult(), saveFile(dto.getImage()), dto.getNum());
+		try {
+			boxLogService.logUpdate(box.getId(), dto.getResult(), saveFile(dto.getImage()), dto.getNum(), dto.getUserId());
+		} catch (Exception e) {
+			System.out.println("오류 발생!");
+		}
 	}
 
 	// 수거 권장 및 필요 알람

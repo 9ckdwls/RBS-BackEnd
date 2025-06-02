@@ -148,6 +148,7 @@ public class UserService {
 		if(user.isPresent()) {
 			User myUser = user.get();
 			myUser.setPoint(myUser.getPoint() + point);
+			userRepositroy.save(myUser);
 		}
 	}
 }

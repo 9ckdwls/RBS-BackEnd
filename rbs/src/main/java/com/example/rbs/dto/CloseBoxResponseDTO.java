@@ -12,9 +12,9 @@ public class CloseBoxResponseDTO {
 	@JsonProperty("timestamp")
     private String timeStamp;
     private Map<String, Integer> result;
-    private String image;
+    private int num;
     private int boxId;
-    
+    private String image;
     	
     // 기본 생성자
     public CloseBoxResponseDTO() {}
