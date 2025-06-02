@@ -60,6 +60,8 @@ public class BoxLogItemsService {
 	        int count = entry.getValue();
 	        int unitPrice = unitPriceMap.getOrDefault(name, 0);
 	        totalValue += count * unitPrice;
+	        
+	        System.out.println("수거한 물품당 가격" + totalValue);
 
 	        BoxLogItems agg = new BoxLogItems();
 	        agg.setBoxLogId(boxLogId);

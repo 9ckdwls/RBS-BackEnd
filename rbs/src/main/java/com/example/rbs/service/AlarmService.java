@@ -192,10 +192,12 @@ public class AlarmService {
 				// 2. 사진 저장
 				// 3. 사진 경로 저장 및 로그
 				// 4. IOT 제어
+				int boxLogId = 0;
 				if(alarmType.equals(AlarmType.COLLECTION_COMPLETED)) { // 수거 완료라면
 					boxService.boxControll("boxAdClose", myAlarm.getBoxId(), 3);
 					boxService.collectionCompleted(myAlarm.getBoxId());
-					myAlarm.setBoxLogId(boxLogService.collectionCompleted(myAlarm.getBoxId(), saveFile(file)));
+					boxLogId = boxLogService.collectionCompleted(myAlarm.getBoxId(), saveFile(file));
+					myAlarm.setBoxLogId(boxLogId);
 				}
 
 				if(alarmType.equals(AlarmType.COLLECTION_CONFIRMED)) { // 수거 확정이라면
@@ -206,6 +208,10 @@ public class AlarmService {
 				
 				// 알람 전송
 				sseService.sendAlarmToUser(myAlarm);
+				
+				if(alarmType.equals(AlarmType.COLLECTION_COMPLETED)) { // 수거 완료라면
+					return boxLogService.getCollectionPoint(boxLogId);
+				}
 				return "Success";
 			} else {
 				return "Fail";

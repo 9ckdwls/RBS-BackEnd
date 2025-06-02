@@ -87,4 +87,13 @@ public class BoxLogService {
 		return boxLog.getLogId();
 	}
 
+	public String getCollectionPoint(int boxLogId) {
+		BoxLog boxLog = findById(boxLogId);
+		if(boxLog == null) {
+			return "0";
+		} else {
+			return Integer.toString(boxLog.getValue());
+		}
+	}
+
 }
