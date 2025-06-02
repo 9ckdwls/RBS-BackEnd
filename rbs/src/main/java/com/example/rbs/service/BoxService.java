@@ -237,6 +237,7 @@ public class BoxService {
 			box.setVolume3(volum);
 		}
 		boxRepository.save(box);
+		alarm(dto.getBoxId());
 
 		// 로그 작성 및 사진파일 저장
 		try {
@@ -250,8 +251,8 @@ public class BoxService {
 	private void alarm(int boxId) {
 		Box box = findBoxById(boxId);
 		int maxVolume = Math.max(box.getVolume1(), Math.max(box.getVolume2(), box.getVolume3()));
-		if (maxVolume >= 50) {
-			String alertType = (maxVolume >= 80) ? "수거 필요" : "수거 권장";
+		if (maxVolume > 50) {
+			String alertType = (maxVolume > 80) ? "수거 필요" : "수거 권장";
 
 			WebClient webClient = webClientBuilder.baseUrl(webIP).build();
 			webClient.post().uri("/alerts").contentType(MediaType.APPLICATION_JSON)
