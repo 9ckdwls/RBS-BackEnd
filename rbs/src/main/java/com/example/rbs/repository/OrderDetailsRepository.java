@@ -10,7 +10,9 @@ import com.example.rbs.entity.OrderDetails;
 @Repository
 public interface OrderDetailsRepository extends JpaRepository<OrderDetails, Integer> {
 
-	// 사용자id로 주문 내역 조회
-	List<OrderDetails> findByUserId(String userId);
+
+	List<OrderDetails> findByState(int i);
+
+	List<OrderDetails> findByUserIdAndState(String userId, int i);
 
 }

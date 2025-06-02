@@ -22,12 +22,12 @@ public class OrderDetailsService {
 
 	// 모든 사용자 주문 내역
 	public List<OrderResponse> findOrderList() {
-		return OrderChange(orderDetailsRepository.findAll());
+		return OrderChange(orderDetailsRepository.findByState(1));
 	}
 
 	// 사용자id로 주문 내역 조회
 	public List<OrderResponse> findOrderListByUserId(String userId) {
-		return OrderChange(orderDetailsRepository.findByUserId(userId));
+		return OrderChange(orderDetailsRepository.findByUserIdAndState(userId, 1));
 	}
 	
 	private List<OrderResponse> OrderChange(List<OrderDetails> orderList) {
